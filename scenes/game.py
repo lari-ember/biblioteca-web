@@ -16,6 +16,8 @@ pygame.display.set_caption("my game")
 run = True
 clock = pygame.time.Clock()
 
+pygame.draw.rect(win,(255,0,0),(110,100,200,100,))
+
 #loop
 while run:
     #set the window refresh rate

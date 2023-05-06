@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Search Books</h1>
+    <form method="POST" action="{{ url_for('search') }}">
+        {{ form.csrf_token }}
+        {{ form.search.label }} {{ form.search(size=32) }}
+        <button type="submit">Search</button>
+    </form>
+
+    {% if books %}
+        <h2>Results:</h2>
+        <ul>
+        {% for book in books %}
+            <li>{{ book.title }} - {{ book.author }} ({{ book.status }})</li>
+        {% endfor %}
+        </ul>
+    {% endif %}
+{% endblock %}

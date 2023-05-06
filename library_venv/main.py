@@ -1,10 +1,12 @@
-from flask import Flask, render_template, redirect, url_for, flash
-from flask_sqlalchemy import SQLAlchemy
-from flask_login import LoginManager, login_required, current_user, login_user, logout_user
-from sqlalchemy import or_
-from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import date
-from utils.forms import BookForm, SearchForm, LoginForm
+
+from flask import Flask, flash, redirect, render_template, url_for
+from flask_login import (LoginManager, current_user, login_required,
+                         login_user, logout_user)
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import or_
+from utils.forms import BookForm, LoginForm, SearchForm
+from werkzeug.security import check_password_hash, generate_password_hash
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'sua-secret-key-aqui'

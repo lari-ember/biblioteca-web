@@ -13,6 +13,8 @@ from werkzeug.security import check_password_hash, generate_password_hash
 app = Flask(__name__)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
+from controllers import defaut
+
 '''db = SQLAlchemy(app)
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'

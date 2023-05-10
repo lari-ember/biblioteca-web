@@ -40,10 +40,8 @@ class Book(db.Model):
     status = db.Column(db.String(50), nullable=False)  # 'available', 'borrowed', or 'ex-libris'
     format = db.Column(db.String(50), nullable=False)  # 'physical', 'e-book', or 'pdf'
     genre = db.Column(db.String(50), nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     
-    def __init__(self, user_id, code, title, author, publisher, year, pages, genre):
-        self.user_id = user_id
+    def __init__(self, code, title, author, publisher, year, pages, genre):
         self.code = code
         self.title = title
         self.author = author
@@ -54,6 +52,9 @@ class Book(db.Model):
         
     def __repr__(self):
         return f'<code={self.code}, book={self.title}, author={self.author}, year={self.year}, pages={self.pages}, genre={self.genre}, publisher={self.publisher}, format={self.format}, status={self.status}>'
+
+with app.app_context():
+    db.create_all()
 
 #db = SQLAlchemy() # db intitialized here
 #app = Flask(__name__)

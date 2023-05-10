@@ -8,12 +8,12 @@ from sqlalchemy import or_
 from utils.forms import BookForm, LoginForm, SearchForm
 from werkzeug.security import check_password_hash, generate_password_hash
 
+
+
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'sua-secret-key-aqui'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-db = SQLAlchemy(app)
+'''db = SQLAlchemy(app)
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 
@@ -147,14 +147,14 @@ def search():
                 flash('No results found.', 'warning')
     return render_template('search.html', form=form, books=books)
 
-'''@app.route('/login')
+app.route('/login')
 def login():
     return render_template('login.html')
 
 @app.route('/search')
 def search():
-    return render_template('search.html')'''
+    return render_template('search.html')
 
 if __name__ == '__main__':
     app.run()
-    
+'''

@@ -5,7 +5,7 @@ from flask_login import (LoginManager, current_user, login_required,
                          login_user, logout_user)
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import or_
-from utils.forms import BookForm, LoginForm, SearchForm
+#from utils.forms import BookForm, LoginForm, SearchForm
 from werkzeug.security import check_password_hash, generate_password_hash
 
 
@@ -13,7 +13,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 app = Flask(__name__)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-from controllers import defaut
+from app.controllers import defaut
 
 '''db = SQLAlchemy(app)
 login_manager = LoginManager(app)

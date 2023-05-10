@@ -17,10 +17,6 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 
-@app.route('/')
-def index():
-    return render_template('index.html')
-
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))

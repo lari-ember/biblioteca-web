@@ -40,8 +40,10 @@ class Book(db.Model):
     status = db.Column(db.String(50), nullable=False)  # 'available', 'borrowed', or 'ex-libris'
     format = db.Column(db.String(50), nullable=False)  # 'physical', 'e-book', or 'pdf'
     genre = db.Column(db.String(50), nullable=False)
-    
-    def __init__(self, code, title, author, publisher, year, pages, genre):
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+
+    def __init__(self, user_id, code, title, author, publisher, year, pages, genre):
+        self.user_id = user_id
         self.code = code
         self.title = title
         self.author = author
@@ -49,7 +51,7 @@ class Book(db.Model):
         self.year = year
         self.pages = pages
         self.genre = genre
-        
+
     def __repr__(self):
         return f'<code={self.code}, book={self.title}, author={self.author}, year={self.year}, pages={self.pages}, genre={self.genre}, publisher={self.publisher}, format={self.format}, status={self.status}>'
 

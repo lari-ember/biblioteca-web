@@ -12,6 +12,8 @@ from sqlalchemy.sql import text
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = 'sqlite:///storage.db'
 db = SQLAlchemy(app)
+
+
 class User(db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
@@ -66,7 +68,7 @@ with app.app_context():
 
 
 
-#from app.controllers import defaut
+from app.controllers import defaut
 
 '''db = SQLAlchemy(app)
 login_manager = LoginManager(app)

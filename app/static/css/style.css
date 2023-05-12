@@ -7,10 +7,6 @@ header {
     font-family: 'Poppins', sans-serif;
 }
 
-:root {
-    --clr: #222327;
-}
-
 body {
     display: flex;
     justify-content: center;
@@ -19,12 +15,197 @@ body {
     background: #222327;
 }
 
-.navgation {
-    width: 400px;
-    height: 70px;    
-    background: #f0f0f0;
+div.container a {
+    margin-top: 100px;
+transform: translateX(-200%);
+}
+
+div.navbar-text {
+    display: block;
+    align-items: left;
+}
+
+nav {
+    margin-top: 30px;
     position: relative;
     display: flex;
     justify-content: center;
     align-items: center;
 }
+
+.navigation {
+    width: 650px;
+    height: 90px;    
+    background: #ffeaea;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px;
+}
+
+.navigation ul {
+    display: flex;
+    width: 700px;
+    
+}
+
+.navigation ul li {
+position: relative;
+list-style: none;
+width: 70px;
+height: 70px;
+z-index: 1;
+}
+
+.navigation ul li a {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    width: 100%;
+    text-align: center;
+    font-weight: 500;
+}
+
+.navigation ul li a .icon {
+    position: relative;
+    display: block;
+    line-height: 75px;
+    font-size: 1.5em;
+    text-align: center;
+    transition: 0.5s;
+    color: #222327;
+}
+
+.navigation ul li.active a .icon {
+    transform: translateY(-35px);
+}
+
+.navigation ul li a .text {
+    position: absolute;
+    color: #222327;
+    font-weight: 400;
+    font-size: 0.75em;
+    letter-spacing: 0.05em;
+    transition: 0.5s;
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+.navigation ul li.active a .text {
+    opacity: 1;
+    transform: translateY(15px);
+}
+
+.indicator {
+    position: absolute;
+    top: -35%;
+    width: 68px;
+    height: 68px;
+    background: #5af49f;
+    border-radius: 50%;
+    border: 6px solid #222327;
+    transition: 0.5s;
+}
+
+.indicator::before {
+    content: '';
+    position: absolute;
+    top: 46%;
+    left: -22px;
+    width: 20px;
+    height: 20px;
+    background: transparent;
+    border-top-right-radius: 20px;
+    box-shadow: -1px -10px 0 0 #222327;
+
+}
+
+.indicator::after {
+    content: '';
+    position: absolute;
+    top: 46%;
+    right: -22px;
+    width: 20px;
+    height: 20px;
+    background: transparent;
+    border-top-left-radius: 20px;
+    box-shadow: -1px -10px 0 0 #222327;
+
+}
+
+.navigation ul li:nth-child(2).active ~ .indicator {
+    transform: translateX(calc(70px * 1));
+}
+
+.navigation ul li:nth-child(3).active ~ .indicator {
+    transform: translateX(calc(70px * 2));
+}
+
+.navigation ul li:nth-child(4).active ~ .indicator {
+    transform: translateX(calc(70px * 3));
+}
+
+.navigation ul li:nth-child(5).active ~ .indicator {
+    transform: translateX(calc(70px * 4));
+}
+
+.navigation ul li:nth-child(6).active ~ .indicator {
+    transform: translateX(calc(70px * 5));
+}
+
+.navigation ul li:nth-child(7).active ~ .indicator {
+    transform: translateX(calc(70px * 6));
+}
+
+.navigation ul li:nth-child(8).active ~ .indicator {
+    transform: translateX(calc(70px * 7));
+}
+
+div.container {
+    display: flex;
+}
+
+.datetime div p {
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    display: flex;
+    padding: 0px;
+}
+
+div.datetime {
+    padding: 20px;
+    width: 180px;
+    height: 180px;
+    background: #ffeaea;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px;
+    padding-bottom: 0px;
+    border: 2px ridge rgb(204, 202, 202);
+    box-shadow: 2px 2px 5px rgba(255, 255, 255, 0.5);
+}
+
+.datetime div {
+    margin-bottom: 20px;
+    justify-content: center;
+    align-items: center;
+}
+
+time {
+    margin-bottom: 20px;
+    justify-content: center;
+    align-items: center;
+    width: 140px;
+    border: 1px solid #f7f7f7;
+    padding: 4px 12px;
+    background-color: #222327;
+    color: #f7f7f7;
+    font-size: 2em;
+    font-weight: 300;
+    border-radius: 4px;
+}
+

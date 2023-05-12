@@ -1,32 +1,61 @@
 import url('https://fonts.googleapis.com/css?family=Poppins:100,200,300,400,500,600,700,800,900');
 
 header {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
     font-family: 'Poppins', sans-serif;
 }
 
 body {
-    display: flex;
+    padding: 20px;
     justify-content: center;
     align-items: center;
     min-width: 100vh;
     background: #222327;
 }
 
+div.container {
+    min-width: 100px;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-width: auto;
+    min-height: 170px;
+    font-size: 15px;
+    background: linear-gradient(
+        to right,
+        #5c5d63,
+        #222327
+    );
+    border-radius: 10px;
+}
+
+div.container h2 {
+    margin: 10px;
+    font-size: 22px;
+}
+
+div.container p {
+    margin: 10px;
+    font-size: 14px;
+}
+
 div.container a {
-    margin-top: 100px;
-transform: translateX(-200%);
+    position: absolute;
+    top: 50%;
+    left: 5%;
 }
 
 div.navbar-text {
+    min-width: 200px;
+    max-width: 1080px;
     display: block;
+    justify-content: center;
+    align-items: center;
     align-items: left;
 }
 
 nav {
-    margin-top: 30px;
+    margin-top: 40px;
     position: relative;
     display: flex;
     justify-content: center;
@@ -34,9 +63,15 @@ nav {
 }
 
 .navigation {
-    width: 650px;
-    height: 90px;    
-    background: #ffeaea;
+    width: 750px;
+    height: 115px;    
+    background: linear-gradient(
+        to right,
+        #70faae,
+        #004720
+    );
+    border: 2px ridge #ddffec;
+    box-shadow: 2px 2px 5px rgba(162, 255, 204, 0.5);
     position: relative;
     display: flex;
     justify-content: center;
@@ -72,7 +107,7 @@ z-index: 1;
 .navigation ul li a .icon {
     position: relative;
     display: block;
-    line-height: 75px;
+    line-height: 70px;
     font-size: 1.5em;
     text-align: center;
     transition: 0.5s;
@@ -80,7 +115,7 @@ z-index: 1;
 }
 
 .navigation ul li.active a .icon {
-    transform: translateY(-35px);
+    transform: translateY(-50px);
 }
 
 .navigation ul li a .text {
@@ -96,7 +131,7 @@ z-index: 1;
 
 .navigation ul li.active a .text {
     opacity: 1;
-    transform: translateY(15px);
+    transform: translateY(20px);
 }
 
 .indicator {
@@ -138,65 +173,82 @@ z-index: 1;
 
 .navigation ul li:nth-child(2).active ~ .indicator {
     transform: translateX(calc(70px * 1));
+    background-color: #52e092;
 }
 
 .navigation ul li:nth-child(3).active ~ .indicator {
     transform: translateX(calc(70px * 2));
+    background-color: #43ca80;
 }
 
 .navigation ul li:nth-child(4).active ~ .indicator {
     transform: translateX(calc(70px * 3));
+    background-color: #33c273;
 }
 
 .navigation ul li:nth-child(5).active ~ .indicator {
     transform: translateX(calc(70px * 4));
+    background-color: #25b164;
 }
 
 .navigation ul li:nth-child(6).active ~ .indicator {
     transform: translateX(calc(70px * 5));
+    background-color: #1da058;
 }
 
 .navigation ul li:nth-child(7).active ~ .indicator {
     transform: translateX(calc(70px * 6));
+    background-color: #117e42;
 }
 
 .navigation ul li:nth-child(8).active ~ .indicator {
     transform: translateX(calc(70px * 7));
+    background-color: #0c582e;
 }
 
-div.container {
-    display: flex;
-}
-
-.datetime div p {
-    justify-content: center;
-    align-items: center;
-    position: relative;
-    display: flex;
-    padding: 0px;
+.datetime {
+    position: absolute;
+    right: 15px;
+    top: 15px;
 }
 
 div.datetime {
-    padding: 20px;
-    width: 180px;
-    height: 180px;
-    background: #ffeaea;
+    width: 170px;
+    height: 150px;
+    background: linear-gradient(
+        to right,
+        #70faae,
+        #004720
+    );
+    display: block;
     justify-content: center;
     align-items: center;
     border-radius: 10px;
-    padding-bottom: 0px;
-    border: 2px ridge rgb(204, 202, 202);
-    box-shadow: 2px 2px 5px rgba(255, 255, 255, 0.5);
+    border: 2px ridge #ddffec;
+    box-shadow: 2px 2px 5px rgba(162, 255, 204, 0.5);
 }
 
-.datetime div {
-    margin-bottom: 20px;
+div.datetime p {
+    margin-top: 15px;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    margin-bottom: 5px;
+}
+
+div.datetime hr {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+div.datetime div {
+    margin-top: 5px;
     justify-content: center;
     align-items: center;
 }
 
 time {
-    margin-bottom: 20px;
+    margin: 37px;
     justify-content: center;
     align-items: center;
     width: 140px;

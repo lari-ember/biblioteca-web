@@ -12,7 +12,7 @@
     <!--css core
         <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 -->
-    <title>Amber Archivily</title>
+    <title>amber archivily</title>
 
 </head>
 
@@ -21,14 +21,17 @@
         <div id="hide" class="container bg-dark text-white">
             <a class="navbar-brand text-white-50" href="#">Amber Archivily</a>
             <div class="navbar-text">
-                <h2>nome do usuaruio</h2>
-                <p>Informações Úteis sobre a Biblioteca</p>
+                <h2>larissa ember</h2>
+                <p>Lorem ipsum dolor sit amet...</p>
+                <p>Lorem ipsum dolor sit amet...</p>
+                <p>Lorem ipsum dolor sit amet...</p>
                 <div class="datetime">
-                    <p class="text-dark">date & time</p>
+                    <p class="text-dark fw-bold">date & time</p>
                     <hr class="bg-dark">
-                    <p class="text-dark">date: 05/12/2023</p>
+                    <p class="text-dark"><span id="date"></span>
+                    </p>
                     <div>
-                        <time>14:44:44</time>
+                        <time></time>
                     </div>
                 </div>
             </div>
@@ -109,16 +112,59 @@
                             <span class="text">login</span>
                         </a>
                     </li>
-                    <li class="list">
-                        <button id="botao-ocultar">Ocultar div</button>
-                    </li>
                     <div class="indicator"></div>
                 </ul>
             </div>
         </nav>
     </header>
-    <h1></h1>
-    <footer></footer>
+    <br>
+    <main>
+        {% block content%}
+        {&end block&}
+    </main>
+    <footer class="container py-5">
+        <div class="row">
+          <div class="col-12 col-md">
+            <br>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="d-block mb-2" role="img" viewBox="0 0 24 24"><title>Product</title><circle cx="12" cy="12" r="10"/><path d="M14.31 8l5.74 9.94M9.69 8h11.48M7.38 12l5.74-9.94M9.69 16L3.95 6.06M14.31 16H2.83m13.79-4l-5.74 9.94"/></svg>
+            <small class="d-block mb-3 text-light">&copy;Larissa Ember 2022</small>
+          </div>
+          <div class="col-6 col-md">
+            <h5 class="text-white">Neste Site</h5>
+            <ul class="list-unstyled text-small">
+              <li><a class="link-secondary" href="#">register new books</a></li>
+              <li><a class="link-secondary" href="comicas.html">your colectiom</a></li>
+              <li><a class="link-secondary" href="projetos/pokedex.html">pokedex</a></li>
+              <li><a class="link-secondary" href="#">more projects</a></li>
+              <li><a class="link-secondary" href="#">Portifolio</a></li>
+            </ul>
+          </div>
+          <div class="col-6 col-md">
+            <h5 class="text-white">Midias</h5>
+            <ul class="list-unstyled text-small">
+              <li><a class="link-secondary" href="https://discord.gg/jWzjDQSE">discord server</a></li>
+              <li><a class="link-secondary" href="profile.html">contact</a></li>
+            </ul>
+          </div>
+          <div class="col-6 col-md">
+            <h5 class="text-white">please</h5>
+            <ul class="list-unstyled text-small">
+              <li><a class="link-secondary" href="#">help me</a></li>
+              <li><a class="link-secondary" href="#">rape me</a></li>
+              <li><a class="link-secondary" href="#">please me</a></li>
+            </ul>
+          </div>
+          <div class="col-6 col-md">
+            <h5 class="text-white">about</h5>
+            <ul class="list-unstyled text-small">
+              <li><a class="link-secondary" href="profile">the larissa</a></li>
+              <li><a class="link-secondary" href="#">copyright</a></li>
+              <li><a class="link-secondary" href="#">Privacity</a></li>
+              <li><a class="link-secondary" href="#">terms</a></li>
+            </ul>
+          </div>
+        </div>
+      </footer>
     <script>
         const list = document.querySelectorAll('.list');
 
@@ -134,6 +180,37 @@
 
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+    <script>
+        const showTimeNow = () =>{
+  const clockTag = document.querySelector('time');
+  let dateNow = new Date();
+
+//pegando os valores desejados
+  let hh = dateNow.getHours();
+  let mm = dateNow.getMinutes();
+  let ss = dateNow.getSeconds();
+  
+//validando a necessidade de adicionar zero na exibição
+  hh = hh < 10 ? '0'+ hh : hh; 
+  mm = mm < 10 ? '0'+ mm : mm;
+   
+// atribuindo os valores e montando o formato da hora a ser exibido
+  clockTag.innerText = hh +':'+ mm;
+}
+
+//executando a funcao a cada 1 segundo
+showTimeNow()
+setInterval(showTimeNow, 10000);
+    </script>
+    <script>
+        function updateDateTime() {
+    const dateTime = new Date();
+    const dateStr = dateTime.toLocaleDateString();
+    document.getElementById("date").textContent = dateStr;
+}
+
+setInterval(updateDateTime, 1000);
+    </script>
 </body>
 
 </html>

@@ -1,14 +1,88 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home</title>
-</head>
-<body>
-    <h1>Bem-vindo à minha aplicação</h1>
-    <a href="{{ url_for('login') }}"><button>Login</button></a>
-    <a href="{{ url_for('search') }}"><button>Pesquisar Livros</button></a>
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="position-relative overflow-hidden p-3 p-md-5 m-md-3 text-center olar">
+    <div class="col-md-5 p-lg-5 mx-auto my-5">
+      <h1 class="text-white text">amber archively</h1>
+      <p class="lead fw-normal text-white">uma plataforma de organização de livros pessoais, intuitiva e interativa</p>
+      <a class="btn btn-outline-light" href="#about">Saiba mais</a>
+    </div>
+    <img src="images/jujusamaaa.png" class="img-fluid d-none d-md-block d-lg-block d-xl-block">
+  </div>
+
+  <div class="d-md-flex flex-md-equal w-100 my-md-3 ps-md-3">
+    <div class="bg-dark me-md-3 pt-3 px-3 pt-md-5 px-md-5  text-white overflow-hidden">
+      <div class="my-3 py-3 align-content-center">
+        <div class="my-3 py-3 align-content-center text-center" id="about">
+          <a href="page2.html">
+            <img class="img1" src="images/img-hacking.png"
+              alt="Aqui temos a foto de dois gatinhos dormindo abraçados, eles são brancos, filhotes e alegram o seu dia!"></a>
+        </div>
+        <h2 class="text-lg-left font-weight-bold display-1">Sobre</h2>
+        <h3 class="text">have your juice while walking through amber archivily ;)
+        </h3>
+        <p class="lead">Introducing Amber Archively - the program that will bring your personal library to life! Whether you're a bookworm, manga lover, or anime enthusiast, Amber Archively is the perfect platform to keep track of your personal collection.</p>
+
+            <p class="lead">With features like user registration and personal library creation, you can easily organize your books and keep them at your fingertips. Add books with unique codes based on the CDU, and input details like title, author, publisher, year of publication, number of pages, and format (physical, PDF, or e-book). </p>
+            
+            <p class="lead">Want to find a specific book in your collection? No problem! Amber Archively allows you to search by any of the previously mentioned details, as well as by genre, reading status (currently reading, read, or to be read), and loan status (borrowed or owned). </p>
+            
+            <p class="lead">But that's not all - with Amber Archively's filtering and classification system, you can easily sort your collection by author, publisher, year of publication, number of pages, and more. Keep track of which books you've read and mark your progress on those you're currently reading. </p>
+            
+            <p class="lead">And for all the statistics lovers out there, Amber Archively generates insightful information about your library, including the number of books per genre and your most-read author. So, go ahead and take a sip of your juice box while you peruse your personal library, and let Amber Archively do the rest!!</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="d-md-flex flex-md-equal w-100 my-md-3 ps-md-3">
+    <div class="bg0 me-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden text-white">
+      <div class="my-3 p-3">
+        <h2 class="display-5">Artigos</h2>
+        <p class="lead">Nada para ver aqui... Volte em 24 dias, quem sabe aparece??</p>
+      </div>
+      <div class="bg-dark shadow-sm mx-auto" style="width: 80%; height: 300px; border-radius: 21px 21px 0 0;">
+        <a class="btn btn-secondary bt1" href="#">Acesse</a>
+      </div>
+    </div>
+    <div class="bg0 me-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center text-white overflow-hidden">
+      <div class="my-3 py-3">
+        <h2 class="display-5">Crônicas</h2>
+        <p class="lead">A caixa de pandora, de uma linda Fadinha.</p>
+      </div>
+      <div class="bg-dark shadow-sm mx-auto cronicas"
+        style="width: 80%; height: 300px; border-radius: 21px 21px 0 0;">
+        <a class="btn btn-secondary bt1" href="comicas.html">Acesse</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="d-md-flex flex-md-equal w-100 my-md-3 ps-md-3">
+    <div class="bg0 me-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden text-white">
+      <div class="my-3 p-3">
+        <h2 class="display-5">Pokedex</h2>
+        <p class="lead">Clique na pokedex e veja a magia acontecer...</p>
+      </div>
+      <a href="projetos/pokedex.html">
+        <img src="projetos/images/pokedex.png" alt="imagem de uma Pokedex" style="max-height: 33%;
+      min-width: 20%;" class="img"></a>
+    </div>
+    <div class="bg0 me-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden text-white align-content-center">
+      <div class="my-3 py-3">
+        <h2 class="display-5">Quem é Larissa?</h2>
+        <p class="lead">A Lady Lari mi consagras, esta ouvindo o mano Lil Nax X.</p>
+        <a class="btn btn-outline-light" href="profile.html">Perfil Social</a>
+      </div>
+      <div class="shadow-sm mx-auto"
+        style="width: 101%; height: 300px; border-radius: 21px 21px 0 0; align-content: center;">
+        <a href="https://www.pinterest.cl/pin/579768152016330995/?amp_client_id=CLIENT_ID%28_%29&mweb_unauth_id=%7B%7Bdefault.session%7D%7D&simplified=true"
+          target="external"><img src="images/fofri.gif"
+            alt="Gif da Larissa com frio, assoprando as mãos (clique no link para seguir até o autor do gif...)"></a>
+      </div>
+
+    </div>
+
+
+  </div>
+
+{% endblock %}

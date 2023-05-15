@@ -23,7 +23,7 @@ div.container {
     font-size: 15px;
     background: linear-gradient(
         to right,
-        #5c5d63,
+        rgb(108, 224, 195) 55%,
         #222327
     );
     border-radius: 10px;

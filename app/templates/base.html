@@ -8,10 +8,126 @@
 
     <!-- CSS Bootstrap -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="../static/css/style.css">
-    <!--css core
+    
+    <!--css core -->
         <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
--->
+
+        <style>
+            /*
+         * Dummy devices (replace them with your own or something else entirely!)
+         */
+        
+            .product-device {
+              position: absolute;
+              right: 10%;
+              bottom: -30%;
+              width: 300px;
+              height: 540px;
+              background-color: #333;
+              border-radius: 21px;
+              transform: rotate(30deg);
+            }
+        
+            .product-device::before {
+              position: absolute;
+              top: 10%;
+              right: 10px;
+              bottom: 10%;
+              left: 10px;
+              content: "";
+              background-color: rgba(255, 255, 255, .1);
+              border-radius: 5px;
+            }
+        
+            .product-device-2 {
+              top: -25%;
+              right: auto;
+              bottom: 0;
+              left: 5%;
+              background-color: #e5e5e5;
+            }
+        
+        
+            /*
+         * Extra utilities
+         */
+        
+            .flex-equal>* {
+              flex: 1;
+            }
+        
+            @media (min-width: 768px) {
+              .flex-md-equal>* {
+                flex: 1;
+              }
+            }
+        
+            .olar {
+              background: linear-gradient(to right,
+                  rgb(51, 51, 51) 0%,
+                  #d1a2b3 90%,
+                  #fcc2d7 100%);
+            }
+        
+            .text-white h1 {
+              font-family: Calibri;
+              font-weight: bold;
+              letter-spacing: 1px;
+              color: rgb(240, 240, 240);
+              font-size: 60px;
+            }
+        
+            .img-fluid {
+              height: 465px;
+              position: absolute;
+              bottom: 0%;
+              left: 65%;
+            }
+        
+            .img1 {
+              align-content: center;
+            }
+        
+            .text h1 {
+              text-align: left;
+              font-size: 60px;
+            }
+        
+            .text p {
+              text-align: left;
+              font-size: 30px;
+              min-width: 200px;
+              max-width: 1000px;
+            }
+        
+            .text h3 {
+              text-align: left;
+              font-size: 30px;
+            }
+        
+            .display-1 {
+              font-weight: bold;
+              border-bottom: 2px solid;
+            }
+        
+            div.bg0 {
+              background: linear-gradient(to bottom, rgb(51,51,51) 0%, #daaabb 75%, #fcc2d7 100%);
+
+            }
+        
+            .bt1 {
+              margin-top: 25%;
+              font-size: 24px;
+            }
+        
+            .cronicas {
+              background-image: url('images/jornais.jpg');
+              background-repeat: no-repeat;
+              background-size: cover;
+            }
+
+            </style>
+
     <title>amber archivily</title>
 
 </head>
@@ -21,10 +137,18 @@
         <div id="hide" class="container bg-dark text-white">
             <a class="navbar-brand text-white-50" href="#">Amber Archivily</a>
             <div class="navbar-text">
-                <h2>larissa ember</h2>
+                {%if user %}
+                <h2>{{ user }}</h2>
                 <p>Lorem ipsum dolor sit amet...</p>
                 <p>Lorem ipsum dolor sit amet...</p>
                 <p>Lorem ipsum dolor sit amet...</p>
+                {% else %}
+                <h2>welcome</h2>
+                <p>Lorem ipsum dolor sit amet</p>
+                <p>Lorem ipsum dolor sit amet</p>
+                <p>Lorem ipsum dolor sit amet</p>
+                {% endif %}
+
                 <div class="datetime">
                     <p class="text-dark fw-bold">date & time</p>
                     <hr class="bg-dark">
@@ -119,8 +243,8 @@
     </header>
     <br>
     <main>
-        {% block content%}
-        {&end block&}
+        {% block content %}
+        {% endblock %}
     </main>
     <footer class="container py-5">
         <div class="row">
@@ -175,9 +299,8 @@
         list.forEach((item) => item.addEventListener('click', activeLink)); 
     </script>
 
-<!--<script src="{{ url_for('static', filename='js/script.js') }}"></script>-->
-<script src="../static/js/script.js"></script>
 
+<script src="../static/js/script.js"></script>
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
     <script>

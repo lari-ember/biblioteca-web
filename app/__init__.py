@@ -13,6 +13,25 @@ app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = 'sqlite:///storage.db'
 db = SQLAlchemy(app)
 
+app.secret_key = 'secret'
+
+lm = LoginManager(app)
+
+@property
+def is_authenticated(self):
+    return True
+
+@property
+def is_active(self):
+    return True
+
+@property
+def is_anonymous(self):
+    return False
+
+
+def get_id(self):
+    return str(self.id)
 
 class User(db.Model):
     __tablename__ = 'users'

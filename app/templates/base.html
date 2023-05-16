@@ -2,338 +2,356 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- CSS Bootstrap -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css">
-    
-    <!--css core -->
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <!-- CSS Bootstrap -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css">
 
-        <style>
-            /*
+  <!--css core -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+  <style>
+    /*
          * Dummy devices (replace them with your own or something else entirely!)
          */
-        
-            .product-device {
-              position: absolute;
-              right: 10%;
-              bottom: -30%;
-              width: 300px;
-              height: 540px;
-              background-color: #333;
-              border-radius: 21px;
-              transform: rotate(30deg);
-            }
-        
-            .product-device::before {
-              position: absolute;
-              top: 10%;
-              right: 10px;
-              bottom: 10%;
-              left: 10px;
-              content: "";
-              background-color: rgba(255, 255, 255, .1);
-              border-radius: 5px;
-            }
-        
-            .product-device-2 {
-              top: -25%;
-              right: auto;
-              bottom: 0;
-              left: 5%;
-              background-color: #e5e5e5;
-            }
-        
-        
-            /*
+
+    .product-device {
+      position: absolute;
+      right: 10%;
+      bottom: -30%;
+      width: 300px;
+      height: 540px;
+      background-color: #333;
+      border-radius: 21px;
+      transform: rotate(30deg);
+    }
+
+    .product-device::before {
+      position: absolute;
+      top: 10%;
+      right: 10px;
+      bottom: 10%;
+      left: 10px;
+      content: "";
+      background-color: rgba(255, 255, 255, .1);
+      border-radius: 5px;
+    }
+
+    .product-device-2 {
+      top: -25%;
+      right: auto;
+      bottom: 0;
+      left: 5%;
+      background-color: #e5e5e5;
+    }
+
+
+    /*
          * Extra utilities
          */
-        
-            .flex-equal>* {
-              flex: 1;
-            }
-        
-            @media (min-width: 768px) {
-              .flex-md-equal>* {
-                flex: 1;
-              }
-            }
-        
-            .olar {
-              background: linear-gradient(to right,
-                  rgb(51, 51, 51) 0%,
-                  #d1a2b3 90%,
-                  #fcc2d7 100%);
-            }
-        
-            .text-white h1 {
-              font-family: Calibri;
-              font-weight: bold;
-              letter-spacing: 1px;
-              color: rgb(240, 240, 240);
-              font-size: 60px;
-            }
-        
-            .img-fluid {
-              height: 465px;
-              position: absolute;
-              bottom: 0%;
-              left: 65%;
-            }
-        
-            .img1 {
-              align-content: center;
-            }
-        
-            .text h1 {
-              text-align: left;
-              font-size: 60px;
-            }
-        
-            .text p {
-              text-align: left;
-              font-size: 30px;
-              min-width: 200px;
-              max-width: 1000px;
-            }
-        
-            .text h3 {
-              text-align: left;
-              font-size: 30px;
-            }
-        
-            .display-1 {
-              font-weight: bold;
-              border-bottom: 2px solid;
-            }
-        
-            div.bg0 {
-              background: linear-gradient(to bottom, rgb(51,51,51) 0%, #daaabb 75%, #fcc2d7 100%);
 
-            }
-        
-            .bt1 {
-              margin-top: 25%;
-              font-size: 24px;
-            }
-        
-            .cronicas {
-              background-image: url('images/jornais.jpg');
-              background-repeat: no-repeat;
-              background-size: cover;
-            }
+    .flex-equal>* {
+      flex: 1;
+    }
 
-            </style>
+    @media (min-width: 768px) {
+      .flex-md-equal>* {
+        flex: 1;
+      }
+    }
 
-    <title>amber archivily</title>
+    .olar {
+      background: linear-gradient(to right,
+          rgb(51, 51, 51) 0%,
+          #d1a2b3 90%,
+          #fcc2d7 100%);
+    }
+
+    .text-white h1 {
+      font-family: Calibri;
+      font-weight: bold;
+      letter-spacing: 1px;
+      color: rgb(240, 240, 240);
+      font-size: 60px;
+    }
+
+    .img-fluid {
+      height: 465px;
+      position: absolute;
+      bottom: 0%;
+      left: 65%;
+    }
+
+    .img1 {
+      align-content: center;
+    }
+
+    .text h1 {
+      text-align: left;
+      font-size: 60px;
+    }
+
+    .text p {
+      text-align: left;
+      font-size: 30px;
+      min-width: 200px;
+      max-width: 1000px;
+    }
+
+    .text h3 {
+      text-align: left;
+      font-size: 30px;
+    }
+
+    .display-1 {
+      font-weight: bold;
+      border-bottom: 2px solid;
+    }
+
+    div.bg0 {
+      background: linear-gradient(to bottom, rgb(51, 51, 51) 0%, #daaabb 75%, #fcc2d7 100%);
+
+    }
+
+    .bt1 {
+      margin-top: 25%;
+      font-size: 24px;
+    }
+
+    .cronicas {
+      background-image: url('images/jornais.jpg');
+      background-repeat: no-repeat;
+      background-size: cover;
+    }
+  </style>
+
+  <title>amber archivily</title>
 
 </head>
 
 <body>
-    <header>
-        <div id="hide" class="container bg-dark text-white">
-            <a class="navbar-brand text-white-50" href="#">Amber Archivily</a>
-            <div class="navbar-text">
-                {%if user %}
-                <h2>{{ user }}</h2>
-                <p>Lorem ipsum dolor sit amet...</p>
-                <p>Lorem ipsum dolor sit amet...</p>
-                <p>Lorem ipsum dolor sit amet...</p>
-                {% else %}
-                <h2>welcome</h2>
-                <p>Lorem ipsum dolor sit amet</p>
-                <p>Lorem ipsum dolor sit amet</p>
-                <p>Lorem ipsum dolor sit amet</p>
-                {% endif %}
+  <header>
+    <div id="hide" class="container bg-dark text-white">
+      <a class="navbar-brand text-white-50" href="#">Amber Archivily</a>
+      <div class="navbar-text">
+        {%if user %}
+        <h2>{{ user }}</h2>
+        <p>Lorem ipsum dolor sit amet...</p>
+        <p>Lorem ipsum dolor sit amet...</p>
+        <p>Lorem ipsum dolor sit amet...</p>
+        {% else %}
+        <h2>welcome</h2>
+        <p>Lorem ipsum dolor sit amet</p>
+        <p>Lorem ipsum dolor sit amet</p>
+        <p>Lorem ipsum dolor sit amet</p>
+        {% endif %}
 
-                <div class="datetime">
-                    <p class="text-dark fw-bold">date & time</p>
-                    <hr class="bg-dark">
-                    <p class="text-dark"><span id="date"></span>
-                    </p>
-                    <div>
-                        <time></time>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <nav>
-            <div class="navigation">
-                <ul>
-                    <li class="list active">
-                        <a href="#">
-                            <span class="icon">
-                                <ion-icon name="compass-outline"></ion-icon>
-                            </span>
-                            <span class="text">home</span>
-                        </a>
-                    </li>
-                    <li class="list">
-                        <a href="#">
-                            <span class="icon">
-                                <ion-icon name="medkit-outline"></ion-icon>
-                            </span>
-                            <span class="text">register new book</span>
-                        </a>
-                    </li>
-                    <li class="list">
-                        <a href="#">
-                            <span class="icon">
-                                <ion-icon name="library-outline"></ion-icon>
-                            </span>
-                            <span class="text">your collection</span>
-                        </a>
-                    </li>
-                    <li class="list">
-                        <a href="#">
-                            <span class="icon">
-                                <ion-icon name="color-filter-outline"></ion-icon>
-                            </span>
-                            <span class="text">filter</span>
-                        </a>
-                    </li>
-                    <li class="list">
-                        <a href="#">
-                            <span class="icon">
-                                <ion-icon name="search-outline"></ion-icon>
-                            </span>
-                            <span class="text">search</span>
-                        </a>
-                    </li>
-                    <li class="list">
-                        <a href="#">
-                            <span class="icon">
-                                <ion-icon name="podium-outline"></ion-icon>
-                            </span>
-                            <span class="text">about your library</span>
-                        </a>
-                    </li>
-                    <li class="list">
-                        <a href="#">
-                            <span class="icon">
-                                <ion-icon name="help-buoy-outline"></ion-icon>
-                            </span>
-                            <span class="text">help</span>
-                        </a>
-                    </li>
-                    <li class="list">
-                        <a href="#">
-                            <span class="icon">
-                                <ion-icon name="logo-discord"></ion-icon>
-                            </span>
-                            <span class="text">contact</span>
-                        </a>
-                    </li>
-                    <hr>
-                    <li class="list">
-                        <a href="#">
-                            <span class="icon">
-                                <ion-icon name="power-outline"></ion-icon>
-                            </span>
-                            <span class="text">login</span>
-                        </a>
-                    </li>
-                    <div class="indicator"></div>
-                </ul>
-            </div>
-        </nav>
-    </header>
-    <br>
-    <main>
-        {% block content %}
-        {% endblock %}
-    </main>
-    <footer class="container py-5">
-        <div class="row">
-          <div class="col-12 col-md">
-            <br>
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="d-block mb-2" role="img" viewBox="0 0 24 24"><title>Product</title><circle cx="12" cy="12" r="10"/><path d="M14.31 8l5.74 9.94M9.69 8h11.48M7.38 12l5.74-9.94M9.69 16L3.95 6.06M14.31 16H2.83m13.79-4l-5.74 9.94"/></svg>
-            <small class="d-block mb-3 text-light">&copy;Larissa Ember 2022</small>
-          </div>
-          <div class="col-6 col-md">
-            <h5 class="text-white">Neste Site</h5>
-            <ul class="list-unstyled text-small">
-              <li><a class="link-secondary" href="#">register new books</a></li>
-              <li><a class="link-secondary" href="comicas.html">your colectiom</a></li>
-              <li><a class="link-secondary" href="projetos/pokedex.html">pokedex</a></li>
-              <li><a class="link-secondary" href="#">more projects</a></li>
-              <li><a class="link-secondary" href="#">Portifolio</a></li>
-            </ul>
-          </div>
-          <div class="col-6 col-md">
-            <h5 class="text-white">Midias</h5>
-            <ul class="list-unstyled text-small">
-              <li><a class="link-secondary" href="https://discord.gg/jWzjDQSE">discord server</a></li>
-              <li><a class="link-secondary" href="profile.html">contact</a></li>
-            </ul>
-          </div>
-          <div class="col-6 col-md">
-            <h5 class="text-white">please</h5>
-            <ul class="list-unstyled text-small">
-              <li><a class="link-secondary" href="#">help me</a></li>
-              <li><a class="link-secondary" href="#">rape me</a></li>
-              <li><a class="link-secondary" href="#">please me</a></li>
-            </ul>
-          </div>
-          <div class="col-6 col-md">
-            <h5 class="text-white">about</h5>
-            <ul class="list-unstyled text-small">
-              <li><a class="link-secondary" href="profile">the larissa</a></li>
-              <li><a class="link-secondary" href="#">copyright</a></li>
-              <li><a class="link-secondary" href="#">Privacity</a></li>
-              <li><a class="link-secondary" href="#">terms</a></li>
-            </ul>
+        <div class="datetime">
+          <p class="text-dark fw-bold">date & time</p>
+          <hr class="bg-dark">
+          <p class="text-dark"><span id="date"></span>
+          </p>
+          <div>
+            <time></time>
           </div>
         </div>
-      </footer>
-    <script>
-        const list = document.querySelectorAll('.list');
+      </div>
+    </div>
+    <nav>
+      <div class="navigation">
+        <ul>
+          <li class="list active">
+            <a href="/home">
+              <span class="icon">
+                <ion-icon name="compass-outline"></ion-icon>
+              </span>
+              <span class="text">home</span>
+            </a>
+          </li>
+          <li class="list">
+            <a href="#">
+              <span class="icon">
+                <ion-icon name="medkit-outline"></ion-icon>
+              </span>
+              <span class="text">register new book</span>
+            </a>
+          </li>
+          <li class="list">
+            <a href="#">
+              <span class="icon">
+                <ion-icon name="library-outline"></ion-icon>
+              </span>
+              <span class="text">your collection</span>
+            </a>
+          </li>
+          <li class="list">
+            <a href="#">
+              <span class="icon">
+                <ion-icon name="color-filter-outline"></ion-icon>
+              </span>
+              <span class="text">filter</span>
+            </a>
+          </li>
+          <li class="list">
+            <a href="#">
+              <span class="icon">
+                <ion-icon name="search-outline"></ion-icon>
+              </span>
+              <span class="text">search</span>
+            </a>
+          </li>
+          <li class="list">
+            <a href="#">
+              <span class="icon">
+                <ion-icon name="podium-outline"></ion-icon>
+              </span>
+              <span class="text">about your library</span>
+            </a>
+          </li>
+          <li class="list">
+            <a href="#">
+              <span class="icon">
+                <ion-icon name="help-buoy-outline"></ion-icon>
+              </span>
+              <span class="text">help</span>
+            </a>
+          </li>
+          <li class="list">
+            <a href="#">
+              <span class="icon">
+                <ion-icon name="logo-discord"></ion-icon>
+              </span>
+              <span class="text">contact</span>
+            </a>
+          </li>
+          <hr>
+          <li class="list">
+            <a href="/login">
+              <span class="icon">
+                <ion-icon name="power-outline"></ion-icon>
+              </span>
+              <span class="text">login</span>
+            </a>
+          </li>
+          <div class="indicator"></div>
+        </ul>
+      </div>
+    </nav>
+  </header>
+  <br>
+  {% with messages = get_flashed_messages() %}
+  {% if messages %}
+  <div class="alert alert-warning"></div>
+  <ul class=flashes>
+    {% for message in messages %}
+    <li>{{ message }}</li>
+    {% endfor %}
+  </ul>
+  </div>
+  {% endif %}
+  {% endwith %}
 
-        function activeLink() {
-            list.forEach((item) => item.classList.remove('active'));
-            this.classList.add('active');
-        }
-        list.forEach((item) => item.addEventListener('click', activeLink)); 
-    </script>
+  <main>
+    {% block content %}
+    {% endblock %}
+  </main>
+  <footer class="container py-5">
+    <div class="row">
+      <div class="col-12 col-md">
+        <br>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor"
+          stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="d-block mb-2" role="img"
+          viewBox="0 0 24 24">
+          <title>Product</title>
+          <circle cx="12" cy="12" r="10" />
+          <path
+            d="M14.31 8l5.74 9.94M9.69 8h11.48M7.38 12l5.74-9.94M9.69 16L3.95 6.06M14.31 16H2.83m13.79-4l-5.74 9.94" />
+        </svg>
+        <small class="d-block mb-3 text-light">&copy;Larissa Ember 2022</small>
+      </div>
+      <div class="col-6 col-md">
+        <h5 class="text-white">Neste Site</h5>
+        <ul class="list-unstyled text-small">
+          <li><a class="link-secondary" href="#">register new books</a></li>
+          <li><a class="link-secondary" href="comicas.html">your colectiom</a></li>
+          <li><a class="link-secondary" href="projetos/pokedex.html">pokedex</a></li>
+          <li><a class="link-secondary" href="#">more projects</a></li>
+          <li><a class="link-secondary" href="#">Portifolio</a></li>
+        </ul>
+      </div>
+      <div class="col-6 col-md">
+        <h5 class="text-white">Midias</h5>
+        <ul class="list-unstyled text-small">
+          <li><a class="link-secondary" href="https://discord.gg/jWzjDQSE">discord server</a></li>
+          <li><a class="link-secondary" href="profile.html">contact</a></li>
+        </ul>
+      </div>
+      <div class="col-6 col-md">
+        <h5 class="text-white">please</h5>
+        <ul class="list-unstyled text-small">
+          <li><a class="link-secondary" href="#">help me</a></li>
+          <li><a class="link-secondary" href="#">rape me</a></li>
+          <li><a class="link-secondary" href="#">please me</a></li>
+        </ul>
+      </div>
+      <div class="col-6 col-md">
+        <h5 class="text-white">about</h5>
+        <ul class="list-unstyled text-small">
+          <li><a class="link-secondary" href="profile">the larissa</a></li>
+          <li><a class="link-secondary" href="#">copyright</a></li>
+          <li><a class="link-secondary" href="#">Privacity</a></li>
+          <li><a class="link-secondary" href="#">terms</a></li>
+        </ul>
+      </div>
+    </div>
+  </footer>
+  <script>
+    const list = document.querySelectorAll('.list');
+
+    function activeLink() {
+      list.forEach((item) => item.classList.remove('active'));
+      this.classList.add('active');
+    }
+    list.forEach((item) => item.addEventListener('click', activeLink)); 
+  </script>
 
 
-<script src="../static/js/script.js"></script>
-    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
-    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
-    <script>
-        const showTimeNow = () =>{
-  const clockTag = document.querySelector('time');
-  let dateNow = new Date();
+  <script src="../static/js/script.js"></script>
+  <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+  <script>
+    const showTimeNow = () => {
+      const clockTag = document.querySelector('time');
+      let dateNow = new Date();
 
-//pegando os valores desejados
-  let hh = dateNow.getHours();
-  let mm = dateNow.getMinutes();
-  let ss = dateNow.getSeconds();
-  
-//validando a necessidade de adicionar zero na exibição
-  hh = hh < 10 ? '0'+ hh : hh; 
-  mm = mm < 10 ? '0'+ mm : mm;
-   
-// atribuindo os valores e montando o formato da hora a ser exibido
-  clockTag.innerText = hh +':'+ mm;
-}
+      //pegando os valores desejados
+      let hh = dateNow.getHours();
+      let mm = dateNow.getMinutes();
+      let ss = dateNow.getSeconds();
 
-//executando a funcao a cada 1 segundo
-showTimeNow()
-setInterval(showTimeNow, 10000);
-    </script>
-    <script>
-        function updateDateTime() {
-    const dateTime = new Date();
-    const dateStr = dateTime.toLocaleDateString();
-    document.getElementById("date").textContent = dateStr;
-}
+      //validando a necessidade de adicionar zero na exibição
+      hh = hh < 10 ? '0' + hh : hh;
+      mm = mm < 10 ? '0' + mm : mm;
 
-setInterval(updateDateTime, 1000);
-    </script>
+      // atribuindo os valores e montando o formato da hora a ser exibido
+      clockTag.innerText = hh + ':' + mm;
+    }
+
+    //executando a funcao a cada 1 segundo
+    showTimeNow()
+    setInterval(showTimeNow, 10000);
+  </script>
+  <script>
+    function updateDateTime() {
+      const dateTime = new Date();
+      const dateStr = dateTime.toLocaleDateString();
+      document.getElementById("date").textContent = dateStr;
+    }
+
+    setInterval(updateDateTime, 1000);
+  </script>
 </body>
 
 </html>

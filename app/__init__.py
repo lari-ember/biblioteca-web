@@ -2,7 +2,7 @@ from datetime import date
 
 from flask import Flask, flash, redirect, render_template, url_for, request
 from flask_login import (LoginManager, current_user, login_required,
-                         login_user, logout_user)
+                         login_user, logout_user, UserMixin)
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import or_
 #from utils.forms import BookForm, LoginForm, SearchForm
@@ -17,21 +17,6 @@ app.secret_key = 'secret'
 
 lm = LoginManager(app)
 
-@property
-def is_authenticated(self):
-    return True
-
-@property
-def is_active(self):
-    return True
-
-@property
-def is_anonymous(self):
-    return False
-
-
-def get_id(self):
-    return str(self.id)
 
 class User(db.Model):
     __tablename__ = 'users'
@@ -40,6 +25,30 @@ class User(db.Model):
     password = db.Column(db.String(), nullable=False)
     name = db.Column(db.String(), nullable=False)
     books = db.relationship('Book', backref='user', lazy=True)
+    
+    @property
+    def is_authenticated(self):
+        return True
+
+    @property
+    def is_active(self):
+        return True
+
+    @property
+    def is_anonymous(self):
+        return False
+
+
+    def get_id(self):
+        return str(self.id)
+
+    
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
+
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
+    
     
     def __init__(self, username, password, name):
         self.username = username
@@ -85,7 +94,9 @@ with app.app_context():
 #db.init_app(app)
 
 
-
+@lm.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
 
 from app.controllers import defaut
 

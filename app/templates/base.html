@@ -133,7 +133,7 @@
 
 <body>
   <header>
-    <div id="hide" class="container bg-dark text-white">
+    {% if current_user.is_authenticated %}<div id="hide" class="container bg-dark text-white">
       <a class="navbar-brand text-white-50" href="#">Amber Archivily</a>
       <div class="navbar-text">
         {%if user %}
@@ -158,7 +158,7 @@
           </div>
         </div>
       </div>
-    </div>
+    </div> {% endif %}
     <nav>
       <div class="navigation">
         <ul>
@@ -227,6 +227,16 @@
             </a>
           </li>
           <hr>
+          {% if current_user.is_authenticated %}
+          <li class="list">
+            <a href="/logout">
+              <span class="icon">
+                <ion-icon name="power-outline"></ion-icon>
+              </span>
+              <span class="text">logout</span>
+            </a>
+          </li>
+          {% else %}
           <li class="list">
             <a href="/login">
               <span class="icon">
@@ -235,6 +245,7 @@
               <span class="text">login</span>
             </a>
           </li>
+          {%  endif %}
           <div class="indicator"></div>
         </ul>
       </div>

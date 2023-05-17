@@ -36,20 +36,21 @@
   </div>
   {%  endif %}
 
+  {% if current_user.is_authenticated %}
   <div class="d-md-flex flex-md-equal w-100 my-md-3 ps-md-3">
     <div class="bg0 me-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden text-white">
       <div class="my-3 p-3">
         <h2 class="display-5">register new book</h2>
-        <p class="lead"></p>
+        <p class="lead">Unlock the magical realm of the 'Register New Book' tab, where bibliophiles embark on an enchanted quest to give their beloved books an official identity card – because every book deserves its own novel identification number, just like we bibliophiles cherish our library cards</p>
       </div>
       <div class="bg-dark shadow-sm mx-auto" style="width: 80%; height: 300px; border-radius: 21px 21px 0 0;">
-        <a class="btn btn-secondary bt1" href="#">Acesse</a>
+        <a class="btn btn-secondary bt1" href="/register_new_book">three, two...</a>
       </div>
     </div>
     <div class="bg0 me-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center text-white overflow-hidden">
       <div class="my-3 py-3">
-        <h2 class="display-5">Crônicas</h2>
-        <p class="lead">A caixa de pandora, de uma linda Fadinha.</p>
+        <h2 class="display-5">your collection</h2>
+        <p class="lead">Discover the Pandora's Box of literary treasures in Your Collection, where bookworms unleash the enchantment of their personal library, revealing a trove of captivating tales and literary wonders. in there are your precious books of palladins world...</p>
       </div>
       <div class="bg-dark shadow-sm mx-auto cronicas"
         style="width: 80%; height: 300px; border-radius: 21px 21px 0 0;">
@@ -86,4 +87,5 @@
 
   </div>
 <hr class="bg-white">
+{%  endif %}
 {% endblock %}

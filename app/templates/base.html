@@ -136,16 +136,11 @@
     {% if current_user.is_authenticated %}<div id="hide" class="container bg-dark text-white">
       <a class="navbar-brand text-white-50" href="#">Amber Archivily</a>
       <div class="navbar-text">
-        {%if user %}
-        <h2>{{ user }}</h2>
+        {% if current_user.is_authenticated %}
+        <h2>welcome {{ username }}</h2>
         <p>Lorem ipsum dolor sit amet...</p>
         <p>Lorem ipsum dolor sit amet...</p>
         <p>Lorem ipsum dolor sit amet...</p>
-        {% else %}
-        <h2>welcome</h2>
-        <p>Lorem ipsum dolor sit amet</p>
-        <p>Lorem ipsum dolor sit amet</p>
-        <p>Lorem ipsum dolor sit amet</p>
         {% endif %}
 
         <div class="datetime">

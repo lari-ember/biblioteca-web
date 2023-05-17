@@ -1,12 +1,13 @@
 {% extends "base.html" %}
 
 {% block content %}
-
+<hr class="bg-white">
+{% if not current_user.is_authenticated %}
 <div class="position-relative overflow-hidden p-3 p-md-5 m-md-3 text-center olar">
     <div class="col-md-5 p-lg-5 mx-auto my-5">
       <h1 class="text-white text">amber archively</h1>
       <p class="lead fw-normal text-white">uma plataforma de organização de livros pessoais, intuitiva e interativa</p>
-      <a class="btn btn-outline-light" href="#about">Saiba mais</a>
+      <a class="btn btn-outline-light" href="#about">more about</a>
     </div>
     <img src="images/jujusamaaa.png" class="img-fluid d-none d-md-block d-lg-block d-xl-block">
   </div>
@@ -15,11 +16,10 @@
     <div class="bg-dark me-md-3 pt-3 px-3 pt-md-5 px-md-5  text-white overflow-hidden">
       <div class="my-3 py-3 align-content-center">
         <div class="my-3 py-3 align-content-center text-center" id="about">
-          <a href="page2.html">
             <img class="img1" src="images/img-hacking.png"
-              alt="Aqui temos a foto de dois gatinhos dormindo abraçados, eles são brancos, filhotes e alegram o seu dia!"></a>
+              alt="Aqui temos a foto de dois gatinhos dormindo abraçados, eles são brancos, filhotes e alegram o seu dia!">
         </div>
-        <h2 class="text-lg-left font-weight-bold display-1">Sobre</h2>
+        <h2 class="text-lg-left font-weight-bold display-1">about</h2>
         <h3 class="text">have your juice while walking through amber archivily ;)
         </h3>
         <p class="lead">Introducing Amber Archively - the program that will bring your personal library to life! Whether you're a bookworm, manga lover, or anime enthusiast, Amber Archively is the perfect platform to keep track of your personal collection.</p>
@@ -34,6 +34,7 @@
       </div>
     </div>
   </div>
+  {%  endif %}
 
   <div class="d-md-flex flex-md-equal w-100 my-md-3 ps-md-3">
     <div class="bg0 me-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden text-white">
@@ -84,5 +85,5 @@
 
 
   </div>
-
+<hr class="bg-white">
 {% endblock %}

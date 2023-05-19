@@ -261,3 +261,23 @@ time {
     border-radius: 4px;
 }
 
+.img1d {
+    width:1200px;
+	height:566px;
+	border:4px solid #999;
+	background:transparent url(../images/cine_metah.jpg);
+}
+
+.moldura-dois {
+	width: 1248px; 
+	border:8px inset #5f6632;
+	padding:15px;
+	background: #b1b1c3;
+	}
+
+.moldura-um {
+    width: 1350px; /*404+8+8(bordas)+15+15(paddings)*/
+    border:20px inset #c1292c;
+    padding:25px;
+    background: transparent url(../images/wallpaper.jpg);
+    }

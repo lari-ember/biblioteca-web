@@ -132,120 +132,122 @@
 </head>
 
 <body>
-  <header>
-    {% if current_user.is_authenticated %}<div id="hide" class="container bg-dark text-white">
-      <a class="navbar-brand text-white-50" href="#">Amber Archivily</a>
-      <div class="navbar-text">
-        {% if current_user.is_authenticated %}
-        <h2>welcome {{ username }}</h2>
-        <p>Lorem ipsum dolor sit amet...</p>
-        <p>Lorem ipsum dolor sit amet...</p>
-        <p>Lorem ipsum dolor sit amet...</p>
-        {% endif %}
-
-        <div class="datetime">
-          <p class="text-dark fw-bold">date & time</p>
-          <hr class="bg-dark">
-          <p class="text-dark"><span id="date"></span>
-          </p>
-          <div>
-            <time></time>
+  <div class="d-none d-md-block d-lg-block d-xl-block">
+    <header>
+      {% if current_user.is_authenticated %}
+      <div id="hide" class="container bg-dark text-white">
+        <a class="navbar-brand text-white-50" href="#">Amber Archivily</a>
+        <div class="navbar-text">
+          {% if current_user.is_authenticated %}
+          <h2>welcome {{ username }}</h2>
+          <p>Lorem ipsum dolor sit amet...</p>
+          <p>Lorem ipsum dolor sit amet...</p>
+          <p>Lorem ipsum dolor sit amet...</p>
+          {% endif %}
+          <div class="datetime">
+            <p class="text-dark fw-bold">date & time</p>
+            <hr class="bg-dark">
+            <p class="text-dark"><span id="date"></span>
+            </p>
+            <div>
+              <time></time>
+            </div>
           </div>
         </div>
-      </div>
-    </div> {% endif %}
-    <nav>
-      <div class="navigation">
-        <ul>
-          <li class="list active">
-            <a href="/home">
-              <span class="icon">
-                <ion-icon name="compass-outline"></ion-icon>
-              </span>
-              <span class="text">home</span>
-            </a>
-          </li>
-          <li class="list">
-            <a href="#">
-              <span class="icon">
-                <ion-icon name="medkit-outline"></ion-icon>
-              </span>
-              <span class="text">register new book</span>
-            </a>
-          </li>
-          <li class="list">
-            <a href="#">
-              <span class="icon">
-                <ion-icon name="library-outline"></ion-icon>
-              </span>
-              <span class="text">your collection</span>
-            </a>
-          </li>
-          <li class="list">
-            <a href="#">
-              <span class="icon">
-                <ion-icon name="color-filter-outline"></ion-icon>
-              </span>
-              <span class="text">filter</span>
-            </a>
-          </li>
-          <li class="list">
-            <a href="#">
-              <span class="icon">
-                <ion-icon name="search-outline"></ion-icon>
-              </span>
-              <span class="text">search</span>
-            </a>
-          </li>
-          <li class="list">
-            <a href="#">
-              <span class="icon">
-                <ion-icon name="podium-outline"></ion-icon>
-              </span>
-              <span class="text">about your library</span>
-            </a>
-          </li>
-          <li class="list">
-            <a href="#">
-              <span class="icon">
-                <ion-icon name="help-buoy-outline"></ion-icon>
-              </span>
-              <span class="text">help</span>
-            </a>
-          </li>
-          <li class="list">
-            <a href="#">
-              <span class="icon">
-                <ion-icon name="logo-discord"></ion-icon>
-              </span>
-              <span class="text">contact</span>
-            </a>
-          </li>
-          <hr>
-          {% if current_user.is_authenticated %}
-          <li class="list">
-            <a href="/logout">
-              <span class="icon">
-                <ion-icon name="power-outline"></ion-icon>
-              </span>
-              <span class="text">logout</span>
-            </a>
-          </li>
-          {% else %}
-          <li class="list">
-            <a href="/login">
-              <span class="icon">
-                <ion-icon name="power-outline"></ion-icon>
-              </span>
-              <span class="text">login</span>
-            </a>
-          </li>
-          {%  endif %}
-          <div class="indicator"></div>
-        </ul>
-      </div>
-    </nav>
-  </header>
+      </div> {% endif %}
+      <div class="d-none d-md-block d-lg-block d-xl-block"><nav class="">
+        <div class="navigation">
+          <ul>
+            <li class="list active">
+              <a href="/home">
+                <span class="icon">
+                  <ion-icon name="compass-outline"></ion-icon>
+                </span>
+                <span class="text">home</span>
+              </a>
+            </li>
+            <li class="list">
+              <a href="#">
+                <span class="icon">
+                  <ion-icon name="medkit-outline"></ion-icon>
+                </span>
+                <span class="text">register new book</span>
+              </a>
+            </li>
+            <li class="list">
+              <a href="#">
+                <span class="icon">
+                  <ion-icon name="library-outline"></ion-icon>
+                </span>
+                <span class="text">your collection</span>
+              </a>
+            </li>
+            <li class="list">
+              <a href="#">
+                <span class="icon">
+                  <ion-icon name="color-filter-outline"></ion-icon>
+                </span>
+                <span class="text">filter</span>
+              </a>
+            </li>
+            <li class="list">
+              <a href="#">
+                <span class="icon">
+                  <ion-icon name="search-outline"></ion-icon>
+                </span>
+                <span class="text">search</span>
+              </a>
+            </li>
+            <li class="list">
+              <a href="#">
+                <span class="icon">
+                  <ion-icon name="podium-outline"></ion-icon>
+                </span>
+                <span class="text">about your library</span>
+              </a>
+            </li>
+            <li class="list">
+              <a href="#">
+                <span class="icon">
+                  <ion-icon name="help-buoy-outline"></ion-icon>
+                </span>
+                <span class="text">help</span>
+              </a>
+            </li>
+            <li class="list">
+              <a href="#">
+                <span class="icon">
+                  <ion-icon name="logo-discord"></ion-icon>
+                </span>
+                <span class="text">contact</span>
+              </a>
+            </li>
+            <hr>
+            {% if current_user.is_authenticated %}
+            <li class="list">
+              <a href="/logout">
+                <span class="icon">
+                  <ion-icon name="power-outline"></ion-icon>
+                </span>
+                <span class="text">logout</span>
+              </a>
+            </li>
+            {% else %}
+            <li class="list">
+              <a href="/login">
+                <span class="icon">
+                  <ion-icon name="power-outline"></ion-icon>
+                </span>
+                <span class="text">login</span>
+              </a>
+            </li>
+            {%  endif %}
+            <div class="indicator"></div>
+          </ul>
+        </div>
+      </nav></div>
+    </header>
+  </div>
   <br>
   {% with messages = get_flashed_messages() %}
   {% if messages %}
@@ -263,7 +265,7 @@
     {% block content %}
     {% endblock %}
   </main>
-  <footer class="container py-5">
+  <footer class="container py-5 d-none d-md-block d-lg-block d-xl-block">
     <div class="row">
       <div class="col-12 col-md">
         <br>
@@ -278,37 +280,33 @@
         <small class="d-block mb-3 text-light">&copy;Larissa Ember 2022</small>
       </div>
       <div class="col-6 col-md">
-        <h5 class="text-white">Neste Site</h5>
+        <h5 class="text-white">more</h5>
         <ul class="list-unstyled text-small">
-          <li><a class="link-secondary" href="#">register new books</a></li>
-          <li><a class="link-secondary" href="comicas.html">your colectiom</a></li>
-          <li><a class="link-secondary" href="projetos/pokedex.html">pokedex</a></li>
           <li><a class="link-secondary" href="#">more projects</a></li>
           <li><a class="link-secondary" href="#">Portifolio</a></li>
         </ul>
       </div>
       <div class="col-6 col-md">
-        <h5 class="text-white">Midias</h5>
+        <h5 class="text-white">Midia</h5>
         <ul class="list-unstyled text-small">
           <li><a class="link-secondary" href="https://discord.gg/jWzjDQSE">discord server</a></li>
-          <li><a class="link-secondary" href="profile.html">contact</a></li>
+          <li><a class="link-secondary" href="/profile">contact</a></li>
         </ul>
       </div>
       <div class="col-6 col-md">
         <h5 class="text-white">please</h5>
         <ul class="list-unstyled text-small">
-          <li><a class="link-secondary" href="#">help me</a></li>
-          <li><a class="link-secondary" href="#">rape me</a></li>
+          <li><a class="link-secondary" href="/help">help me</a></li>
           <li><a class="link-secondary" href="#">please me</a></li>
         </ul>
       </div>
       <div class="col-6 col-md">
         <h5 class="text-white">about</h5>
         <ul class="list-unstyled text-small">
-          <li><a class="link-secondary" href="profile">the larissa</a></li>
-          <li><a class="link-secondary" href="#">copyright</a></li>
-          <li><a class="link-secondary" href="#">Privacity</a></li>
-          <li><a class="link-secondary" href="#">terms</a></li>
+          <li><a class="link-secondary" href="/profile">the larissa</a></li>
+          <li><a class="link-secondary" href="/copyright">copyright</a></li>
+          <li><a class="link-secondary" href="/only_fans">Privacity</a></li>
+          <li><a class="link-secondary" href="/terms">terms</a></li>
         </ul>
       </div>
     </div>

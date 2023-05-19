@@ -88,13 +88,25 @@ def register():
     return render_template('register.html', form=form)
 
 
+from flask_login import current_user
 
-'''
-@app.route('/register_new_book', methods=['POST'])
+def get_logged_in_user():
+    if current_user.is_authenticated:
+        return current_user
+    else:
+        # Caso o usuário não esteja logado, você pode retornar None ou tomar alguma outra ação, dependendo do seu requisito.
+        return None
+
+
+@app.route('/register_new_book', methods=['GET','POST'])
 def register_new_book():
     # Get the logged-in user (you'll need to implement this logic)
     user = get_logged_in_user()
-
+    if user != None:
+        return f'A {user} autenticated'
+    else:
+        return 'false'
+'''
     # Extract book information from the request form
     code = request.form['code']
     title = request.form['title']

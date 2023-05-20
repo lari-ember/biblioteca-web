@@ -1,7 +1,10 @@
 from flask import Flask, render_template, request, redirect, flash, session, url_for
+from flask_login import LoginManager, current_user, login_required, login_user, logout_user, UserMixin
+from datetime import date
 from app import app, User, db, lm
-from app.models.forms import LoginForm, RegistrationForm
+from app.models.forms import LoginForm, RegistrationForm, BookForm
 from flask_login import login_user, logout_user
+
 
 
 @lm.user_loader
@@ -94,18 +97,53 @@ def get_logged_in_user():
     if current_user.is_authenticated:
         return current_user
     else:
-        # Caso o usuário não esteja logado, você pode retornar None ou tomar alguma outra ação, dependendo do seu requisito.
+        # If the user is not logged in, you can return None or take any other action depending on your requirement.
         return None
 
-
-@app.route('/register_new_book', methods=['GET','POST'])
+@app.route('/register_new_book', methods=['GET', 'POST'])
+@login_required
 def register_new_book():
-    # Get the logged-in user (you'll need to implement this logic)
-    user = get_logged_in_user()
-    if user != None:
-        return f'A {user} autenticated'
+    form = BookForm()
+
+    if form.validate_on_submit():
+        print(2)
+        user = get_logged_in_user()
+        if user is None:
+            print(3)
+            flash('User is not authenticated', 'error')
+            return redirect(url_for('login'))  # Redirecionar para a página de login ou para outro local apropriado
+
+        code = generate_book_code(form.genre.data)
+        if code is None:
+            print(1)
+            flash('Genre not found. Do you want to add a new genre?', 'warning')
+            # Redirecionar para uma página onde o usuário possa adicionar um novo gênero
+            return redirect(url_for('add_genre'))
+
+        book = Book(
+            user_id=user.id,
+            code=code,
+            title=form.title.data,
+            author=form.author.data,
+            publisher=form.publisher.data,
+            year=form.year.data,
+            pages=form.pages.data,
+            genre=form.genre.data,
+            status=form.status.data,
+            format=form.book_format.data
+        )
+        db.session.add(book)
+        db.session.commit()
+        print('ok')
+        flash('New book registered successfully', 'success')
+        return redirect(url_for('index'))
     else:
-        return 'false'
+        print('not ok')
+
+    return render_template('register_new_book.html', form=form)
+
+
+
 '''
     # Extract book information from the request form
     code = request.form['code']

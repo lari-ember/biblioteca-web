@@ -88,11 +88,6 @@ class Book(db.Model):
 with app.app_context():
     db.create_all()
 
-#db = SQLAlchemy() # db intitialized here
-#app = Flask(__name__)
-#app.config['SQLALCHEMY_DATABASE_URI'] = 'slqlite://storage.db'
-#db.init_app(app)
-
 
 @lm.user_loader
 def load_user(user_id):
@@ -100,44 +95,8 @@ def load_user(user_id):
 
 from app.controllers import defaut
 
-'''db = SQLAlchemy(app)
-login_manager = LoginManager(app)
-login_manager.login_view = 'login'
+'''
 
-@login_manager.user_loader
-def load_user(user_id):
-    return User.query.get(int(user_id))
-
-@app.cli.command('create_tables')
-#@login_required
-def create_tables():
-    db.create_all()
-    return 'Tabelas criadas!'
-
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    form = LoginForm()
-    if form.validate_on_submit():
-        user = User.query.filter_by(username=form.username.data).first()
-        if user and check_password_hash(user.password, form.password.data):
-            login_user(user)
-            flash('Logged in successfully.')
-            return redirect(url_for('dashboard'))
-        else:
-            flash('Invalid username or password.')
-    return render_template('login.html', form=form)
-
-@app.route('/logout')
-@login_required
-def logout():
-    logout_user()
-    flash('You have been logged out.')
-    return redirect(url_for('index'))
-
-@app.route('/dashboard')
-@login_required
-def dashboard():
-    return render_template('dashboard.html')
 
 @app.route('/books', methods=['GET', 'POST'])
 @login_required

@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="text-white d-flex justify-content-center align-items-center">
+    <form action="" method="POST">
+        {{ form.csrf_token }}
+        <div class="form-group">
+            <label class="form-label">Title</label>
+            {{ form.title(class="form-control", placeholder="Enter the book title") }}
+        </div>
+        <div class="form-group">
+            <label class="form-label">Author</label>
+            {{ form.author(class="form-control", placeholder="Enter the book author") }}
+        </div>
+        <div class="form-group">
+            <label class="form-label">Publisher</label>
+            {{ form.publisher(class="form-control", placeholder="Enter the book publisher") }}
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label class="form-label">Year</label>
+                {{ form.year(class="form-control", placeholder="Enter the publication year") }}
+            </div>
+            <div class="form-group col-md-6">
+                <label class="form-label d-sm-inline-flex">Pages</label>
+                {{ form.pages(class="form-control", placeholder="Enter the number of pages") }}
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Genre</label>
+            {{ form.genre(class="form-control", placeholder="Enter the book genre") }}
+        </div>
+        <div class="form-group">
+            <label class="form-label">Status</label>
+            {{ form.status(class="form-control", placeholder="Enter the book status") }}
+        </div>
+        <div class="form-group">
+            <label class="form-label">Format</label>
+            {{ form.book_format(class="form-control", placeholder="Enter the book format") }}
+        </div>
+        <div class="form-check">
+            <button type="submit" class="btn btn-primary">Register</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

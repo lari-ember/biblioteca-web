@@ -1,8 +1,9 @@
 from flask import Flask, render_template, request, redirect, flash, session, url_for
 from flask_login import LoginManager, current_user, login_required, login_user, logout_user, UserMixin
 from datetime import date
-from app import app, User, db, lm
+from app import app, User, db, lm, Book
 from app.models.forms import LoginForm, RegistrationForm, BookForm
+from app.models.code_book import generate_book_code
 from flask_login import login_user, logout_user
 
 
@@ -101,11 +102,9 @@ def get_logged_in_user():
         return None
 
 @app.route('/register_new_book', methods=['GET', 'POST'])
-@login_required
 def register_new_book():
-    form = BookForm()
-
-    if form.validate_on_submit():
+    form = BookForm(request.form)
+    if request.method == 'POST' and form.validate():
         print(2)
         user = get_logged_in_user()
         if user is None:
@@ -123,21 +122,23 @@ def register_new_book():
         book = Book(
             user_id=user.id,
             code=code,
-            title=form.title.data,
-            author=form.author.data,
-            publisher=form.publisher.data,
+            title=form.title.data.title(),
+            author=form.author.data.title(),
+            publisher=form.publisher.data.title(),
             year=form.year.data,
             pages=form.pages.data,
-            genre=form.genre.data,
-            status=form.status.data,
-            format=form.book_format.data
+            genre=form.genre.data.title(),
+            status=form.status.data.title(),
+            format=form.format.data.title()
         )
         db.session.add(book)
         db.session.commit()
         print('ok')
-        flash('New book registered successfully', 'success')
+        flash(f'New book registered successfully: Title - {book.title}, Author - {book.author}', 'success')
         return redirect(url_for('index'))
     else:
+        print(request.method)
+        print(form.validate())
         print('not ok')
 
     return render_template('register_new_book.html', form=form)

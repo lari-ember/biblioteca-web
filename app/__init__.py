@@ -72,12 +72,14 @@ class Book(db.Model):
     genre = db.Column(db.String(50), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
-    def __init__(self, user_id, code, title, author, publisher, year, pages, genre):
+    def __init__(self, user_id, code, title, author, publisher, year, pages, genre, status, format):
         self.user_id = user_id
         self.code = code
         self.title = title
         self.author = author
         self.publisher = publisher
+        self.status = status
+        self.format = format
         self.year = year
         self.pages = pages
         self.genre = genre

@@ -2,7 +2,7 @@
 
 {% block content %}
 <div class="text-white d-flex justify-content-center align-items-center">
-    <form action="" method="POST">
+    <form action="{{ url_for('register_new_book') }}" method="POST">
         {{ form.csrf_token }}
         <div class="form-group">
             <label class="form-label">Title</label>
@@ -36,10 +36,11 @@
         </div>
         <div class="form-group">
             <label class="form-label">Format</label>
-            {{ form.book_format(class="form-control", placeholder="Enter the book format") }}
+            {{ form.format(class="form-control", placeholder="Enter the book genre") }}
+        </div>
         </div>
         <div class="form-check">
-            <button type="submit" class="btn btn-primary">Register</button>
+            <button type="submit" class="btn btn-primary">ner book  </button>
         </div>
     </form>
 </div>

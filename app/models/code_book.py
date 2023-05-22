@@ -1,3 +1,6 @@
+from sqlalchemy import func
+from app import Book
+
 book_genres = {
     '000': 'General',
     '001': 'Adventure',
@@ -200,21 +203,37 @@ book_genres = {
     '199': 'Neuroscience'
 }
 
-def generate_book_code(genre):
-    # Carregar o arquivo CSV com as informações dos gêneros e suas respectivas numerações
+def generate_book_code(genre, author_fullname, title):
+    # Obtenha o último sobrenome do autor
+    author_lastname = author_fullname.split()[-1]
 
+    # Obtenha a primeira letra do último sobrenome do autor
+    author_lastname_initial = author_lastname[0]
+    
+    title_initial = title[0]
+    
+    # Carregar o arquivo CSV com as informações dos gêneros e suas respectivas numerações
     # Verificar se o gênero está presente no arquivo CSV
     for key, val in book_genres.items():
         if val == genre:
-            return key
+            base_code = f'{author_lastname_initial.upper()}{key}{title_initial.lower()}'
+    last_code = Book.query.filter(Book.code.like(f'{base_code}%')).order_by(Book.code.desc()).first()
 
-    # Caso o gênero não esteja presente no arquivo CSV, perguntar ao usuário se deseja adicionar um novo gênero
-    user_choice = input("Genre not found. Do you want to add a new genre? (y/n): ")
-    if user_choice.lower() == 'y':
-        new_genre = input("Enter the new genre: ")
-        new_code = input("Enter the code for the new genre: ")
-        book_genres[new_code] = new_genre  # Adicionar o novo gênero ao dicionário
-        return new_code
+    if last_code:
+        # Obtenha o sufixo do último código usado
+        last_suffix = last_code.code[len(base_code):]
+        # Verifique se o sufixo é um número
+        if last_suffix.isdigit():
+            # Incremente o sufixo
+            new_suffix = str(int(last_suffix) + 1)
+
+            # Gere o novo código com o sufixo
+            new_code = f'{base_code}{new_suffix}'
+        else:
+            # O último sufixo não é um número, então adicione ".1" como sufixo
+            new_code = f'{base_code}.1'
     else:
-        return 'GENERIC_CODE'
+        # Não existem códigos com base_code, então use o código base
+        new_code = base_code
 
+    return print(new_code)

@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, flash, session, url_for
+from flask import Flask, current_app, render_template, request, redirect, flash, session, url_for
 from flask_login import LoginManager, current_user, login_required, login_user, logout_user, UserMixin
 from datetime import date
 from app import app, User, db, lm, Book
@@ -111,8 +111,8 @@ def register_new_book():
             print(3)
             flash('User is not authenticated', 'error')
             return redirect(url_for('login'))  # Redirecionar para a página de login ou para outro local apropriado
-
-        code = generate_book_code(form.genre.data)
+        with current_app.app_context():
+            code = generate_book_code(form.genre.data, form.author.data, form.title.data)
         if code is None:
             print(1)
             flash('Genre not found. Do you want to add a new genre?', 'warning')
@@ -122,8 +122,8 @@ def register_new_book():
         book = Book(
             user_id=user.id,
             code=code,
-            title=form.title.data.title(),
             author=form.author.data.title(),
+            title=form.title.data.title(),
             publisher=form.publisher.data.title(),
             year=form.year.data,
             pages=form.pages.data,
@@ -134,7 +134,7 @@ def register_new_book():
         db.session.add(book)
         db.session.commit()
         print('ok')
-        flash(f'New book registered successfully: Title - {book.title}, Author - {book.author}', 'success')
+        flash(f'New book registered successfully: Title - {book.title}, Author - {book.author}, code - {book.code}', 'success')
         return redirect(url_for('index'))
     else:
         print(request.method)

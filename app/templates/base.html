@@ -125,6 +125,19 @@
       background-repeat: no-repeat;
       background-size: cover;
     }
+
+    label {
+      margin-top: 10px;
+    }
+
+    table {
+      box-shadow: 2px 2px 12px rgba(255,255,255,0.5);
+    }
+
+    select {
+      background-color: black; 
+      color: aliceblue;
+    }
   </style>
 
   <title>amber archivily</title>
@@ -167,7 +180,7 @@
               </a>
             </li>
             <li class="list">
-              <a href="#">
+              <a href="/register_new_book">
                 <span class="icon">
                   <ion-icon name="medkit-outline"></ion-icon>
                 </span>
@@ -175,7 +188,7 @@
               </a>
             </li>
             <li class="list">
-              <a href="#">
+              <a href="/your_collection">
                 <span class="icon">
                   <ion-icon name="library-outline"></ion-icon>
                 </span>
@@ -320,8 +333,6 @@
     }
     list.forEach((item) => item.addEventListener('click', activeLink)); 
   </script>
-
-
   <script src="../static/js/script.js"></script>
   <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
   <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>

@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1 class="text-white">Your Collection</h1>
+<div class="table-responsive-md table-responsive-sm table-responsive-xl table-responsive-lg">
+  <table class="table table-striped table-hover table-dark ">
+    <thead>
+      <tr>
+        <th>Position</th>
+        <th>ID</th>
+        <th>Code</th>
+        <th>Title</th>
+        <th>Author</th>
+        <th>Pages</th>
+        <th>Year</th>
+        <th>Genre</th>
+        <th>Read</th>
+        <th>Status</th>
+        <th><div class="filters">
+          <select id="format-filter">
+            <option value="">All Formats</option>
+            <option value="pdf">PDF</option>
+            <option value="ebook">E-Book</option>
+            <option value="physical">Physical</option>
+          </select>
+        </div></th>
+        <th>Publisher</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for book in books %}
+        <tr>
+          <td>{{ loop.index }}</td>
+          <td>{{ book.id }}</td>
+          <td>{{ book.code }}</td>
+          <td>{{ book.title }}</td>
+          <td>{{ book.author }}</td>
+          <td>{{ book.pages }}</td>
+          <td>{{ book.year }}</td>
+          <td>{{ book.genre }}</td>
+          <td>{{ book.read }}</td>
+          <td>{{ book.status }}</td>
+          <td>{{ book.format }}</td>
+          <td>{{ book.publisher }}</td>
+          <td>
+            <!-- Botão de edição -->
+            <a href="" class="btn btn-outline-warning">Edit</a>
+            <!-- Botão de exclusão -->
+            <button class="btn btn-outline-danger" onclick="confirmDelete({{ book.id }})">Delete</button>
+          </td>
+        </tr>
+      {% endfor %}
+  </table></div>
+
+  <script>
+    function confirmDelete(bookId) {
+      if (confirm("Are you sure you want to delete this book?")) {
+        // Redirecionar para a rota de exclusão do livro
+        window.location.href = "/delete_book/" + bookId;
+      }
+    }
+  </script>
+  
+{% endblock %}

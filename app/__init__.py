@@ -69,10 +69,11 @@ class Book(db.Model):
     pages = db.Column(db.Integer, nullable=False)
     status = db.Column(db.String(50), nullable=False)  # 'available', 'borrowed', or 'ex-libris'
     format = db.Column(db.String(50), nullable=False)  # 'physical', 'e-book', or 'pdf'
+    read = db.Column(db.String(10), nullable=True)
     genre = db.Column(db.String(50), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
-    def __init__(self, user_id, code, title, author, publisher, year, pages, genre, status, format):
+    def __init__(self, user_id, code, title, author, publisher, year, pages, genre, status, format, read):
         self.user_id = user_id
         self.code = code
         self.title = title
@@ -98,52 +99,6 @@ def load_user(user_id):
 from app.controllers import defaut
 
 '''
-
-
-@app.route('/books', methods=['GET', 'POST'])
-@login_required
-def books():
-    form = BookForm()
-    if form.validate_on_submit():
-        book = Book(
-            code=form.code.data,
-            title=form.title.data,
-            author=form.author.data,
-            publisher=form.publisher.data,
-            year=form.year.data,
-            pages=form.pages.data,
-            status=form.status.data,
-            format=form.format.data,
-            genre=form.genre.data,
-            user_id=current_user.id
-        )
-        db.session.add(book)
-        db.session.commit()
-        flash('Book added')
-        
-@app.route('/add_book', methods=['GET', 'POST'])
-@login_required
-def add_book():
-    form = BookForm()
-    if form.validate_on_submit():
-        book = Book(
-            code=form.code.data,
-            title=form.title.data,
-            author=form.author.data,
-            publisher=form.publisher.data,
-            year=form.year.data,
-            pages=form.pages.data,
-            status=form.status.data,
-            format=form.format.data,
-            genre=form.genre.data,
-            user_id=current_user.id
-        )
-        db.session.add(book)
-        db.session.commit()
-        flash('Book added successfully.', 'success')
-        return redirect(url_for('dashboard'))
-    return render_template('add_book.html', form=form)
-
 @app.route('/search', methods=['GET', 'POST'])
 @login_required
 def search():
@@ -168,10 +123,6 @@ def search():
             if not books:
                 flash('No results found.', 'warning')
     return render_template('search.html', form=form, books=books)
-
-app.route('/login')
-def login():
-    return render_template('login.html')
 
 @app.route('/search')
 def search():

@@ -114,10 +114,10 @@ def register_new_book():
         with current_app.app_context():
             code = generate_book_code(form.genre.data, form.author.data, form.title.data)
         if code is None:
-            print(1)
-            flash('Genre not found. Do you want to add a new genre?', 'warning')
+            print(f'{code} a')
+            flash(f'Genre not found. Do you want to add a new genre?', 'warning {form.title.data}, {form.genre.data} {form.author.data}')
             # Redirecionar para uma página onde o usuário possa adicionar um novo gênero
-            return redirect(url_for('add_genre'))
+            return redirect(url_for('index'))
 
         book = Book(
             user_id=user.id,
@@ -127,6 +127,7 @@ def register_new_book():
             publisher=form.publisher.data.title(),
             year=form.year.data,
             pages=form.pages.data,
+            read=form.read.data,
             genre=form.genre.data.title(),
             status=form.status.data.title(),
             format=form.format.data.title()
@@ -134,14 +135,41 @@ def register_new_book():
         db.session.add(book)
         db.session.commit()
         print('ok')
-        flash(f'New book registered successfully: Title - {book.title}, Author - {book.author}, code - {book.code}', 'success')
-        return redirect(url_for('index'))
+        flash(f'New book registered successfully:\n title - {book.title}\n author - {book.author}\n code - {book.code}', 'success')
+        return redirect(url_for('your_collection'))
     else:
         print(request.method)
         print(form.validate())
+        print(form.errors)
         print('not ok')
-
     return render_template('register_new_book.html', form=form)
+
+
+@app.route('/your_collection')
+def your_collection():
+    # Verifique se o usuário está logado
+    user = get_logged_in_user()
+    if not user:
+        # Redirecione para a página de login ou tome qualquer outra ação que você desejar para lidar com usuários não logados
+        return redirect('/login')
+
+    # Recupere os livros da tabela 'Book' para o usuário logado
+    books = Book.query.filter_by(user_id=user.id).all()
+
+    # Renderize o template 'your_collection.html' e passe os livros como contexto
+    return render_template('your_collection.html', books=books)
+
+
+@app.route('/delete_book/<int:book_id>', methods=['GET', 'POST'])
+def delete_book(book_id):
+    book = Book.query.get(book_id)
+    if book:
+        db.session.delete(book)
+        db.session.commit()
+        flash('Book deleted successfully!', 'success')
+    else:
+        flash('Book not found.', 'error')
+    return redirect(url_for('your_collection'))
 
 
 

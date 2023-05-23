@@ -200,7 +200,8 @@ book_genres = {
     '196': 'Social Media Marketing',
     '197': 'Statistical Analysis',
     '198': 'Biochemistry',
-    '199': 'Neuroscience'
+    '199': 'Neuroscience',
+    '200': 'History of the United States'
 }
 
 def generate_book_code(genre, author_fullname, title):
@@ -236,4 +237,4 @@ def generate_book_code(genre, author_fullname, title):
         # Não existem códigos com base_code, então use o código base
         new_code = base_code
 
-    return print(new_code)
+    return new_code

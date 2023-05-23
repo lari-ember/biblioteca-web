@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 from sqlalchemy import func
 from app import Book
 
@@ -239,7 +238,6 @@ def generate_book_code(genre, author_fullname, title):
         new_code = base_code
 
     return new_code
-=======
 from sqlalchemy import func
 from app import Book
 
@@ -480,4 +478,3 @@ def generate_book_code(genre, author_fullname, title):
         new_code = base_code
 
     return new_code
->>>>>>> 94bf2673f46feb230e7b3fa5e70e538921d06c55

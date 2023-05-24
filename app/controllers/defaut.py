@@ -105,24 +105,14 @@ def get_logged_in_user():
 def register_new_book():
     form = BookForm(request.form)
     if request.method == 'POST' and form.validate():
-        print(2)
         user = get_logged_in_user()
         if user is None:
-            print(3)
             flash('User is not authenticated', 'error')
             return redirect(url_for('login'))
-        existing_book = Book.query.filter_by(
-            title=form.title.data.title(),
-            author=form.author.data.title(),
-            publisher=form.publisher.data.title(),
-            pages=form.pages.data,
-            year=form.year.data,
-            genre=form.genre.data.title()
-        ).first()
         with current_app.app_context():
             code = generate_book_code(form.genre.data, form.author.data, form.title.data)
         if code is None:
-            flash(f'Genre not found. Do you want to add a new genre?', 'warning {form.title.data}, {form.genre.data} {form.author.data}')
+            flash(f'Genre not found. Do you want to add a new genre?', 'warning')
             return redirect(url_for('index'))
         book = Book(
             user_id=user.id,
@@ -136,10 +126,9 @@ def register_new_book():
             genre=form.genre.data.lower(),
             status=form.status.data.lower(),
             format=form.format.data.lower()
-        )
+            )
         db.session.add(book)
         db.session.commit()
-        print('ok')
         flash(f'New book registered successfully: title - {book.title} author - {book.author} code - {book.code} genre - {book.genre}', 'success')
         return redirect(url_for('your_collection'))
     else:
@@ -148,39 +137,6 @@ def register_new_book():
         print(form.errors)
         print('not ok')
     return render_template('register_new_book.html', form=form)
-
-
-@app.route('/confirm_new_book/<int:book_id>', methods=['GET', 'POST'])
-def confirm_new_book(book_id):
-    book = Book.query.get(book_id)
-
-    if book:
-        if book.user_id == current_user.id:
-            flash('you have this register in here!', 'alert')
-            return redirect(url_for('your_collection'))
-        else:
-            new_book = Book(
-                user_id=current_user.id,
-                code=book.code,
-                author=book.author,
-                title=book.title,
-                publisher=book.publisher,
-                year=book.year,
-                pages=book.pages,
-                read=book.read,
-                genre=book.genre,
-                status=book.status,
-                format=book.format
-            )
-
-            db.session.add(new_book)
-            db.session.commit()
-
-            flash('Book duplicated successfully!', 'success')
-    else:
-        flash('Book not found.', 'error')
-
-    return redirect(url_for('your_collection'))
 
 
 @app.route('/your_collection')
@@ -209,25 +165,3 @@ def delete_book(book_id):
     else:
         flash('Book not found.', 'error')
     return redirect(url_for('your_collection'))
-
-
-
-'''
-    # Extract book information from the request form
-    code = request.form['code']
-    title = request.form['title']
-    author = request.form['author']
-    publisher = request.form['publisher']
-    year = request.form['year']
-    pages = request.form['pages']
-    genre = request.form['genre']
-
-    # Create a new Book object
-    book = Book(user_id=user.id, code=code, title=title, author=author, publisher=publisher, year=year, pages=pages, genre=genre)
-
-    # Add the book to the database
-    db.session.add(book)
-    db.session.commit()
-
-    # Redirect the user to a success page or any other desired page
-    return redirect('/success')'''

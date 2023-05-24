@@ -42,43 +42,35 @@
             <label class="form-label">Format</label>
             {{ form.format(class="form-control", placeholder="Enter the book genre") }}
         </div>
-</div>
-<br>
 
-<!-- Bloco para exibir informações do livro existente -->
-{% if existing_book %}
-<div class="existing-book">
-    <h4 class="text-danger">A similar book already exists:</h4>
-    <table class="table table-bordered">
-        <tr>
-            <th>Title</th>
-            <td>{{ existing_book.title }}</td>
-        </tr>
-        <tr>
-            <th>Author</th>
-            <td>{{ existing_book.author }}</td>
-        </tr>
-        <!-- Exiba as outras informações do livro -->
-    </table>
-    <p class="text-warning">Do you still want to add a new record?</p>
-    <button onclick="confirmNewBook({{ book.id }})">yeah</button>
-</div>
-{% endif %}
-<!-- Fim do bloco de informações do livro existente -->
+        {% if existing_book %}
+        <div class="existing-book position-absolute align-content-end">
+            <h4 class="text-danger">A similar book already exists:</h4>
+            <table class="table table-bordered table-striped table-hover table-dark">
+                <tr>
+                    <th>Title</th>
+                    <td>{{ existing_book.title }}</td>
+                </tr>
+                <tr>
+                    <th>Author</th>
+                    <td>{{ existing_book.author }}</td>
+                </tr>
+            </table>
+            <p class="text-warning">Do you still want to add a new record?</p>
+            <button onclick="confirmNewBook({{ existing_book.id }})">Yeah</button>
+        </div>
+        {% endif %}
 
-<br>
-<div class="form-check d-flex justify-content-center">
-    <button type="submit" class="btn btn-primary">register new book</button>
-</div>
-
-</form>
+        <br>
+        <div class="form-check d-flex justify-content-center">
+            <button type="submit" class="btn btn-primary">Register new book</button>
+        </div>
+    </form>
 </div>
 
 <script>
     function confirmNewBook(bookId) {
-        if (confirm("Are you sure you want to delete this book?")) {
             window.location.href = "/confirm_new_book/" + bookId;
-        }
     }
 </script>
 {% endblock %}

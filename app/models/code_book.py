@@ -215,6 +215,7 @@ def generate_book_code(genre, author_fullname, title):
     
     # Carregar o arquivo CSV com as informações dos gêneros e suas respectivas numerações
     # Verificar se o gênero está presente no arquivo CSV
+    base_code = ''
     for key, val in book_genres.items():
         if val == genre:
             base_code = f'{author_lastname_initial.upper()}{key}{title_initial.lower()}'

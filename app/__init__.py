@@ -69,7 +69,7 @@ class Book(db.Model):
     pages = db.Column(db.Integer, nullable=False)
     status = db.Column(db.String(50), nullable=False)  # 'available', 'borrowed', or 'ex-libris'
     format = db.Column(db.String(50), nullable=False)  # 'physical', 'e-book', or 'pdf'
-    read = db.Column(db.String(10), nullable=True)
+    read = db.Column(db.String(10), nullable=False)
     genre = db.Column(db.String(50), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
@@ -84,6 +84,7 @@ class Book(db.Model):
         self.year = year
         self.pages = pages
         self.genre = genre
+        self.read = read
 
     def __repr__(self):
         return f'<code={self.code}, book={self.title}, author={self.author}, year={self.year}, pages={self.pages}, genre={self.genre}, publisher={self.publisher}, format={self.format}, status={self.status}>'

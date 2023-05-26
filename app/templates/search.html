@@ -1,19 +1,63 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h1>Search Books</h1>
-    <form method="POST" action="{{ url_for('search') }}">
-        {{ form.csrf_token }}
-        {{ form.search.label }} {{ form.search(size=32) }}
-        <button type="submit">Search</button>
-    </form>
+  <h1 class="text-white">Your Collection</h1>
+  <form action="{{ url_for('search') }}" method="POST">
+    <input type="text" name="search_term" placeholder="Search term">
+    <button type="submit">Search</button>
+  </form>
 
-    {% if books %}
-        <h2>Results:</h2>
-        <ul>
+  <div class="table-responsive-md table-responsive-sm table-responsive-xl table-responsive-lg">
+    <table class="table table-striped table-hover table-dark">
+      <thead>
+        <tr>
+          <th>Position</th>
+          <th>ID</th>
+          <th>Code</th>
+          <th>Title</th>
+          <th>Author</th>
+          <th>Pages</th>
+          <th>Year</th>
+          <th>Genre</th>
+          <th>Read</th>
+          <th>Status</th>
+          <th>Format</th>
+          <th>Publisher</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
         {% for book in books %}
-            <li>{{ book.title }} - {{ book.author }} ({{ book.status }})</li>
+          <tr>
+            <td>{{ loop.index }}</td>
+            <td>{{ book.id }}</td>
+            <td>{{ book.code }}</td>
+            <td>{{ book.title }}</td>
+            <td>{{ book.author }}</td>
+            <td>{{ book.pages }}</td>
+            <td>{{ book.year }}</td>
+            <td>{{ book.genre }}</td>
+            <td>{{ book.read }}</td>
+            <td>{{ book.status }}</td>
+            <td>{{ book.format }}</td>
+            <td>{{ book.publisher }}</td>
+            <td>
+              <!-- Botão de edição -->
+              <a href="" class="btn btn-outline-warning">Edit</a>
+              <!-- Botão de exclusão -->
+              <button class="btn btn-outline-danger" onclick="confirmDelete({{ book.id }})">Delete</button>
+            </td>
+          </tr>
         {% endfor %}
-        </ul>
-    {% endif %}
+    </table>
+  </div>
+
+  <script>
+    function confirmDelete(bookId) {
+      if (confirm("Are you sure you want to delete this book?")) {
+        // Redirecionar para a rota de exclusão do livro
+        window.location.href = "/delete_book/" + bookId;
+      }
+    }
+  </script>
 {% endblock %}

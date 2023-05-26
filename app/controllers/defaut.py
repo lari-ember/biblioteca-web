@@ -2,6 +2,8 @@ import csv
 from flask import Flask, current_app, render_template, request, redirect, flash, session, url_for
 from flask_login import LoginManager, current_user, login_required, login_user, logout_user, UserMixin
 from datetime import date
+
+from sqlalchemy import or_
 from app import app, User, db, lm, Book
 from app.models.forms import LoginForm, RegistrationForm, BookForm
 from app.models.code_book import generate_book_code
@@ -190,3 +192,51 @@ def delete_book(book_id):
     else:
         flash('Book not found.', 'error')
     return redirect(url_for('your_collection'))
+
+
+def is_admin_user():
+    # Implemente sua lógica aqui para determinar se o usuário é um administrador
+    # Por exemplo, você pode verificar se o ID do usuário corresponde ao ID de um administrador na base de dados
+    user_id = get_logged_in_user()
+    admin_ids = [1, 2, 3]  # IDs dos usuários administradores
+
+    if user_id in admin_ids:
+        return True
+    else:
+        return False
+
+
+
+@app.route('/search', methods=['GET', 'POST'])
+def search():
+    user = get_logged_in_user()
+    if user != None:
+        if request.method == 'POST':
+            search_term = request.form.get('search_term')
+
+            # Realize a pesquisa com base no termo de pesquisa fornecido
+            query = Book.query.filter(
+                or_(
+                    Book.code.ilike(f'%{search_term}%'),
+                    Book.title.ilike(f'%{search_term}%'),
+                    Book.author.ilike(f'%{search_term}%'),
+                    Book.pages.ilike(f'%{search_term}%'),
+                    Book.year.ilike(f'%{search_term}%'),
+                    Book.genre.ilike(f'%{search_term}%'),
+                    Book.read.ilike(f'%{search_term}%'),
+                    Book.status.ilike(f'%{search_term}%'),
+                    Book.format.ilike(f'%{search_term}%'),
+                    Book.publisher.ilike(f'%{search_term}%')
+                )
+            )
+            
+            # Verifique se o usuário é um administrador e permita a pesquisa pelo ID do livro
+            if is_admin_user():  # Substitua is_admin_user() pela lógica que determina se o usuário é um administrador
+                query = query.filter(Book.id.ilike(f'%{search_term}%'))
+
+            print(search_term)
+            books = query.all()
+            print(books)
+            return render_template('search.html', books=books)
+
+    return render_template('search.html', books=[])

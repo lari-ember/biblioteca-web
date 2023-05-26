@@ -1,3 +1,4 @@
+from xml.dom import ValidationErr
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, IntegerField, SelectField
 from wtforms.validators import DataRequired, EqualTo
@@ -27,3 +28,20 @@ class BookForm(FlaskForm):
     genre = StringField('Genre', validators=[DataRequired()])
     status = SelectField('Status', choices=[('available', 'Available'), ('borrowed', 'Borrowed'), ('ex-libris', 'Ex-Libris')], validators=[DataRequired()])
     format = SelectField('Format', choices=[('physical', 'Physical'), ('e-book', 'E-book'), ('pdf', 'PDF')], validators=[DataRequired()])
+
+
+class SearchForm(FlaskForm):
+    search_field = SelectField('Search Field', choices=[
+        ('', 'Select Field'),
+        ('code', 'Code'),
+        ('title', 'Title'),
+        ('author', 'Author'),
+        ('pages', 'Pages'),
+        ('year', 'Year'),
+        ('genre', 'Genre'),
+        ('read', 'Read'),
+        ('status', 'Status'),
+        ('format', 'Format'),
+        ('publisher', 'Publisher')
+    ], validators=[DataRequired()])
+    search_term = StringField('Search Term', validators=[DataRequired()])

@@ -1,63 +1,70 @@
 {% extends 'base.html' %}
 
 {% block content %}
-  <h1 class="text-white">Your Collection</h1>
-  <form action="{{ url_for('search') }}" method="POST">
-    <input type="text" name="search_term" placeholder="Search term">
-    <button type="submit">Search</button>
-  </form>
-
-  <div class="table-responsive-md table-responsive-sm table-responsive-xl table-responsive-lg">
+<h1 class="text-white">Your Collection</h1>
+<form class="text-white d-flex justify-content-center" method="POST" autocomplete="off" style="margin-bottom: 45px;">
+    {{ form.csrf_token }}
+    <div class="form-group mt-3">
+        <label for="search_field">Search Field</label>
+        {{ form.search_field(class='form-select', id='search_field') }}
+    </div>
+    <div class="form-group mt-3" style="margin-left: 15px;">
+        <label for="search_term">Search Term</label>
+        {{ form.search_term(class='form-control', id='search_term', placeholder='Search term') }}
+    </div>
+    <button type="submit" class="btn btn-primary mt-5" style="margin-left: 15px;">Search</button>
+</form>
+<div class="table-responsive-md table-responsive-sm table-responsive-xl table-responsive-lg">
     <table class="table table-striped table-hover table-dark">
-      <thead>
-        <tr>
-          <th>Position</th>
-          <th>ID</th>
-          <th>Code</th>
-          <th>Title</th>
-          <th>Author</th>
-          <th>Pages</th>
-          <th>Year</th>
-          <th>Genre</th>
-          <th>Read</th>
-          <th>Status</th>
-          <th>Format</th>
-          <th>Publisher</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for book in books %}
-          <tr>
-            <td>{{ loop.index }}</td>
-            <td>{{ book.id }}</td>
-            <td>{{ book.code }}</td>
-            <td>{{ book.title }}</td>
-            <td>{{ book.author }}</td>
-            <td>{{ book.pages }}</td>
-            <td>{{ book.year }}</td>
-            <td>{{ book.genre }}</td>
-            <td>{{ book.read }}</td>
-            <td>{{ book.status }}</td>
-            <td>{{ book.format }}</td>
-            <td>{{ book.publisher }}</td>
-            <td>
-              <!-- Botão de edição -->
-              <a href="" class="btn btn-outline-warning">Edit</a>
-              <!-- Botão de exclusão -->
-              <button class="btn btn-outline-danger" onclick="confirmDelete({{ book.id }})">Delete</button>
-            </td>
-          </tr>
-        {% endfor %}
+        <thead>
+            <tr>
+                <th>Position</th>
+                <th>ID</th>
+                <th>Code</th>
+                <th>Title</th>
+                <th>Author</th>
+                <th>Pages</th>
+                <th>Year</th>
+                <th>Genre</th>
+                <th>Read</th>
+                <th>Status</th>
+                <th>Format</th>
+                <th>Publisher</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for book in books %}
+            <tr>
+                <td>{{ loop.index }}</td>
+                <td>{{ book.id }}</td>
+                <td>{{ book.code }}</td>
+                <td>{{ book.title }}</td>
+                <td>{{ book.author }}</td>
+                <td>{{ book.pages }}</td>
+                <td>{{ book.year }}</td>
+                <td>{{ book.genre }}</td>
+                <td>{{ book.read }}</td>
+                <td>{{ book.status }}</td>
+                <td>{{ book.format }}</td>
+                <td>{{ book.publisher }}</td>
+                <td>
+                    <!-- Botão de edição -->
+                    <a href="" class="btn btn-outline-warning">Edit</a>
+                    <!-- Botão de exclusão -->
+                    <button class="btn btn-outline-danger" onclick="confirmDelete({{ book.id }})">Delete</button>
+                </td>
+            </tr>
+            {% endfor %}
     </table>
-  </div>
+</div>
 
-  <script>
+<script>
     function confirmDelete(bookId) {
-      if (confirm("Are you sure you want to delete this book?")) {
-        // Redirecionar para a rota de exclusão do livro
-        window.location.href = "/delete_book/" + bookId;
-      }
+        if (confirm("Are you sure you want to delete this book?")) {
+            // Redirecionar para a rota de exclusão do livro
+            window.location.href = "/delete_book/" + bookId;
+        }
     }
-  </script>
+</script>
 {% endblock %}

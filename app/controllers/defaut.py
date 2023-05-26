@@ -5,7 +5,7 @@ from datetime import date
 
 from sqlalchemy import or_
 from app import app, User, db, lm, Book
-from app.models.forms import LoginForm, RegistrationForm, BookForm
+from app.models.forms import LoginForm, RegistrationForm, BookForm, SearchForm
 from app.models.code_book import generate_book_code
 from flask_login import login_user, logout_user
 
@@ -206,37 +206,45 @@ def is_admin_user():
         return False
 
 
+# Mapeamento dos campos de pesquisa aos atributos do modelo Book
+field_mapping = {
+    'code': Book.code,
+    'title': Book.title,
+    'author': Book.author,
+    'pages': Book.pages,
+    'year': Book.year,
+    'genre': Book.genre,
+    'read': Book.read,
+    'status': Book.status,
+    'format': Book.format,
+    'publisher': Book.publisher
+}
+
 
 @app.route('/search', methods=['GET', 'POST'])
 def search():
-    user = get_logged_in_user()
-    if user != None:
-        if request.method == 'POST':
-            search_term = request.form.get('search_term')
+    form = SearchForm()
 
-            # Realize a pesquisa com base no termo de pesquisa fornecido
-            query = Book.query.filter(
-                or_(
-                    Book.code.ilike(f'%{search_term}%'),
-                    Book.title.ilike(f'%{search_term}%'),
-                    Book.author.ilike(f'%{search_term}%'),
-                    Book.pages.ilike(f'%{search_term}%'),
-                    Book.year.ilike(f'%{search_term}%'),
-                    Book.genre.ilike(f'%{search_term}%'),
-                    Book.read.ilike(f'%{search_term}%'),
-                    Book.status.ilike(f'%{search_term}%'),
-                    Book.format.ilike(f'%{search_term}%'),
-                    Book.publisher.ilike(f'%{search_term}%')
-                )
-            )
-            
-            # Verifique se o usuário é um administrador e permita a pesquisa pelo ID do livro
-            if is_admin_user():  # Substitua is_admin_user() pela lógica que determina se o usuário é um administrador
-                query = query.filter(Book.id.ilike(f'%{search_term}%'))
+    if form.validate_on_submit():
+        search_field = form.search_field.data
+        search_term = form.search_term.data
 
-            print(search_term)
-            books = query.all()
-            print(books)
-            return render_template('search.html', books=books)
+        # Realize a pesquisa com base nos dados fornecidos
+        if search_field and search_field in field_mapping:
+            field = field_mapping[search_field]
+            if search_field == 'pages' or search_field == 'year':
+                # Realize a pesquisa com base em um valor numérico
+                try:
+                    search_term = int(search_term)
+                    books = Book.query.filter(field == search_term).all()
+                except ValueError:
+                    books = []
+            else:
+                # Realize a pesquisa com base em uma string
+                books = Book.query.filter(field.ilike(f'%{search_term}%')).all()
+        else:
+            books = []
 
-    return render_template('search.html', books=[])
+        return render_template('search.html', form=form, books=books)
+
+    return render_template('search.html', form=form, books=[])

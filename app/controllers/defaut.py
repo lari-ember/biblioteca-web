@@ -94,7 +94,6 @@ def register():
     form = RegistrationForm(request.form)
     if request.method == 'POST' and form.validate():
         # Create a new user object with form data
-        print(f'{form.username.data}, {form.name.data} e {form.password.data}')
         user = User(
             username=form.username.data,
             password=form.password.data,
@@ -158,11 +157,6 @@ def register_new_book():
         db.session.commit()
         flash(f'New book registered successfully: title - {book.title} author - {book.author} code - {book.code} genre - {book.genre}', 'success')
         return redirect(url_for('your_collection'))
-    else:
-        print(request.method)
-        print(form.validate())
-        print(form.errors)
-        print('not ok')
     return render_template('register_new_book.html', form=form)
 
 
@@ -178,7 +172,6 @@ def your_collection():
     books = Book.query.filter_by(user_id=user.id).all()
 
     # Renderize o template 'your_collection.html' e passe os livros como 
-    print(books)
     return render_template('your_collection.html', books=books)
 
 
@@ -248,3 +241,42 @@ def search():
         return render_template('search.html', form=form, books=books)
 
     return render_template('search.html', form=form, books=[])
+
+
+@app.route('/edit_book/<int:book_id>', methods=['GET', 'POST'])
+def edit_book(book_id):
+    book = Book.query.get_or_404(book_id)
+    form = BookForm()
+
+    if form.validate_on_submit():
+        user = get_logged_in_user()
+        if user is None:
+            flash('User is not authenticated', 'error')
+            return redirect(url_for('login'))
+        with current_app.app_context():
+            code = generate_book_code(form.genre.data, form.author.data, form.title.data)
+            if code != book.code:
+                print('aaaaaaaaaaaaaaaaaaaa')
+                print(book.code)
+                print('bbbbbbbbbbbb')
+                print(code)
+                book.code = code
+        if code is None:
+            flash(f'Genre not found. Do you want to add a new genre?', 'warning')
+            return redirect(url_for('index'))
+        book.title = form.title.data
+        book.author = form.author.data
+        book.publisher = form.publisher.data
+        book.year = form.year.data
+        book.pages = form.pages.data
+        book.read = form.read.data
+        book.genre = form.genre.data
+        book.status = form.status.data
+        book.format = form.format.data
+
+        db.session.commit()
+        flash('Book updated successfully!', 'success')
+        return redirect(url_for('your_collection'))
+
+    return render_template('edit_book.html', form=form, book=book)
+

@@ -201,7 +201,8 @@ book_genres = {
     '197': 'Statistical Analysis',
     '198': 'Biochemistry',
     '199': 'Neuroscience',
-    '200': 'History of the United States'
+    '200': 'History of the United States',
+    '201': 'Philosophy',
 }
 
 def generate_book_code(genre, author_fullname, title):
@@ -233,8 +234,6 @@ def generate_book_code(genre, author_fullname, title):
             new_code = f'{base_code}{new_suffix}'
             print(new_code)
         else:
-            print(last_suffix)
-            print(f'jvduydvyd ydufyd duyfyd {last_suffix.isdigit()}')
             # O último sufixo não é um número, então adicione ".1" como sufixo
             new_code = f'{base_code}.001'
     else:

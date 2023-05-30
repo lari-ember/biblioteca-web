@@ -131,11 +131,11 @@
     }
 
     table {
-      box-shadow: 2px 2px 12px rgba(255,255,255,0.5);
+      box-shadow: 2px 2px 12px rgba(255, 255, 255, 0.5);
     }
 
     select {
-      background-color: black; 
+      background-color: black;
       color: aliceblue;
     }
   </style>
@@ -168,100 +168,102 @@
           </div>
         </div>
       </div> {% endif %}
-      <div class="d-none d-md-block d-lg-block d-xl-block"><nav class="">
-        <div class="navigation">
-          <ul>
-            <li class="list active">
-              <a href="/home">
-                <span class="icon">
-                  <ion-icon name="compass-outline"></ion-icon>
-                </span>
-                <span class="text">home</span>
-              </a>
-            </li>
-            <li class="list">
-              <a href="/register_new_book">
-                <span class="icon">
-                  <ion-icon name="medkit-outline"></ion-icon>
-                </span>
-                <span class="text">register new book</span>
-              </a>
-            </li>
-            <li class="list">
-              <a href="/your_collection">
-                <span class="icon">
-                  <ion-icon name="library-outline"></ion-icon>
-                </span>
-                <span class="text">your collection</span>
-              </a>
-            </li>
-            <li class="list">
-              <a href="/search">
-                <span class="icon">
-                  <ion-icon name="search-outline"></ion-icon>
-                </span>
-                <span class="text">search</span>
-              </a>
-            </li>
-            <li class="list">
-              <a href="#">
-                <span class="icon">
-                  <ion-icon name="podium-outline"></ion-icon>
-                </span>
-                <span class="text">about your library</span>
-              </a>
-            </li>
-            <li class="list">
-              <a href="#">
-                <span class="icon">
-                  <ion-icon name="help-buoy-outline"></ion-icon>
-                </span>
-                <span class="text">help</span>
-              </a>
-            </li>
-            <li class="list">
-              <a href="#">
-                <span class="icon">
-                  <ion-icon name="logo-discord"></ion-icon>
-                </span>
-                <span class="text">contact</span>
-              </a>
-            </li>
-            <hr>
-            {% if current_user.is_authenticated %}
-            <li class="list">
-              <a href="/logout">
-                <span class="icon">
-                  <ion-icon name="power-outline"></ion-icon>
-                </span>
-                <span class="text">logout</span>
-              </a>
-            </li>
-            {% else %}
-            <li class="list">
-              <a href="/login">
-                <span class="icon">
-                  <ion-icon name="power-outline"></ion-icon>
-                </span>
-                <span class="text">login</span>
-              </a>
-            </li>
-            {%  endif %}
-            <div class="indicator"></div>
-          </ul>
-        </div>
-      </nav></div>
+      <div class="d-none d-md-block d-lg-block d-xl-block">
+        <nav class="">
+          <div class="navigation">
+            <ul>
+              <li class="list active">
+                <a href="/home">
+                  <span class="icon">
+                    <ion-icon name="compass-outline"></ion-icon>
+                  </span>
+                  <span class="text">home</span>
+                </a>
+              </li>
+              <li class="list">
+                <a href="/register_new_book">
+                  <span class="icon">
+                    <ion-icon name="medkit-outline"></ion-icon>
+                  </span>
+                  <span class="text">register new book</span>
+                </a>
+              </li>
+              <li class="list">
+                <a href="/your_collection">
+                  <span class="icon">
+                    <ion-icon name="library-outline"></ion-icon>
+                  </span>
+                  <span class="text">your collection</span>
+                </a>
+              </li>
+              <li class="list">
+                <a href="/search">
+                  <span class="icon">
+                    <ion-icon name="search-outline"></ion-icon>
+                  </span>
+                  <span class="text">search</span>
+                </a>
+              </li>
+              <li class="list">
+                <a href="#">
+                  <span class="icon">
+                    <ion-icon name="podium-outline"></ion-icon>
+                  </span>
+                  <span class="text">about your library</span>
+                </a>
+              </li>
+              <li class="list">
+                <a href="#">
+                  <span class="icon">
+                    <ion-icon name="help-buoy-outline"></ion-icon>
+                  </span>
+                  <span class="text">help</span>
+                </a>
+              </li>
+              <li class="list">
+                <a href="#">
+                  <span class="icon">
+                    <ion-icon name="logo-discord"></ion-icon>
+                  </span>
+                  <span class="text">contact</span>
+                </a>
+              </li>
+              <hr>
+              {% if current_user.is_authenticated %}
+              <li class="list">
+                <a href="/logout">
+                  <span class="icon">
+                    <ion-icon name="power-outline"></ion-icon>
+                  </span>
+                  <span class="text">logout</span>
+                </a>
+              </li>
+              {% else %}
+              <li class="list">
+                <a href="/login">
+                  <span class="icon">
+                    <ion-icon name="power-outline"></ion-icon>
+                  </span>
+                  <span class="text">login</span>
+                </a>
+              </li>
+              {% endif %}
+              <div class="indicator"></div>
+            </ul>
+          </div>
+        </nav>
+      </div>
     </header>
   </div>
   <br>
   {% with messages = get_flashed_messages() %}
   {% if messages %}
   <div class="alert alert-warning">
-  <ul class=flashes>
-    {% for message in messages %}
-    <li>{{ message }}</li>
-    {% endfor %}
-  </ul>
+    <ul class=flashes>
+      {% for message in messages %}
+      <li>{{ message }}</li>
+      {% endfor %}
+    </ul>
   </div>
   {% endif %}
   {% endwith %}
@@ -320,10 +322,32 @@
     const list = document.querySelectorAll('.list');
 
     function activeLink() {
-      list.forEach((item) => item.classList.remove('active'));
-      this.classList.add('active');
+      list.forEach((item, index) => {
+        item.classList.remove('active');
+        if (index === parseInt(localStorage.getItem('activeIndex'))) {
+          item.classList.add('active');
+        }
+      });
+
+      localStorage.setItem('activeIndex', this.dataset.index);
     }
-    list.forEach((item) => item.addEventListener('click', activeLink)); 
+
+    list.forEach((item, index) => {
+      item.dataset.index = index;
+      item.addEventListener('click', activeLink);
+    });
+
+    // Ao carregar a página, aplicar a classe "active" ao elemento correspondente
+    document.addEventListener('DOMContentLoaded', () => {
+      const activeIndex = localStorage.getItem('activeIndex');
+      if (activeIndex !== null) {
+        list.forEach((item, index) => {
+          if (index === parseInt(activeIndex)) {
+            item.classList.add('active');
+          }
+        });
+      }
+    });
   </script>
   <script src="../static/js/script.js"></script>
   <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>

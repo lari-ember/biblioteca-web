@@ -11,12 +11,11 @@ from flask_login import login_user, logout_user
 
 
 def add_books_from_csv(file_path):
-    user = get_logged_in_user()
     with open(file_path, 'r') as file:
         reader = csv.DictReader(file)
         for row in reader:
             book = Book(
-                user_id=user.id,
+                user_id= 1,
                 code=row['codigo'],
                 title=row['titulo'],
                 author=row['autore'],
@@ -37,6 +36,7 @@ csv_file_path = 'C:/Users/bolsista.SFDA-DOACAO-BOL/Documents/GitHub/Biblioteca/a
 
 @lm.user_loader
 def load_user(user_id):
+    #add_books_from_csv(csv_file_path)
     # Implement the code to load the user from the database based on the user ID
     # Return the user object if found, or None if not found
     return User.query.get(int(user_id))
@@ -253,8 +253,12 @@ def edit_book(book_id):
         if user is None:
             flash('User is not authenticated', 'error')
             return redirect(url_for('login'))
-        with current_app.app_context():
-            code = generate_book_code(form.genre.data, form.author.data, form.title.data)
+        if book.genre != form.genre.data:
+            print(book.genre)
+            print(form.genre.data)
+            with current_app.app_context():
+                print(form.author.data)
+                code = generate_book_code(form.genre.data, form.author.data, form.title.data)
             if code != book.code:
                 print('aaaaaaaaaaaaaaaaaaaa')
                 print(book.code)

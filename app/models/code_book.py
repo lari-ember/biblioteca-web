@@ -205,39 +205,43 @@ book_genres = {
     '201': 'Philosophy',
 }
 
+
 def generate_book_code(genre, author_fullname, title):
     # Obtenha o último sobrenome do autor
     author_lastname = author_fullname.split()[-1]
 
     # Obtenha a primeira letra do último sobrenome do autor
     author_lastname_initial = author_lastname[0]
-    
+
     title_initial = title[0]
-    
-    # Carregar o arquivo CSV com as informações dos gêneros e suas respectivas numerações
-    # Verificar se o gênero está presente no arquivo CSV
-    base_code = ''
-    for key, val in book_genres.items():
-        if val == genre:
-            base_code = f'{author_lastname_initial.upper()}{key}{title_initial.lower()}'
-    last_code = Book.query.filter(Book.code.like(f'{base_code}%')).order_by(Book.code.desc()).first()
 
-    if last_code:
-        # Obtenha o sufixo do último código usado
-        last_suffix = last_code.code[len(base_code) + 1:]
-        # Verifique se o sufixo é um número
-        if last_suffix.isdigit():
-            # Incremente o sufixo
-            new_suffix = f'.{str(int(last_suffix) + 1).zfill(3)}'
+    # Verifique se o gênero está presente no dicionário de gêneros
+    if genre.upper() in book_genres.values():
+        # Encontre a chave correspondente ao gênero no dicionário de gêneros
+        genre_code = next(key for key, value in book_genres.items() if value == genre)
+        print(genre_code)
+        base_code = f'{author_lastname_initial.upper()}{genre_code}{title_initial.lower()}'
 
-            # Gere o novo código com o sufixo
-            new_code = f'{base_code}{new_suffix}'
-            print(new_code)
+        last_code = Book.query.filter(Book.code.like(f'{base_code}%')).order_by(Book.code.desc()).first()
+
+        if last_code:
+            # Obtenha o sufixo do último código usado
+            last_suffix = last_code.code[len(base_code) + 1:]
+            # Verifique se o sufixo é um número
+            if last_suffix.isdigit():
+                # Incremente o sufixo
+                new_suffix = f'.{str(int(last_suffix) + 1).zfill(3)}'
+                # Gere o novo código com o sufixo
+                new_code = f'{base_code}{new_suffix}'
+            else:
+                # O último sufixo não é um número, então adicione ".001" como sufixo
+                new_code = f'{base_code}.001'
         else:
-            # O último sufixo não é um número, então adicione ".1" como sufixo
-            new_code = f'{base_code}.001'
-    else:
-        # Não existem códigos com base_code, então use o código base
-        new_code = base_code
+            # Não existem códigos com base_code, então use o código base
+            new_code = base_code
 
-    return new_code
+        return new_code
+
+    else:
+        # O gênero não está presente no dicionário de gêneros
+        return None

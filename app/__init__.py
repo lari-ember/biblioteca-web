@@ -89,6 +89,49 @@ class Book(db.Model):
     def __repr__(self):
         return f'<code={self.code}, book={self.title}, author={self.author}, year={self.year}, pages={self.pages}, genre={self.genre}, publisher={self.publisher}, format={self.format}, status={self.status}>'
 
+
+class UserReadings(db.Model):
+    __tablename__ = 'user_readings'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    book_id = db.Column(db.Integer, db.ForeignKey('books.id'), nullable=False)
+    current_page = db.Column(db.Integer)
+    reading_percentage = db.Column(db.Float)
+    time_spent = db.Column(db.Integer)
+    estimated_time = db.Column(db.Integer)
+    user = db.relationship('User', backref='user_readings')
+    book = db.relationship('Book', backref='user_readings')
+
+    def __init__(self, user_id, book_id, current_page, reading_percentage, time_spent, estimated_time):
+        self.user_id = user_id
+        self.book_id = book_id
+        self.current_page = current_page
+        self.reading_percentage = reading_percentage
+        self.time_spent = time_spent
+        self.estimated_time = estimated_time
+
+    def __repr__(self):
+        return f'<UserReading user_id={self.user_id}, book_id={self.book_id}, current_page={self.current_page}, reading_percentage={self.reading_percentage}, time_spent={self.time_spent}, estimated_time={self.estimated_time}>'
+
+
+class UserRead(db.Model):
+    __tablename__ = 'user_reads'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    book_id = db.Column(db.Integer, db.ForeignKey('books.id'), nullable=False)
+    end_date = db.Column(db.Date, nullable=False)
+    user = db.relationship('User', backref='user_book_reads')
+    book = db.relationship('Book', backref='user_book_reads')
+
+    def __init__(self, user_id, book_id, read_date):
+        self.user_id = user_id
+        self.book_id = book_id
+        self.read_date = read_date
+
+    def __repr__(self):
+        return f'<UserBookRead user_id={self.user_id}, book_id={self.book_id}, read_date={self.read_date}>'
+
+
 with app.app_context():
     db.create_all()
 

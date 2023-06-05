@@ -284,3 +284,6 @@ def edit_book(book_id):
 
     return render_template('edit_book.html', form=form, book=book)
 
+@app.route('/about_your_library')
+def about_your_library():
+    return render_template('about_your_library.html')

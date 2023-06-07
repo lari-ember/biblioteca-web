@@ -1,30 +1,56 @@
 {% extends 'base.html' %}
 
 {% block head %}
-    {{ super() }}
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/plus.css') }}">
+{{ super() }}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/plus.css') }}">
 {% endblock %}
 {% block content %}
 <div class="container-fluid">
-<!-- Pending Requests Card Example -->
-<div class="col-xl-3 col-md-6 mb-4">
-        <a href="/your_collection" style="text-decoration: none;">
-        <div class="card bg-dark border-left-warning shadow h-100 py-2">
-            <div class="card-body">
-                <div class="row no-gutters align-items-center">
-                    <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1"><>number of books in your library</div>
-                        <div class=" h5 mb-0 font-weight-bold text-white">{{ current_user.books|length }}</div>
+    <!-- Pending Requests Card Example -->
+    <div class="text-white text-center">
+        <h1>{{ current_user.username }}</h1>
+        <div class="row">
+            <div class="col-xl-3 col-md-6 mb-4">
+                <a href="/your_collection" style="text-decoration: none;" class="active">
+                    <div class="card bg-dark border-left-warning shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                        umber of books in your library</div>
+                                    <div class="h5 mb-0 font-weight-bold ">{{ current_user.books|length }}</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-comments fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-auto">
-                        <span class="icon">
-                            <ion-icon name="library-outline"></ion-icon>
-                        </span>
+                </a>
+            </div>
+            <div class="col-xl-3 col-md-6 mb-4">
+                <a href="/your_collection" style="text-decoration: none;" class="active">
+                    <div class="card bg-dark border-left-warning shadow h-100 py-2">
+                        <!-- Conteúdo do segundo cartão -->
                     </div>
-                </div>
+                </a>
+            </div>
+            <div class="col-xl-3 col-md-6 mb-4">
+                <a href="/your_collection" style="text-decoration: none;" class="active">
+                    <div class="card bg-dark border-left-warning shadow h-100 py-2">
+                        <!-- Conteúdo do terceiro cartão -->
+                    </div>
+                </a>
+            </div>
+            <div class="col-xl-3 col-md-6 mb-4">
+                <a href="/your_collection" style="text-decoration: none;" class="active">
+                    <div class="card bg-dark border-left-warning shadow h-100 py-2">
+                        <!-- Conteúdo do quarto cartão -->
+                    </div>
+                </a>
             </div>
         </div>
     </div>
-</a>
+    
 </div>
 {% endblock %}

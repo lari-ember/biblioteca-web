@@ -67,22 +67,25 @@
         
     </div>
 </div>
-<div id="author-table" style="display: none; width: 30%;" class="table-responsive justify-content-center">
-    <table class="table table-striped table-hover table-dark">
-        <thead>
-            <tr>
-                <th class="w-auto">Author</th>
-                <th class="w-20">Number of Books</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for author, count in current_user.books|groupby(attribute='author') %}
-            <tr>
-                <td>{{ author }}</td>
-                <td>{{ count|list|length }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+<div class="d-flex justify-content-center">
+    <div id="author-table" style="display: none; width: 30%;" class="table-responsive">
+        <table class="table table-striped table-hover table-dark">
+            <thead>
+                <tr>
+                    <th class="w-auto">Author</th>
+                    <th class="w-20">Number of Books</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for author, count in current_user.books|groupby(attribute='author') %}
+                <tr>
+                    <td>{{ author }}</td>
+                    <td>{{ count|list|length }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
+
 {% endblock %}

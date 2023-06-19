@@ -1,3 +1,4 @@
+from flask_login import current_user
 import csv
 from flask import Flask, current_app, render_template, request, redirect, flash, session, url_for
 from flask_login import LoginManager, current_user, login_required, login_user, logout_user, UserMixin
@@ -15,7 +16,7 @@ def add_books_from_csv(file_path):
         reader = csv.DictReader(file)
         for row in reader:
             book = Book(
-                user_id= 1,
+                user_id=1,
                 code=row['codigo'],
                 title=row['titulo'],
                 author=row['autore'],
@@ -30,13 +31,14 @@ def add_books_from_csv(file_path):
             db.session.add(book)
             db.session.commit()
 
+
 # Caminho para o arquivo CSV de exemplo
 csv_file_path = 'C:/Users/bolsista.SFDA-DOACAO-BOL/Documents/GitHub/Biblioteca/acervo.csv'
 
 
 @lm.user_loader
 def load_user(user_id):
-    #add_books_from_csv(csv_file_path)
+    # add_books_from_csv(csv_file_path)
     # Implement the code to load the user from the database based on the user ID
     # Return the user object if found, or None if not found
     return User.query.get(int(user_id))
@@ -118,14 +120,13 @@ def register():
     return render_template('register.html', form=form)
 
 
-from flask_login import current_user
-
 def get_logged_in_user():
     if current_user.is_authenticated:
         return current_user
     else:
         # If the user is not logged in, you can return None or take any other action depending on your requirement.
         return None
+
 
 @app.route('/register_new_book', methods=['GET', 'POST'])
 def register_new_book():
@@ -136,7 +137,8 @@ def register_new_book():
             flash('User is not authenticated', 'error')
             return redirect(url_for('login'))
         with current_app.app_context():
-            code = generate_book_code(form.genre.data, form.author.data, form.title.data)
+            code = generate_book_code(
+                form.genre.data, form.author.data, form.title.data)
         if code is None:
             flash(f'Genre not found. Do you want to add a new genre?', 'warning')
             return redirect(url_for('index'))
@@ -152,10 +154,11 @@ def register_new_book():
             genre=form.genre.data.lower(),
             status=form.status.data.lower(),
             format=form.format.data.lower()
-            )
+        )
         db.session.add(book)
         db.session.commit()
-        flash(f'New book registered successfully: title - {book.title} author - {book.author} code - {book.code} genre - {book.genre}', 'success')
+        flash(
+            f'New book registered successfully: title - {book.title} author - {book.author} code - {book.code} genre - {book.genre}', 'success')
         return redirect(url_for('your_collection'))
     return render_template('register_new_book.html', form=form)
 
@@ -171,7 +174,7 @@ def your_collection():
     # Recupere os livros da tabela 'Book' para o usuário logado
     books = Book.query.filter_by(user_id=user.id).all()
 
-    # Renderize o template 'your_collection.html' e passe os livros como 
+    # Renderize o template 'your_collection.html' e passe os livros como
     return render_template('your_collection.html', books=books)
 
 
@@ -234,7 +237,8 @@ def search():
                     books = []
             else:
                 # Realize a pesquisa com base em uma string
-                books = Book.query.filter(field.ilike(f'%{search_term}%')).all()
+                books = Book.query.filter(
+                    field.ilike(f'%{search_term}%')).all()
         else:
             books = []
 
@@ -245,6 +249,11 @@ def search():
 
 @app.route('/edit_book/<int:book_id>', methods=['GET', 'POST'])
 def edit_book(book_id):
+    # Verifique se o usuário está logado
+    user = get_logged_in_user()
+    if not user:
+        # Redirecione para a página de login ou tome qualquer outra ação que você desejar para lidar com usuários não logados
+        return redirect('/login')
     book = Book.query.get_or_404(book_id)
     form = BookForm()
 
@@ -258,7 +267,8 @@ def edit_book(book_id):
             print(form.genre.data)
             with current_app.app_context():
                 print(form.author.data)
-                code = generate_book_code(form.genre.data, form.author.data, form.title.data)
+                code = generate_book_code(
+                    form.genre.data, form.author.data, form.title.data)
             if code != book.code:
                 print('aaaaaaaaaaaaaaaaaaaa')
                 print(book.code)
@@ -283,6 +293,7 @@ def edit_book(book_id):
         return redirect(url_for('your_collection'))
 
     return render_template('edit_book.html', form=form, book=book)
+
 
 @app.route('/about_your_library')
 def about_your_library():

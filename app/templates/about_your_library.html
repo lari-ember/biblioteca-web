@@ -8,20 +8,20 @@
 <div class="container-fluid">
     <!-- Pending Requests Card Example -->
     <div class="text-white text-center">
-        <h1>{{ current_user.username }}</h1>
+        <h1>this is your library {{ current_user.username }}</h1>
         <div class="row">
             <div class="col-xl-3 col-md-6 mb-4">
-                <a href="/your_collection" style="text-decoration: none;" class="active">
-                    <div class="card bg-dark border-left-warning shadow h-100 py-2">
+                <a href="/your_collection" style="text-decoration: none;" class="list">
+                    <div class="card bg-dark border-left-warning shadow h-100 py-2 text-white">
                         <div class="card-body">
                             <div class="row no-gutters align-items-center">
                                 <div class="col mr-2">
                                     <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                        umber of books in your library</div>
+                                        number of books in your library</div>
                                     <div class="h5 mb-0 font-weight-bold ">{{ current_user.books|length }}</div>
                                 </div>
                                 <div class="col-auto">
-                                    <i class="fas fa-comments fa-2x text-gray-300"></i>
+                                    <ion-icon name="library-outline"></ion-icon>
                                 </div>
                             </div>
                         </div>
@@ -29,9 +29,22 @@
                 </a>
             </div>
             <div class="col-xl-3 col-md-6 mb-4">
-                <a href="/your_collection" style="text-decoration: none;" class="active">
-                    <div class="card bg-dark border-left-warning shadow h-100 py-2">
-                        <!-- Conteúdo do segundo cartão -->
+                <a href="#" style="text-decoration: none;" class="authour">
+                    <div class="card bg-dark border-left-warning shadow h-100 py-2 text-white">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                        Number of authors in your library
+                                    </div>
+                                    <div class="h5 mb-0 font-weight-bold">{{
+                                        current_user.books|map(attribute='author')|unique|list|length }}</div>
+                                </div>
+                                <div class="col-auto">
+                                    <ion-icon name="people-outline"></ion-icon>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </a>
             </div>
@@ -49,8 +62,27 @@
                     </div>
                 </a>
             </div>
+            
         </div>
+        
     </div>
-    
+</div>
+<div id="author-table" style="display: none; width: 30%;" class="table-responsive justify-content-center">
+    <table class="table table-striped table-hover table-dark">
+        <thead>
+            <tr>
+                <th class="w-auto">Author</th>
+                <th class="w-20">Number of Books</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for author, count in current_user.books|groupby(attribute='author') %}
+            <tr>
+                <td>{{ author }}</td>
+                <td>{{ count|list|length }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </div>
 {% endblock %}

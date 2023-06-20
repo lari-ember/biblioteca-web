@@ -93,8 +93,9 @@
         <table class="table table-striped table-hover table-dark">
             <thead>
                 <tr>
+                    <th>position</th>
                     <th>code</th>
-                    <th>Book Title</th>
+                    <th>Title</th>
                     <th>Current Page</th>
                     <th>Reading Percentage</th>
                     <th>Time Spent</th>
@@ -104,6 +105,8 @@
             <tbody>
                 {% for reading in user_readings %}
                 <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>{{ reading.book.code }}</td>
                     <td>{{ reading.book.title }}</td>
                     <td>{{ reading.current_page }}</td>
                     <td>{{ reading.reading_percentage }}</td>

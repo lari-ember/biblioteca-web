@@ -5,9 +5,9 @@ from flask_login import LoginManager, current_user, login_required, login_user, 
 from datetime import date
 
 from sqlalchemy import or_
-from app import app, User, db, lm, Book
+from app import UserReadings, app, User, db, lm, Book
 from app.models.forms import LoginForm, RegistrationForm, BookForm, SearchForm
-from app.models.code_book import generate_book_code
+from app.models.code_book import generate_book_code, book_genres
 from flask_login import login_user, logout_user
 
 
@@ -38,7 +38,7 @@ csv_file_path = 'C:/Users/bolsista.SFDA-DOACAO-BOL/Documents/GitHub/Biblioteca/a
 
 @lm.user_loader
 def load_user(user_id):
-    # add_books_from_csv(csv_file_path)
+    #add_books_from_csv(csv_file_path)
     # Implement the code to load the user from the database based on the user ID
     # Return the user object if found, or None if not found
     return User.query.get(int(user_id))
@@ -297,4 +297,31 @@ def edit_book(book_id):
 
 @app.route('/about_your_library')
 def about_your_library():
-    return render_template('about_your_library.html')
+    user_readings = current_user.user_readings
+    user = get_logged_in_user()
+    if not user:
+        # Redirecione para a página de login ou tome qualquer outra ação que você desejar para lidar com usuários não logados
+        return redirect('/login')
+    return render_template('about_your_library.html', book_genres=book_genres, user_readings=user_readings)
+
+@app.route('/add_to_current_readings/<int:book_id>', methods=['GET', 'POST'])
+def add_to_current_readings(book_id):
+    # Verifique se o livro existe na coleção do usuário
+    book = Book.query.get(book_id)
+    if not book:
+        flash('Book not found', 'error')
+        return redirect(url_for('search'))
+
+    # Verifique se o livro já está na tabela de leituras em andamento do usuário
+    user_reading = UserReadings.query.filter_by(user_id=current_user.id, book_id=book.id).first()
+    if user_reading:
+        flash('Book already in current readings', 'error')
+        return redirect(url_for('search'))
+
+    # Adicione o livro à tabela de leituras em andamento
+    user_reading = UserReadings(current_user.id, book.id, current_page=0, reading_percentage=0.0, time_spent=0, estimated_time=0)
+    db.session.add(user_reading)
+    db.session.commit()
+
+    flash('Book added to current readings', 'success')
+    return redirect(url_for('search'))

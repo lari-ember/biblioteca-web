@@ -25,6 +25,7 @@ class User(db.Model):
     password_hash = db.Column(db.String(), nullable=False)
     name = db.Column(db.String(), nullable=False)
     books = db.relationship('Book', backref='user', lazy=True)
+    user_readings = db.relationship('UserReadings', backref='user', lazy=True)  # Adicione este atributo de relacionamento
     
     @property
     def is_authenticated(self):
@@ -72,6 +73,7 @@ class Book(db.Model):
     read = db.Column(db.String(10), nullable=False)
     genre = db.Column(db.String(50), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    user_readings = db.relationship('UserReadings', backref='book', lazy=True)  # Adicione este atributo de relacionamento
 
     def __init__(self, user_id, code, title, author, publisher, year, pages, genre, status, format, read):
         self.user_id = user_id
@@ -99,8 +101,6 @@ class UserReadings(db.Model):
     reading_percentage = db.Column(db.Float)
     time_spent = db.Column(db.Integer)
     estimated_time = db.Column(db.Integer)
-    user = db.relationship('User', backref='user_readings')
-    book = db.relationship('Book', backref='user_readings')
 
     def __init__(self, user_id, book_id, current_page, reading_percentage, time_spent, estimated_time):
         self.user_id = user_id
@@ -112,7 +112,6 @@ class UserReadings(db.Model):
 
     def __repr__(self):
         return f'<UserReading user_id={self.user_id}, book_id={self.book_id}, current_page={self.current_page}, reading_percentage={self.reading_percentage}, time_spent={self.time_spent}, estimated_time={self.estimated_time}>'
-
 
 class UserRead(db.Model):
     __tablename__ = 'user_reads'
@@ -141,34 +140,3 @@ def load_user(user_id):
     return User.query.get(int(user_id))
 
 from app.controllers import defaut
-
-'''
-@app.route('/search', methods=['GET', 'POST'])
-@login_required
-def search():
-    form = SearchForm()
-    books = []
-    if form.validate_on_submit():
-        search_string = form.search.data
-        if search_string:
-            search = "%{}%".format(search_string)
-            books = Book.query.filter(
-                or_(Book.code.like(search),
-                    Book.title.like(search),
-                    Book.author.like(search),
-                    Book.publisher.like(search),
-                    Book.year.like(search),
-                    Book.pages.like(search),
-                    Book.status.like(search),
-                    Book.format.like(search),
-                    Book.genre.like(search),
-                    )
-            ).all()
-            if not books:
-                flash('No results found.', 'warning')
-    return render_template('search.html', form=form, books=books)
-
-@app.route('/search')
-def search():
-    return render_template('search.html')
-'''

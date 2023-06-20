@@ -67,77 +67,83 @@
         
     </div>
 </div>
-<div class="d-flex justify-content-center">
-    <div id="author-table" style="display: none; width: auto;" class="table-responsive">
-        <table class="table table-striped table-hover table-dark">
-            <thead>
-                <tr>
-                    <th class="w-auto">Author</th>
-                    <th class="w-20">Number of Books</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for author, count in current_user.books|groupby(attribute='author') %}
-                <tr>
-                    <td>{{ author }}</td>
-                    <td>{{ count|list|length }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+<div class="row">
+    <div class="col d-flex justify-content-center">
+        <div id="author-table" style="display: none; width: auto;" class="table-responsive">
+            <table class="table table-striped table-hover table-dark">
+                <thead>
+                    <tr>
+                        <th class="w-auto">Author</th>
+                        <th class="w-20">Number of Books</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for author, count in current_user.books|groupby(attribute='author') %}
+                    <tr>
+                        <td>{{ author }}</td>
+                        <td>{{ count|list|length }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
-</div>
-
-<div class="d-flex justify-content-center">
-    <div id="book-genres-table" style="width: auto;" class="table-responsive">
-        <table class="table table-striped table-hover table-dark">
-            <thead>
-                <tr>
-                    <th>position</th>
-                    <th>code</th>
-                    <th>Title</th>
-                    <th>Current Page</th>
-                    <th>Reading Percentage</th>
-                    <th>Time Spent</th>
-                    <th>Estimated Time</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for reading in user_readings %}
-                <tr>
-                    <td>{{ loop.index }}</td>
-                    <td>{{ reading.book.code }}</td>
-                    <td>{{ reading.book.title }}</td>
-                    <td>{{ reading.current_page }}</td>
-                    <td>{{ reading.reading_percentage }}</td>
-                    <td>{{ reading.time_spent }}</td>
-                    <td>{{ reading.estimated_time }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+    
+    <div class="col d-flex justify-content-center">
+        <div id="book-genres-table" style="width: auto;" class="table-responsive">
+            <table class="table table-striped table-hover table-dark">
+                <thead>
+                    <tr>
+                        <th>position</th>
+                        <th>code</th>
+                        <th>Title</th>
+                        <th>author</th>
+                        <th>year</th>
+                        <th>Current Page</th>
+                        <th>Reading Percentage</th>
+                        <th>Time Spent</th>
+                        <th>Estimated Time</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for reading in user_readings %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <td>{{ reading.book.code }}</td>
+                        <td>{{ reading.book.title }}</td>
+                        <td>{{ reading.book.author }}</td>
+                        <td>{{ reading.book.year }}</td>
+                        <td>{{ reading.current_page }}</td>
+                        <td>{{ reading.reading_percentage }}</td>
+                        <td>{{ reading.time_spent }}</td>
+                        <td>{{ reading.estimated_time }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
-</div>
-
-
-<div class="d-flex justify-content-center">
-    <div id="book-genres-table" style="width: auto;" class="table-responsive">
-        <table class="table table-striped table-hover table-dark">
-            <thead>
-                <tr>
-                    <th>Genre Code</th>
-                    <th>Genre Name</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for code, name in book_genres.items() %}
-                <tr>
-                    <td>{{ code }}</td>
-                    <td>{{ name }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+    
+    
+    <div class="col d-flex justify-content-center">
+        <div id="book-genres-table" style="width: auto;" class="table-responsive">
+            <table class="table table-striped table-hover table-dark">
+                <thead>
+                    <tr>
+                        <th>Genre Code</th>
+                        <th>Genre Name</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for code, name in book_genres.items() %}
+                    <tr>
+                        <td>{{ code }}</td>
+                        <td>{{ name }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 

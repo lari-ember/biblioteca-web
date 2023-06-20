@@ -5,7 +5,7 @@ from flask_login import LoginManager, current_user, login_required, login_user, 
 from datetime import date
 
 from sqlalchemy import or_
-from app import UserReadings, app, User, db, lm, Book
+from app import UserRead, UserReadings, app, User, db, lm, Book
 from app.models.forms import LoginForm, RegistrationForm, BookForm, SearchForm
 from app.models.code_book import generate_book_code, book_genres
 from flask_login import login_user, logout_user
@@ -303,7 +303,7 @@ def about_your_library():
         # Redirecione para a página de login ou tome qualquer outra ação que você desejar para lidar com usuários não logados
         return redirect('/login')
         # Calcula a soma das páginas lidas nos livros já concluídos (UserRead)
-    total_pages_read = db.session.query(func.sum(UserRead.book.pages)).filter(UserRead.user_id == current_user.id).scalar()
+    total_pages_read = db.session.query(func.sum(UserRead.book.pages)).join(UserRead.book).filter(UserRead.user_id == current_user.id).scalar()
     # Calcula a soma das páginas lidas nos livros em andamento (UserReadings)
     total_pages_in_progress = db.session.query(func.sum(UserReadings.current_page)).filter(UserReadings.user_id == current_user.id).scalar()
     sum_pages = total_pages_read + total_pages_in_progress

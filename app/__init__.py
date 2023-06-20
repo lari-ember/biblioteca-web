@@ -120,7 +120,7 @@ class UserRead(db.Model):
     book_id = db.Column(db.Integer, db.ForeignKey('books.id'), nullable=False)
     end_date = db.Column(db.Date, nullable=False)
     user = db.relationship('User', backref='user_book_reads')
-    book = db.relationship('Book', backref='user_book_reads')
+    book = db.relationship('Book', backref='user_read')
 
     def __init__(self, user_id, book_id, read_date):
         self.user_id = user_id

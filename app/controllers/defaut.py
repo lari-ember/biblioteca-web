@@ -9,7 +9,7 @@ from app import UserReadings, app, User, db, lm, Book
 from app.models.forms import LoginForm, RegistrationForm, BookForm, SearchForm
 from app.models.code_book import generate_book_code, book_genres
 from flask_login import login_user, logout_user
-
+from sqlalchemy.sql import func
 
 def add_books_from_csv(file_path):
     with open(file_path, 'r') as file:
@@ -302,7 +302,12 @@ def about_your_library():
     if not user:
         # Redirecione para a página de login ou tome qualquer outra ação que você desejar para lidar com usuários não logados
         return redirect('/login')
-    return render_template('about_your_library.html', book_genres=book_genres, user_readings=user_readings)
+        # Calcula a soma das páginas lidas nos livros já concluídos (UserRead)
+    total_pages_read = db.session.query(func.sum(UserRead.book.pages)).filter(UserRead.user_id == current_user.id).scalar()
+    # Calcula a soma das páginas lidas nos livros em andamento (UserReadings)
+    total_pages_in_progress = db.session.query(func.sum(UserReadings.current_page)).filter(UserReadings.user_id == current_user.id).scalar()
+    sum_pages = total_pages_read + total_pages_in_progress
+    return render_template('about_your_library.html', book_genres=book_genres, user_readings=user_readings, sum_pages=sum_pages)
 
 @app.route('/add_to_current_readings/<int:book_id>', methods=['GET', 'POST'])
 def add_to_current_readings(book_id):

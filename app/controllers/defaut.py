@@ -303,10 +303,10 @@ def about_your_library():
         # Redirecione para a página de login ou tome qualquer outra ação que você desejar para lidar com usuários não logados
         return redirect('/login')
         # Calcula a soma das páginas lidas nos livros já concluídos (UserRead)
-    total_pages_read = db.session.query(func.sum(UserRead.book.pages)).join(UserRead.book).filter(UserRead.user_id == current_user.id).scalar()
+    total_pages_read = db.session.query(func.sum(Book.pages)).join(UserRead).filter(UserRead.user_id == current_user.id).scalar()
     # Calcula a soma das páginas lidas nos livros em andamento (UserReadings)
     total_pages_in_progress = db.session.query(func.sum(UserReadings.current_page)).filter(UserReadings.user_id == current_user.id).scalar()
-    sum_pages = total_pages_read + total_pages_in_progress
+    sum_pages = total_pages_in_progress
     return render_template('about_your_library.html', book_genres=book_genres, user_readings=user_readings, sum_pages=sum_pages)
 
 @app.route('/add_to_current_readings/<int:book_id>', methods=['GET', 'POST'])

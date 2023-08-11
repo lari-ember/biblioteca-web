@@ -72,6 +72,7 @@ class Book(db.Model):
     format = db.Column(db.String(50), nullable=False)  # 'physical', 'e-book', or 'pdf'
     read = db.Column(db.String(10), nullable=False)
     genre = db.Column(db.String(50), nullable=False)
+    completion_date = db.Column(db.String(11), nullable=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     user_readings = db.relationship('UserReadings', backref='book', lazy=True)  # Adicione este atributo de relacionamento
 

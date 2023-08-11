@@ -51,3 +51,9 @@ class EditReadingForm(FlaskForm):
     current_page = IntegerField('Current Page', validators=[DataRequired()])
     # Adicione outros campos de edição conforme necessário
     submit = SubmitField('Update')
+
+
+class LogReadingForm(FlaskForm):
+    pages_read = IntegerField('Pages Read', validators=[DataRequired()])
+    time_spent = IntegerField('Time Spent', validators=[DataRequired()])
+    submit = SubmitField('Log Reading')

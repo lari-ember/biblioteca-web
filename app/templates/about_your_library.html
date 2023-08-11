@@ -126,7 +126,7 @@
                         <td>{{ reading.book.year }}</td>
                         <td>{{ reading.book.pages }}</td>
                         <td>{{ reading.current_page }}</td>
-                        <td>{{ reading.reading_percentage }}</td>
+                        <td>{{ reading.reading_percentage }} %</td>
                         <td>{{ reading.time_spent }}</td>
                         <td>{{ reading.estimated_time }}</td>
                         <td><a href="{{ url_for('edit_reading', reading_id=reading.id) }}"
@@ -167,5 +167,7 @@
     </div>
 
 </div>
+
+
 
 {% endblock %}

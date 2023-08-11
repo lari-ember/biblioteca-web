@@ -2,11 +2,11 @@ from flask_login import current_user
 import csv
 from flask import Flask, current_app, render_template, request, redirect, flash, session, url_for
 from flask_login import LoginManager, current_user, login_required, login_user, logout_user, UserMixin
-from datetime import date
+from datetime import date, datetime
 
 from sqlalchemy import or_
 from app import UserRead, UserReadings, app, User, db, lm, Book
-from app.models.forms import LoginForm, RegistrationForm, BookForm, SearchForm, EditReadingForm
+from app.models.forms import LogReadingForm, LoginForm, RegistrationForm, BookForm, SearchForm, EditReadingForm
 from app.models.code_book import generate_book_code, book_genres
 from flask_login import login_user, logout_user
 from sqlalchemy.sql import func
@@ -330,7 +330,7 @@ def add_to_current_readings(book_id):
     db.session.commit()
 
     flash('Book added to current readings', 'success')
-    return redirect(url_for('search'))
+    return redirect(url_for('about_your_library'))
 
 @app.route('/edit_reading/<int:reading_id>', methods=['GET', 'POST'])
 @login_required  # Certifique-se de que o usuário esteja logado para acessar esta rota
@@ -347,11 +347,18 @@ def edit_reading(reading_id):
         user_reading.current_page = form.current_page.data
 
 # Verifique se o livro tem um número total de páginas válido (maior que zero)
-    if user_reading.book.pages > 0:
-        user_reading.reading_percentage = (user_reading.current_page / user_reading.book.pages) * 100
-    else:
-        user_reading.reading_percentage = 0
-        # Atualize outros campos conforme necessário
+        if user_reading.book.pages > 0:
+            user_reading.reading_percentage = round((user_reading.current_page / user_reading.book.pages) * 100, 2)
+            if user_reading.reading_percentage == 100:
+                # Atualize o campo "read" na tabela de livros
+                user_reading.book.read = 'read'
+                user_reading.book.completion_date = datetime.now().strftime('%m-%d-%y')
+                print(user_reading.book.completion_date)
+                # Exclua o livro da tabela de leituras em andamento
+                db.session.delete(user_reading)
+        else:
+            user_reading.reading_percentage = 0
+            # Atualize outros campos conforme necessário
 
         db.session.commit()
         flash('Reading information updated successfully!', 'success')
@@ -359,3 +366,4 @@ def edit_reading(reading_id):
 
     # Passe o formulário e a leitura do usuário para o template de edição
     return render_template('edit_reading.html', form=form, user_reading=user_reading)
+

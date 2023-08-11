@@ -6,7 +6,7 @@ from datetime import date
 
 from sqlalchemy import or_
 from app import UserRead, UserReadings, app, User, db, lm, Book
-from app.models.forms import LoginForm, RegistrationForm, BookForm, SearchForm
+from app.models.forms import LoginForm, RegistrationForm, BookForm, SearchForm, EditReadingForm
 from app.models.code_book import generate_book_code, book_genres
 from flask_login import login_user, logout_user
 from sqlalchemy.sql import func
@@ -309,6 +309,7 @@ def about_your_library():
     sum_pages = total_pages_in_progress
     return render_template('about_your_library.html', book_genres=book_genres, user_readings=user_readings, sum_pages=sum_pages)
 
+
 @app.route('/add_to_current_readings/<int:book_id>', methods=['GET', 'POST'])
 def add_to_current_readings(book_id):
     # Verifique se o livro existe na coleção do usuário
@@ -330,3 +331,31 @@ def add_to_current_readings(book_id):
 
     flash('Book added to current readings', 'success')
     return redirect(url_for('search'))
+
+@app.route('/edit_reading/<int:reading_id>', methods=['GET', 'POST'])
+@login_required  # Certifique-se de que o usuário esteja logado para acessar esta rota
+def edit_reading(reading_id):
+    user_reading = UserReadings.query.get(reading_id)
+    if user_reading.user_id != current_user.id:
+        # Certifique-se de que o usuário só pode editar suas próprias leituras
+        flash('You do not have permission to edit this reading.', 'error')
+        return redirect(url_for('about_your_library'))
+
+    form = EditReadingForm(request.form)
+
+    if request.method == 'POST' and form.validate():
+        user_reading.current_page = form.current_page.data
+
+# Verifique se o livro tem um número total de páginas válido (maior que zero)
+    if user_reading.book.pages > 0:
+        user_reading.reading_percentage = (user_reading.current_page / user_reading.book.pages) * 100
+    else:
+        user_reading.reading_percentage = 0
+        # Atualize outros campos conforme necessário
+
+        db.session.commit()
+        flash('Reading information updated successfully!', 'success')
+        return redirect(url_for('about_your_library'))
+
+    # Passe o formulário e a leitura do usuário para o template de edição
+    return render_template('edit_reading.html', form=form, user_reading=user_reading)

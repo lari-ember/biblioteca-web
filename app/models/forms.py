@@ -45,3 +45,9 @@ class SearchForm(FlaskForm):
         ('publisher', 'Publisher')
     ], validators=[DataRequired()])
     search_term = StringField('Search Term', validators=[DataRequired()])
+
+
+class EditReadingForm(FlaskForm):
+    current_page = IntegerField('Current Page', validators=[DataRequired()])
+    # Adicione outros campos de edição conforme necessário
+    submit = SubmitField('Update')

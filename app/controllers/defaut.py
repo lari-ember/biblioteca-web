@@ -1,15 +1,18 @@
-from flask_login import current_user
 import csv
-from flask import Flask, current_app, render_template, request, redirect, flash, session, url_for
-from flask_login import LoginManager, current_user, login_required, login_user, logout_user, UserMixin
 from datetime import date, datetime
 
+from flask import (Flask, current_app, flash, redirect, render_template,
+                   request, session, url_for)
+from flask_login import (LoginManager, UserMixin, current_user, login_required,
+                         login_user, logout_user)
 from sqlalchemy import or_
-from app import UserRead, UserReadings, app, User, db, lm, Book
-from app.models.forms import LogReadingForm, LoginForm, RegistrationForm, BookForm, SearchForm, EditReadingForm
-from app.models.code_book import generate_book_code, book_genres
-from flask_login import login_user, logout_user
 from sqlalchemy.sql import func
+
+from app import Book, User, UserRead, UserReadings, app, db, lm
+from app.models.code_book import book_genres, generate_book_code
+from app.models.forms import (BookForm, EditReadingForm, LoginForm,
+                              LogReadingForm, RegistrationForm, SearchForm)
+
 
 def add_books_from_csv(file_path):
     with open(file_path, 'r') as file:
@@ -373,4 +376,3 @@ def edit_reading(reading_id):
 
     # Passe o formulário e a leitura do usuário para o template de edição
     return render_template('edit_reading.html', form=form, user_reading=user_reading)
-

@@ -34,18 +34,17 @@
         <td>{{ book.genre }}</td>
         <td>
           {% if book.read == 'read' %}
-            {% if book.completion_date %}
-              <span data-toggle="tooltip" data-placement="top"
-                    title="{{ book.completion_date }}">
-                {{ book.read }}
-              </span>
-            {% else %}
-              {{ book.read }}
-            {% endif %}
-          {% else %}
+          {% if book.completion_date %}
+          <span data-toggle="tooltip" data-placement="top" title="{{ book.completion_date }}">
             {{ book.read }}
+          </span>
+          {% else %}
+          {{ book.read }}
           {% endif %}
-        </td>        
+          {% else %}
+          {{ book.read }}
+          {% endif %}
+        </td>
         <td>{{ book.status }}</td>
         <td>{{ book.format }}</td>
         <td>{{ book.publisher }}</td>
@@ -75,8 +74,17 @@
 </script>
 <script>
   function openLoanPopup(bookId) {
-      // Abre uma nova janela pop-up para a rota '/loan_book' com o ID do livro
-      window.open(`/loan_book/${bookId}`, 'LoanBookWindow', 'width=600,height=400,scrollbars=yes');
+    const width = 600;
+    const height = 400;
+    const left = window.innerWidth / 2 - width / 2;
+    const top = window.innerHeight / 2 - height / 2;
+
+    // Abra a janela pop-up centrada na tela
+    const popupWindow = window.open(`/loan_book/${bookId}`, 'LoanBookWindow', `width=${width},height=${height},left=${left},top=${top},scrollbars=yes`);
+    if (window.focus) {
+      popupWindow.focus();
+    }
   }
+
 </script>
 {% endblock %}

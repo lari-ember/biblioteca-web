@@ -381,6 +381,7 @@ from flask import request
 @app.route('/loan_book/<int:book_id>', methods=['GET', 'POST'])
 @login_required
 def loan_book(book_id):
+    users = User.query.all()
     # Verifique se a solicitação é do tipo POST
     if request.method == 'POST':
     # Lógica para emprestar o livro
@@ -404,4 +405,4 @@ def loan_book(book_id):
             flash('book not found.', 'error')
             return redirect(url_for('your_collection', book_id=book_id))
         
-    return render_template('loan_book.html', book_id=book_id)
+    return render_template('loan_book.html', users=users, book_id=book_id)

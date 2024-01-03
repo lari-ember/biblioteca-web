@@ -23,7 +23,6 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 
   <style>
-    
     /*
          * Dummy devices (replace them with your own or something else entirely!)
          */
@@ -148,6 +147,22 @@
     select {
       background-color: black;
       color: aliceblue;
+    }
+
+    /* Adicione estilos para a janela pop-up */
+    .popup-window {
+      width: 600px;
+      height: 400px;
+      border: 2px solid #ccc;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      background-color: #fff;
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      /* Centralize a janela pop-up */
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
     }
   </style>
 
@@ -406,7 +421,7 @@
       }
     });
   </script>
-  
+
 </body>
 
 </html>

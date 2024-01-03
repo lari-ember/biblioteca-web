@@ -273,10 +273,6 @@ def edit_book(book_id):
                 code = generate_book_code(
                     form.genre.data, form.author.data, form.title.data)
             if code != book.code:
-                print('aaaaaaaaaaaaaaaaaaaa')
-                print(book.code)
-                print('bbbbbbbbbbbb')
-                print(code)
                 book.code = code
         if code is None:
             flash(f'Genre not found. Do you want to add a new genre?', 'warning')
@@ -383,7 +379,7 @@ from flask import request
 
 @app.route('/loan_book/<int:book_id>', methods=['POST'])
 @login_required  # Certifique-se de que o usuário esteja logado para emprestar um livro
-def emprestar_livro(book_id):
+def loan_book(book_id):
     # Lógica para emprestar o livro
     book = Book.query.get(book_id)
     if book:

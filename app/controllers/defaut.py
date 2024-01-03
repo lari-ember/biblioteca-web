@@ -377,27 +377,31 @@ def edit_reading(reading_id):
 
 from flask import request
 
-@app.route('/loan_book/<int:book_id>', methods=['POST'])
-@login_required  # Certifique-se de que o usuário esteja logado para emprestar um livro
+
+@app.route('/loan_book/<int:book_id>', methods=['GET', 'POST'])
+@login_required
 def loan_book(book_id):
+    # Verifique se a solicitação é do tipo POST
+    if request.method == 'POST':
     # Lógica para emprestar o livro
-    book = Book.query.get(book_id)
-    if book:
-        if book.status == 'borrowed':
-            flash('this book was borrowed.', 'warning')
+        book = Book.query.get(book_id)
+        if book:
+            if book.status == 'borrowed':
+                flash('this book was borrowed.', 'warning')
+            else:
+                loan = Loan(
+                    book_id=book.id,
+                    borrower_id=current_user.id,
+                    lender_id=current_user.id,  # Precisa ser atualizado com o ID do usuário atual
+                    date_borrowed=date.today(),
+                    due_date=date.today() + timedelta(days=15)  # Precisa ser calculada com base em um período definido
+                            )
+                db.session.add(loan)
+                book.status = 'borrowed'  # Atualiza o status do livro para emprestado
+                db.session.commit()
+                flash('sucessfully borrowed book!', 'success')
         else:
-            loan = Loan(
-                book_id=book.id,
-                borrower_id=current_user.id,
-                lender_id=current_user.id,  # Precisa ser atualizado com o ID do usuário atual
-                date_borrowed=date.today(),
-                due_date=date.today() + timedelta(days=15)  # Precisa ser calculada com base em um período definido
-            )
-            db.session.add(loan)
-            book.status = 'borrowed'  # Atualiza o status do livro para emprestado
-            db.session.commit()
-            flash('sucessfully borrowed book!', 'success')
-    else:
-        flash('book not found.', 'error')
-    
-    return redirect(url_for('your_collection', book_id=book_id))
+            flash('book not found.', 'error')
+            return redirect(url_for('your_collection', book_id=book_id))
+        
+    return render_template('loan_book.html', book_id=book_id)

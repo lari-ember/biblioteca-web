@@ -54,7 +54,7 @@
           <a href="{{ url_for('edit_book', book_id=book.id) }}" class="btn btn-outline-warning">Edit</a>
           <!-- Botão de exclusão -->
           <button class="btn btn-outline-danger" onclick="confirmDelete({{ book.id }})">Delete</button>
-          <button type="submit">loan book</button>
+          <button class="btn btn-primary" onclick="openLoanPopup({{ book.id }})">Loan Book</button>
         </td>
       </tr>
       {% endfor %}
@@ -72,5 +72,11 @@
   $(document).ready(function () {
     $('[data-toggle="tooltip"]').tooltip();
   });
+</script>
+<script>
+  function openLoanPopup(bookId) {
+      // Abre uma nova janela pop-up para a rota '/loan_book' com o ID do livro
+      window.open(`/loan_book/${bookId}`, 'LoanBookWindow', 'width=600,height=400,scrollbars=yes');
+  }
 </script>
 {% endblock %}

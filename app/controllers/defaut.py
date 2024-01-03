@@ -15,7 +15,7 @@ from app.models.forms import (BookForm, EditReadingForm, LoginForm,
 
 
 def add_books_from_csv(file_path):
-    with open(file_path, 'r') as file:
+    with open(file_path, 'r', encoding='UTF-8') as file:
         reader = csv.DictReader(file)
         for row in reader:
             book = Book(
@@ -318,7 +318,8 @@ def about_your_library():
     print(total_pages_completed)
     print(total_pages_in_progress)
     sum_pages = total_pages_in_progress + total_pages_completed
-    return render_template('about_your_library.html', book_genres=book_genres, user_readings=user_readings, sum_pages=sum_pages)
+    genre_counts = db.session.query(Book.genre, func.count(Book.id)).group_by(Book.genre).all()
+    return render_template('about_your_library.html', book_genres=book_genres, user_readings=user_readings, sum_pages=sum_pages, genre_counts=genre_counts)
 
 
 @app.route('/add_to_current_readings/<int:book_id>', methods=['GET', 'POST'])

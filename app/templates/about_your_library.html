@@ -152,6 +152,7 @@
                     <tr>
                         <th>Genre Code</th>
                         <th>Genre Name</th>
+                        <th>Book Count</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -159,10 +160,16 @@
                     <tr>
                         <td>{{ code }}</td>
                         <td>{{ name }}</td>
+                        {% if loop.index0 < genre_counts|length %}
+                            <td>{{ genre_counts[loop.index0][1] }}</td>
+                        {% else %}
+                            <td>0</td>
+                        {% endif %}
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
+            
         </div>
     </div>
 

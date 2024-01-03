@@ -114,6 +114,23 @@ class UserReadings(db.Model):
     def __repr__(self):
         return f'<UserReading user_id={self.user_id}, book_id={self.book_id}, current_page={self.current_page}, reading_percentage={self.reading_percentage}, time_spent={self.time_spent}, estimated_time={self.estimated_time}>'
 
+class Loan(db.Model):
+    __tablename__ = 'loans'
+    id = db.Column(db.Integer, primary_key=True)
+    book_id = db.Column(db.Integer, db.ForeignKey('books.id'), nullable=False)
+    borrower_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    lender_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    date_borrowed = db.Column(db.Date, nullable=False)
+    due_date = db.Column(db.Date, nullable=False)
+    date_returned = db.Column(db.Date, nullable=True)
+
+    def __init__(self, book_id, borrower_id, lender_id, date_borrowed, due_date):
+        self.book_id = book_id
+        self.borrower_id = borrower_id
+        self.lender_id = lender_id
+        self.date_borrowed = date_borrowed
+        self.due_date = due_date
+
 class UserRead(db.Model):
     __tablename__ = 'user_reads'
     id = db.Column(db.Integer, primary_key=True)

@@ -1,5 +1,6 @@
+from flask import request
 import csv
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 
 from flask import (Flask, current_app, flash, redirect, render_template,
                    request, session, url_for)
@@ -8,7 +9,7 @@ from flask_login import (LoginManager, UserMixin, current_user, login_required,
 from sqlalchemy import or_
 from sqlalchemy.sql import func
 
-from app import Book, User, UserRead, UserReadings, app, db, lm
+from app import Book, User, UserRead, UserReadings, Loan, app, db, lm
 from app.models.code_book import book_genres, generate_book_code
 from app.models.forms import (BookForm, EditReadingForm, LoginForm,
                               LogReadingForm, RegistrationForm, SearchForm)
@@ -41,7 +42,7 @@ csv_file_path = 'C:/Users/bolsista.SFDA-DOACAO-BOL/Documents/GitHub/Biblioteca/a
 
 @lm.user_loader
 def load_user(user_id):
-    #add_books_from_csv(csv_file_path)
+    # add_books_from_csv(csv_file_path)
     # Implement the code to load the user from the database based on the user ID
     # Return the user object if found, or None if not found
     return User.query.get(int(user_id))
@@ -303,18 +304,21 @@ def about_your_library():
         return redirect('/login')
         # Calcula a soma das páginas lidas nos livros já concluídos (UserRead)
     if db.session.query(func.sum(Book.pages)).filter(Book.read == 'read').scalar() != None:
-        total_pages_completed = db.session.query(func.sum(Book.pages)).filter(Book.read == 'read').scalar()
+        total_pages_completed = db.session.query(
+            func.sum(Book.pages)).filter(Book.read == 'read').scalar()
     else:
         total_pages_completed = 0
     # Calcula a soma das páginas lidas nos livros em andamento (UserReadings)
     if db.session.query(func.sum(UserReadings.current_page)).filter(UserReadings.user_id == current_user.id).scalar() != None:
-        total_pages_in_progress = db.session.query(func.sum(UserReadings.current_page)).filter(UserReadings.user_id == current_user.id).scalar()
+        total_pages_in_progress = db.session.query(func.sum(UserReadings.current_page)).filter(
+            UserReadings.user_id == current_user.id).scalar()
     else:
         total_pages_in_progress = 0
     print(total_pages_completed)
     print(total_pages_in_progress)
     sum_pages = total_pages_in_progress + total_pages_completed
-    genre_counts = db.session.query(Book.genre, func.count(Book.id)).group_by(Book.genre).all()
+    genre_counts = db.session.query(
+        Book.genre, func.count(Book.id)).group_by(Book.genre).all()
     return render_template('about_your_library.html', book_genres=book_genres, user_readings=user_readings, sum_pages=sum_pages, genre_counts=genre_counts)
 
 
@@ -327,18 +331,21 @@ def add_to_current_readings(book_id):
         return redirect(url_for('search'))
 
     # Verifique se o livro já está na tabela de leituras em andamento do usuário
-    user_reading = UserReadings.query.filter_by(user_id=current_user.id, book_id=book.id).first()
+    user_reading = UserReadings.query.filter_by(
+        user_id=current_user.id, book_id=book.id).first()
     if user_reading:
         flash('Book already in current readings', 'error')
         return redirect(url_for('search'))
 
     # Adicione o livro à tabela de leituras em andamento
-    user_reading = UserReadings(current_user.id, book.id, current_page=0, reading_percentage=0.0, time_spent=0, estimated_time=0)
+    user_reading = UserReadings(current_user.id, book.id, current_page=0,
+                                reading_percentage=0.0, time_spent=0, estimated_time=0)
     db.session.add(user_reading)
     db.session.commit()
 
     flash('Book added to current readings', 'success')
     return redirect(url_for('about_your_library'))
+
 
 @app.route('/edit_reading/<int:reading_id>', methods=['GET', 'POST'])
 @login_required  # Certifique-se de que o usuário esteja logado para acessar esta rota
@@ -356,7 +363,8 @@ def edit_reading(reading_id):
 
 # Verifique se o livro tem um número total de páginas válido (maior que zero)
         if user_reading.book.pages > 0:
-            user_reading.reading_percentage = round((user_reading.current_page / user_reading.book.pages) * 100, 2)
+            user_reading.reading_percentage = round(
+                (user_reading.current_page / user_reading.book.pages) * 100, 2)
             if user_reading.reading_percentage == 100:
                 # Atualize o campo "read" na tabela de livros
                 user_reading.book.read = 'read'
@@ -375,16 +383,13 @@ def edit_reading(reading_id):
     return render_template('edit_reading.html', form=form, user_reading=user_reading)
 
 
-from flask import request
-
-
 @app.route('/loan_book/<int:book_id>', methods=['GET', 'POST'])
 @login_required
 def loan_book(book_id):
     users = User.query.all()
     # Verifique se a solicitação é do tipo POST
     if request.method == 'POST':
-    # Lógica para emprestar o livro
+        # Lógica para emprestar o livro
         book = Book.query.get(book_id)
         if book:
             if book.status == 'borrowed':
@@ -395,14 +400,15 @@ def loan_book(book_id):
                     borrower_id=current_user.id,
                     lender_id=current_user.id,  # Precisa ser atualizado com o ID do usuário atual
                     date_borrowed=date.today(),
-                    due_date=date.today() + timedelta(days=15)  # Precisa ser calculada com base em um período definido
-                            )
+                    # Precisa ser calculada com base em um período definido
+                    due_date=date.today() + timedelta(days=15)
+                )
                 db.session.add(loan)
                 book.status = 'borrowed'  # Atualiza o status do livro para emprestado
                 db.session.commit()
                 flash('sucessfully borrowed book!', 'success')
         else:
             flash('book not found.', 'error')
-            return redirect(url_for('your_collection', book_id=book_id))
-        
+            return render_template_string('close_window.html')
+
     return render_template('loan_book.html', users=users, book_id=book_id)

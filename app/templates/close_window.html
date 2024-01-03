@@ -1,12 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <title>Close Window</title>
-</head>
-<body>
-  <script>
-    // Fecha a janela pop-up
+{% extends 'base.html' %}
+
+{% block content %}
+<script>
+  // Fecha a janela pop-up após um período de tempo (por exemplo, 2 segundos)
+  setTimeout(() => {
     window.close();
-  </script>
-</body>
-</html>
+  }, 5000); // Altere o tempo conforme necessário
+</script>
+
+{% endblock %}

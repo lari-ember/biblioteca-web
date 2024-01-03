@@ -409,6 +409,12 @@ def loan_book(book_id):
                 flash('sucessfully borrowed book!', 'success')
         else:
             flash('book not found.', 'error')
-            return render_template_string('close_window.html')
+        return redirect(url_for('close_window', book_id=book_id))
 
     return render_template('loan_book.html', users=users, book_id=book_id)
+
+
+@app.route('/close_window/<int:book_id>', methods=['GET', 'POST'])
+@login_required
+def close_window(book_id, mensage):
+    return render_template('close_window.html')

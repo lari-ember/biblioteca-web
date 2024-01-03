@@ -54,6 +54,7 @@
           <a href="{{ url_for('edit_book', book_id=book.id) }}" class="btn btn-outline-warning">Edit</a>
           <!-- Botão de exclusão -->
           <button class="btn btn-outline-danger" onclick="confirmDelete({{ book.id }})">Delete</button>
+          <button type="submit">loan book</button>
         </td>
       </tr>
       {% endfor %}

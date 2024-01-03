@@ -377,3 +377,31 @@ def edit_reading(reading_id):
 
     # Passe o formulário e a leitura do usuário para o template de edição
     return render_template('edit_reading.html', form=form, user_reading=user_reading)
+
+
+from flask import request
+
+@app.route('/loan_book/<int:book_id>', methods=['POST'])
+@login_required  # Certifique-se de que o usuário esteja logado para emprestar um livro
+def emprestar_livro(book_id):
+    # Lógica para emprestar o livro
+    book = Book.query.get(book_id)
+    if book:
+        if book.status == 'borrowed':
+            flash('this book was borrowed.', 'warning')
+        else:
+            loan = Loan(
+                book_id=book.id,
+                borrower_id=current_user.id,
+                lender_id=current_user.id,  # Precisa ser atualizado com o ID do usuário atual
+                date_borrowed=date.today(),
+                due_date=date.today() + timedelta(days=15)  # Precisa ser calculada com base em um período definido
+            )
+            db.session.add(loan)
+            book.status = 'borrowed'  # Atualiza o status do livro para emprestado
+            db.session.commit()
+            flash('sucessfully borrowed book!', 'success')
+    else:
+        flash('book not found.', 'error')
+    
+    return redirect(url_for('your_collection', book_id=book_id))

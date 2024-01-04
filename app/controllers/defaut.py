@@ -387,28 +387,32 @@ def edit_reading(reading_id):
 @login_required
 def loan_book(book_id):
     users = User.query.all()
-    # Verifique se a solicitação é do tipo POST
     if request.method == 'POST':
-        # Lógica para emprestar o livro
         book = Book.query.get(book_id)
         if book:
             if book.status == 'borrowed':
-                flash('this book was borrowed.', 'warning')
+                flash('This book is already borrowed.', 'warning')
             else:
+                # Get the lender ID from the selected user (borrower ID should already be current_user.id)
+                selected_user_id = request.form.get('selected_user_id')  # Assuming you have a form field to select a user
+                if not selected_user_id:
+                    flash('Please select a user to borrow the book.', 'error')
+                    return redirect(url_for('loan_book', book_id=book_id))
+
                 loan = Loan(
                     book_id=book.id,
                     borrower_id=current_user.id,
-                    lender_id=current_user.id,  # Precisa ser atualizado com o ID do usuário atual
+                    lender_id=selected_user_id,  # Update with the selected user's ID
                     date_borrowed=date.today(),
-                    # Precisa ser calculada com base em um período definido
                     due_date=date.today() + timedelta(days=15)
                 )
+                book.loan_id = loan.id  # Atualiza o livro emprestado com o ID do empréstimo
                 db.session.add(loan)
-                book.status = 'borrowed'  # Atualiza o status do livro para emprestado
+                book.status = 'borrowed'
                 db.session.commit()
-                flash('sucessfully borrowed book!', 'success')
+                flash('Successfully borrowed the book!', 'success')
         else:
-            flash('book not found.', 'error')
+            flash('Book not found.', 'error')
         return redirect(url_for('close_window', book_id=book_id))
 
     return render_template('loan_book.html', users=users, book_id=book_id)

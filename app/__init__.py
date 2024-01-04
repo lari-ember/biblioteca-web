@@ -1,4 +1,3 @@
-from app.controllers import defaut
 from datetime import date
 
 from flask import Flask, flash, redirect, render_template, url_for, request
@@ -6,7 +5,7 @@ from flask_login import (LoginManager, current_user, login_required,
                          login_user, logout_user, UserMixin)
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import or_
-# from utils.forms import BookForm, LoginForm, SearchForm
+#from utils.forms import BookForm, LoginForm, SearchForm
 from werkzeug.security import check_password_hash, generate_password_hash
 from sqlalchemy.sql import text
 
@@ -26,10 +25,8 @@ class User(db.Model):
     password_hash = db.Column(db.String(), nullable=False)
     name = db.Column(db.String(), nullable=False)
     books = db.relationship('Book', backref='user', lazy=True)
-    # Adicione este atributo de relacionamento
-    user_readings = db.relationship('UserReadings', backref='user', lazy=True)
-    loan_id = db.Column(db.Integer, db.ForeignKey('loans.id'), nullable=True)  # Chave estrangeira para a tabela Loan
-
+    user_readings = db.relationship('UserReadings', backref='user', lazy=True)  # Adicione este atributo de relacionamento
+    
     @property
     def is_authenticated(self):
         return True
@@ -42,24 +39,26 @@ class User(db.Model):
     def is_anonymous(self):
         return False
 
+
     def get_id(self):
         return str(self.id)
 
+    
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
-
+    
+    
     def __init__(self, username, password, name):
         self.username = username
         self.password = password
         self.name = name
-
+        
     def __repr__(self):
         return f'<User {self.username}>'
-
-
+    
 class Book(db.Model):
     __tablename__ = 'books'
     id = db.Column(db.Integer, primary_key=True)
@@ -69,16 +68,13 @@ class Book(db.Model):
     publisher = db.Column(db.String(100), nullable=False)
     year = db.Column(db.Integer, nullable=False)
     pages = db.Column(db.Integer, nullable=False)
-    # 'available', 'borrowed', or 'ex-libris'
-    status = db.Column(db.String(50), nullable=False)
-    # 'physical', 'e-book', or 'pdf'
-    format = db.Column(db.String(50), nullable=False)
+    status = db.Column(db.String(50), nullable=False)  # 'available', 'borrowed', or 'ex-libris'
+    format = db.Column(db.String(50), nullable=False)  # 'physical', 'e-book', or 'pdf'
     read = db.Column(db.String(10), nullable=False)
     genre = db.Column(db.String(50), nullable=False)
     completion_date = db.Column(db.String(11), nullable=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    # Adicione este atributo de relacionamento
-    user_readings = db.relationship('UserReadings', backref='book', lazy=True)
+    user_readings = db.relationship('UserReadings', backref='book', lazy=True)  # Adicione este atributo de relacionamento
     loan_id = db.Column(db.Integer, db.ForeignKey('loans.id'), nullable=True)  # Chave estrangeira para a tabela Loan
 
     def __init__(self, user_id, code, title, author, publisher, year, pages, genre, status, format, read):
@@ -119,15 +115,12 @@ class UserReadings(db.Model):
     def __repr__(self):
         return f'<UserReading user_id={self.user_id}, book_id={self.book_id}, current_page={self.current_page}, reading_percentage={self.reading_percentage}, time_spent={self.time_spent}, estimated_time={self.estimated_time}>'
 
-
 class Loan(db.Model):
     __tablename__ = 'loans'
     id = db.Column(db.Integer, primary_key=True)
     book_id = db.Column(db.Integer, db.ForeignKey('books.id'), nullable=False)
-    borrower_id = db.Column(
-        db.Integer, db.ForeignKey('users.id'), nullable=False)
-    lender_id = db.Column(
-        db.Integer, db.ForeignKey('users.id'), nullable=False)
+    borrower_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    lender_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     date_borrowed = db.Column(db.Date, nullable=False)
     due_date = db.Column(db.Date, nullable=False)
     date_returned = db.Column(db.Date, nullable=True)
@@ -138,7 +131,6 @@ class Loan(db.Model):
         self.lender_id = lender_id
         self.date_borrowed = date_borrowed
         self.due_date = due_date
-
 
 class UserRead(db.Model):
     __tablename__ = 'user_reads'
@@ -165,3 +157,5 @@ with app.app_context():
 @lm.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
+
+from app.controllers import defaut

@@ -394,31 +394,46 @@ def loan_book(book_id):
                 flash('This book is already borrowed.', 'warning')
             else:
                 # Get the lender ID from the selected user (borrower ID should already be current_user.id)
-                selected_user_id = request.form.get('selected_user_id')  # Assuming you have a form field to select a user
+                # Assuming you have a form field to select a user
+                selected_user_id = request.form.get('borrower')
                 if not selected_user_id:
                     flash('Please select a user to borrow the book.', 'error')
                     return redirect(url_for('loan_book', book_id=book_id))
-
-                loan = Loan(
-                    book_id=book.id,
-                    borrower_id=current_user.id,
-                    lender_id=selected_user_id,  # Update with the selected user's ID
-                    date_borrowed=date.today(),
-                    due_date=date.today() + timedelta(days=15)
-                )
-                book.loan_id = loan.id  # Atualiza o livro emprestado com o ID do empréstimo
-                db.session.add(loan)
-                book.status = 'borrowed'
+                else:
+                    loan = Loan(
+                        book_id=book.id,
+                        borrower_id=current_user.id,
+                        lender_id=selected_user_id,  # Update with the selected user's ID
+                        date_borrowed=date.today(),
+                        due_date=date.today() + timedelta(days=15)
+                    )
+                    book.loan_id = loan.id  # Atualiza o livro emprestado com o ID do empréstimo
+                    db.session.add(loan)
+                    book.status = 'borrowed'
+                    book_borrowed = Book(
+                        user_id=selected_user_id,
+                        code=f'B-> {book.code}',
+                        title=book.title,
+                        author=book.author,
+                        publisher=book.publisher,
+                        year=book.year,
+                        pages=book.pages,
+                        genre=book.genre,
+                        format=book.format,
+                        read='unread',
+                        status='voluit',
+                    )
+                db.session.add(book_borrowed)
                 db.session.commit()
                 flash('Successfully borrowed the book!', 'success')
         else:
             flash('Book not found.', 'error')
-        return redirect(url_for('close_window', book_id=book_id))
+        return redirect(url_for('close_window'))
 
     return render_template('loan_book.html', users=users, book_id=book_id)
 
 
-@app.route('/close_window/<int:book_id>', methods=['GET', 'POST'])
+@app.route('/close_window/', methods=['GET', 'POST'])
 @login_required
-def close_window(book_id, mensage):
+def close_window():
     return render_template('close_window.html')

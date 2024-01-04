@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Larissa's Social Midia</title>
-    <link rel="stylesheet" href="css/pestilo.css">
+    <link rel="stylesheet" href="../static/css/profile.css">
     <link href="https://getbootstrap.com.br/docs/4.1/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 
@@ -14,7 +14,7 @@
     <div class="container d-flex justify-content-center">
         <div class="card p-3 py-4">
             <div class="text-center">
-                <img src="images/profile-pic.jpg"
+                <img src="../static/images/profile-pic.jpg"
                         class="rounded-circle"
                         alt="foto da Larissa ember, com uma camiseta branca, e escritos: 'casal perfeito', saia cinza xadrez, ao fundo a paisagem de um prédio antigo.">
                 <h3 class="mt-2">Larissa Ember</h3>
@@ -24,7 +24,7 @@
 
                     <div class="col-md-4">
                         <h4>Idade</h4>
-                        <span class="num">18</span>
+                        <span class="num">20</span>
                     </div>
                     <div class="col-md-4">
                         <h4>Identidade</h4>
@@ -33,7 +33,8 @@
                     </div>
                     <div class="col-md-4">
                         <h4>Projeto Atual</h4>
-                        <a href="index"><span class="num">The Last Ephifany</span></a>
+                        <a href="{{ url_for('index') }}"><span class="num">amber archively
+                        </span></a>
                     </div>
                     <br>
 
@@ -44,15 +45,15 @@
                 <h3 class="">Você pode se concectar comigo pelas seguintes redes:</h4>
                     <div class="social-buttons mt-5">
                         <a href="https://www.linkedin.com/in/" target="_blank" rel="external" title="Linkedin"><button
-                                class="neo-button" ><img src="images/icone-linkedin.png"
+                                class="neo-button" ><img src="../static/images/icone-linkedin.png"
                                     alt="icone do linkedin"></button></a>
                         <a a href="https://github.com/Lari-ember" target="_blank" rel="external" title="Github"><button
                                 class="neo-button">
-                                <img src="images/icone-github.png" alt="icone do github"></button></a>
+                                <img src="../static/images/icone-github.png" alt="icone do github"></button></a>
                         <a href="https://www.instagram.com/lari.ember" target="_blank" rel="external" title="Instagram"><button
-                                class="neo-button"><img src="images/icone-instagram.png" alt="icone do instagram"></button></a>
+                                class="neo-button"><img src="../static/images/icone-instagram.png" alt="icone do instagram"></button></a>
                         <a href="https://twitter.com/Lari.ember" target="_blank" rel="external" title="twitter"><button
-                                class="neo-button"><img src="images/icone-twitter.png"
+                                class="neo-button"><img src="../static/images/icone-twitter.png"
                                     alt="icone do twitter"></button></a>
                     </div>
 

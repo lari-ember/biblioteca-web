@@ -319,7 +319,8 @@ def about_your_library():
     sum_pages = total_pages_in_progress + total_pages_completed
     genre_counts = db.session.query(
         Book.genre, func.count(Book.id)).group_by(Book.genre).all()
-    return render_template('about_your_library.html', book_genres=book_genres, user_readings=user_readings, sum_pages=sum_pages, genre_counts=genre_counts)
+    borrowed_books = Book.query.filter_by(status='borrowed').all()
+    return render_template('about_your_library.html', book_genres=book_genres, user_readings=user_readings, sum_pages=sum_pages, genre_counts=genre_counts, borrowed_books=borrowed_books)
 
 
 @app.route('/add_to_current_readings/<int:book_id>', methods=['GET', 'POST'])
@@ -437,3 +438,22 @@ def loan_book(book_id):
 @login_required
 def close_window():
     return render_template('close_window.html')
+
+
+@app.route('/change_status/<int:book_id>', methods=['POST'])
+@login_required
+def change_status(book_id):
+    new_status = request.json.get('newStatus')
+
+    book = Book.query.get(book_id)
+    if book:
+        book.status = new_status
+        db.session.commit()
+        return 'Status updated successfully', 200
+    else:
+        return 'Book not found', 404
+
+
+@app.route('/profile/')
+def profile():
+    return render_template('profile.html')

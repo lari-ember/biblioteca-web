@@ -217,7 +217,6 @@
             })
                 .then(response => {
                     if (response.ok) {
-                        // Status alterado com sucesso, faça alguma ação (recarregar a página, notificar o usuário, etc.)
                         window.location.reload(); // Recarrega a página para refletir as alterações
                     } else {
                         throw new Error('Failed to change status');

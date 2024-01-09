@@ -449,6 +449,10 @@ def change_status(book_id):
     if book:
         book.status = new_status
         db.session.commit()
+        loan = Loan.query.filter_by(book_id=book_id).first()
+        if loan:
+            db.session.delete(loan)  # Exclua o registro de empréstimo
+            db.session.commit()
         return 'Status updated successfully', 200
     else:
         return 'Book not found', 404

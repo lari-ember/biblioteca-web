@@ -8,6 +8,7 @@ from flask_login import (LoginManager, UserMixin, current_user, login_required,
                          login_user, logout_user)
 from sqlalchemy import or_
 from sqlalchemy.sql import func
+from sqlalchemy import and_
 
 from app import Book, User, UserRead, UserReadings, Loan, app, db, lm
 from app.models.code_book import book_genres, generate_book_code
@@ -267,10 +268,7 @@ def edit_book(book_id):
             flash('User is not authenticated', 'error')
             return redirect(url_for('login'))
         if book.genre != form.genre.data:
-            print(book.genre)
-            print(form.genre.data)
             with current_app.app_context():
-                print(form.author.data)
                 code = generate_book_code(
                     form.genre.data, form.author.data, form.title.data)
             if code != book.code:
@@ -314,8 +312,6 @@ def about_your_library():
             UserReadings.user_id == current_user.id).scalar()
     else:
         total_pages_in_progress = 0
-    print(total_pages_completed)
-    print(total_pages_in_progress)
     sum_pages = total_pages_in_progress + total_pages_completed
     genre_counts = db.session.query(
         Book.genre, func.count(Book.id)).group_by(Book.genre).all()
@@ -370,7 +366,6 @@ def edit_reading(reading_id):
                 # Atualize o campo "read" na tabela de livros
                 user_reading.book.read = 'read'
                 user_reading.book.completion_date = datetime.now().strftime('%m-%d-%y')
-                print(user_reading.book.completion_date)
                 # Exclua o livro da tabela de leituras em andamento
                 db.session.delete(user_reading)
         else:
@@ -449,13 +444,24 @@ def change_status(book_id):
     if book:
         book.status = new_status
         db.session.commit()
+        # Filtrar os livros pelo ID do usuário e pelo status "voluit"
         loan = Loan.query.filter_by(book_id=book_id).first()
         if loan:
-            db.session.delete(loan)  # Exclua o registro de empréstimo
-            db.session.commit()
+            old_owner_id = loan.lender_id
+            old_owner = User.query.get(old_owner_id)
+            book_with_status_voluit = Book.query.filter(and_(Book.user_id == old_owner.id, Book.status == 'voluit')).first()
+            if book_with_status_voluit:
+                # Verificar se o livro tem um loan_id (se está emprestado)
+                satan = Loan.query.filter_by(book_id=book_with_status_voluit.id).first()
+                if satan:
+                    db.session.delete(satan)
+                    
+                db.session.delete(loan)  # Exclua o registro de empréstimo
+                db.session.commit()
         return 'Status updated successfully', 200
     else:
         return 'Book not found', 404
+
 
 
 @app.route('/profile/')

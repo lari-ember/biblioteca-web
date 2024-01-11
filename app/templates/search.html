@@ -50,10 +50,14 @@
                 <td>{{ book.publisher }}</td>
                 <td>
                     <!-- Botão de edição -->
-                    <a href=""{{ url_for('edit_book', book_id=book.id) }}"" class="btn btn-outline-warning">Edit</a>
+                    <a href="" {{ url_for('edit_book', book_id=book.id) }}"" class="btn btn-outline-warning">Edit</a>
                     <!-- Botão de exclusão -->
                     <button class="btn btn-outline-danger" onclick="confirmDelete({{ book.id }})">Delete</button>
-                    <a href="{{ url_for('add_to_current_readings', book_id=book.id) }}" class="btn btn-outline-success">Add to Current Reading</a>
+                    <a href="{{ url_for('add_to_current_readings', book_id=book.id) }}"
+                        class="btn btn-outline-success">Add to Reading</a>
+                    {% if book.status not in ['borrowed', 'voluit'] %}
+                    <button class="btn btn-primary" onclick="openLoanPopup({{ book.id }})">Loan Book</button>
+                    {% endif %}
                 </td>
             </tr>
             {% endfor %}
@@ -67,5 +71,20 @@
             window.location.href = "/delete_book/" + bookId;
         }
     }
+</script>
+<script>
+    function openLoanPopup(bookId) {
+        const width = 600;
+        const height = 400;
+        const left = window.innerWidth / 2 - width / 2;
+        const top = window.innerHeight / 2 - height / 2;
+
+        // Abra a janela pop-up centrada na tela
+        const popupWindow = window.open(`/loan_book/${bookId}`, 'LoanBookWindow', `width=${width},height=${height},left=${left},top=${top},scrollbars=yes`);
+        if (window.focus) {
+            popupWindow.focus();
+        }
+    }
+
 </script>
 {% endblock %}

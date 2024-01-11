@@ -8,6 +8,7 @@ from sqlalchemy import or_
 #from utils.forms import BookForm, LoginForm, SearchForm
 from werkzeug.security import check_password_hash, generate_password_hash
 from sqlalchemy.sql import text
+from sqlalchemy import func
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = 'sqlite:///storage.db'
@@ -25,7 +26,8 @@ class User(db.Model):
     password_hash = db.Column(db.String(), nullable=False)
     name = db.Column(db.String(), nullable=False)
     books = db.relationship('Book', backref='user', lazy=True)
-    user_readings = db.relationship('UserReadings', backref='user', lazy=True)  # Adicione este atributo de relacionamento
+    user_readings = db.relationship('UserReadings', backref='user', lazy=True)  # atributo de relacionamento
+    sum_pages = db.Column(db.Integer)
     
     @property
     def is_authenticated(self):
@@ -57,7 +59,14 @@ class User(db.Model):
         self.name = name
         
     def __repr__(self):
-        return f'<User {self.username}>'
+        return f'{self.name}'
+    
+    def update_sum_pages(self):
+        total_pages_completed = db.session.query(func.sum(Book.pages)).filter(Book.read == 'read').scalar() or 0
+        total_pages_in_progress = db.session.query(func.sum(UserReadings.current_page)).filter(
+            UserReadings.user_id == self.id).scalar() or 0
+        self.sum_pages = total_pages_in_progress + total_pages_completed
+        db.session.commit()
     
 class Book(db.Model):
     __tablename__ = 'books'
@@ -76,6 +85,7 @@ class Book(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     user_readings = db.relationship('UserReadings', backref='book', lazy=True)  # Adicione este atributo de relacionamento
     loan_id = db.Column(db.Integer, db.ForeignKey('loans.id'), nullable=True)  # Chave estrangeira para a tabela Loan
+    loan = db.relationship('Loan', backref='book', uselist=False,foreign_keys="[Loan.book_id]")
 
     def __init__(self, user_id, code, title, author, publisher, year, pages, genre, status, format, read):
         self.user_id = user_id
@@ -124,6 +134,8 @@ class Loan(db.Model):
     date_borrowed = db.Column(db.Date, nullable=False)
     due_date = db.Column(db.Date, nullable=False)
     date_returned = db.Column(db.Date, nullable=True)
+    borrower = db.relationship('User', foreign_keys=[borrower_id])
+    lender = db.relationship('User', foreign_keys=[lender_id])
 
     def __init__(self, book_id, borrower_id, lender_id, date_borrowed, due_date):
         self.book_id = book_id

@@ -179,7 +179,7 @@
           {% if current_user.is_authenticated %}
           <h2>welcome {{ current_user.username }}</h2>
           <p>Number of books in your library: {{ current_user.books|length }}</p>
-          <p>total pages read: </p>
+          <p>total pages read: {{ current_user.sum_pages }}</p>
           <p>Lorem ipsum dolor sit amet...</p>
           {% endif %}
           <div class="datetime">

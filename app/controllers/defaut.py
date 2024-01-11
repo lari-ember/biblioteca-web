@@ -43,7 +43,7 @@ csv_file_path = 'C:/Users/bolsista.SFDA-DOACAO-BOL/Documents/GitHub/Biblioteca/a
 
 @lm.user_loader
 def load_user(user_id):
-    # add_books_from_csv(csv_file_path)
+    #add_books_from_csv(csv_file_path)
     # Implement the code to load the user from the database based on the user ID
     # Return the user object if found, or None if not found
     return User.query.get(int(user_id))
@@ -135,6 +135,11 @@ def get_logged_in_user():
 
 @app.route('/register_new_book', methods=['GET', 'POST'])
 def register_new_book():
+    # Verifique se o usuário está logado
+    user = get_logged_in_user()
+    if not user:
+        # Redirecione para a página de login ou tome qualquer outra ação que você desejar para lidar com usuários não logados
+        return redirect('/login')
     form = BookForm(request.form)
     if request.method == 'POST' and form.validate():
         user = get_logged_in_user()
@@ -224,26 +229,42 @@ field_mapping = {
 
 @app.route('/search', methods=['GET', 'POST'])
 def search():
+        # Verifique se o usuário está logado
+    user = get_logged_in_user()
+    if not user:
+        # Redirecione para a página de login ou tome qualquer outra ação que você desejar para lidar com usuários não logados
+        return redirect('/login')
     form = SearchForm()
 
     if form.validate_on_submit():
         search_field = form.search_field.data
         search_term = form.search_term.data
 
-        # Realize a pesquisa com base nos dados fornecidos
-        if search_field and search_field in field_mapping:
-            field = field_mapping[search_field]
-            if search_field == 'pages' or search_field == 'year':
-                # Realize a pesquisa com base em um valor numérico
-                try:
-                    search_term = int(search_term)
-                    books = Book.query.filter(field == search_term).all()
-                except ValueError:
-                    books = []
+        # Obtém o usuário logado
+        user = get_logged_in_user()
+
+        if user:
+            # Realize a pesquisa com base nos dados fornecidos
+            if search_field and search_field in field_mapping:
+                field = field_mapping[search_field]
+                if search_field == 'pages' or search_field == 'year':
+                    # Realize a pesquisa com base em um valor numérico
+                    try:
+                        search_term = int(search_term)
+                        books = Book.query.filter(
+                            (field == search_term) &
+                            (Book.user_id == user.id)
+                        ).all()
+                    except ValueError:
+                        books = []
+                else:
+                    # Realize a pesquisa com base em uma string
+                    books = Book.query.filter(
+                        (field.ilike(f'%{search_term}%')) &
+                        (Book.user_id == user.id)
+                    ).all()
             else:
-                # Realize a pesquisa com base em uma string
-                books = Book.query.filter(
-                    field.ilike(f'%{search_term}%')).all()
+                books = []
         else:
             books = []
 
@@ -295,12 +316,12 @@ def edit_book(book_id):
 
 @app.route('/about_your_library')
 def about_your_library():
-    user_readings = current_user.user_readings
     user = get_logged_in_user()
     if not user:
         # Redirecione para a página de login ou tome qualquer outra ação que você desejar para lidar com usuários não logados
         return redirect('/login')
         # Calcula a soma das páginas lidas nos livros já concluídos (UserRead)
+    user_readings = current_user.user_readings
     if db.session.query(func.sum(Book.pages)).filter(Book.read == 'read').scalar() != None:
         total_pages_completed = db.session.query(
             func.sum(Book.pages)).filter(Book.read == 'read').scalar()
@@ -313,9 +334,11 @@ def about_your_library():
     else:
         total_pages_in_progress = 0
     sum_pages = total_pages_in_progress + total_pages_completed
+    current_user.update_sum_pages()
     genre_counts = db.session.query(
         Book.genre, func.count(Book.id)).group_by(Book.genre).all()
-    borrowed_books = Book.query.filter_by(status='borrowed').all()
+    borrowed_books = Book.query.filter(
+    or_(Book.status == 'borrowed', Book.status == 'voluit'), Book.user_id == current_user.id).all()
     return render_template('about_your_library.html', book_genres=book_genres, user_readings=user_readings, sum_pages=sum_pages, genre_counts=genre_counts, borrowed_books=borrowed_books)
 
 
@@ -451,11 +474,8 @@ def change_status(book_id):
             old_owner = User.query.get(old_owner_id)
             book_with_status_voluit = Book.query.filter(and_(Book.user_id == old_owner.id, Book.status == 'voluit')).first()
             if book_with_status_voluit:
-                # Verificar se o livro tem um loan_id (se está emprestado)
-                satan = Loan.query.filter_by(book_id=book_with_status_voluit.id).first()
-                if satan:
-                    db.session.delete(satan)
-                    
+                db.session.delete(book_with_status_voluit)
+                db.session.commit()
                 db.session.delete(loan)  # Exclua o registro de empréstimo
                 db.session.commit()
         return 'Status updated successfully', 200

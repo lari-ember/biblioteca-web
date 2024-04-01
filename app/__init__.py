@@ -25,7 +25,7 @@ class User(db.Model):
     username = db.Column(db.String(), unique=True, nullable=False)
     password_hash = db.Column(db.String(), nullable=False)
     name = db.Column(db.String(), nullable=False)
-    books = db.relationship('Book', backref='user', lazy=True)
+    user_books = db.relationship('UserBooks', backref='user', lazy=True)
     user_readings = db.relationship('UserReadings', backref='user', lazy=True)  # atributo de relacionamento
     sum_pages = db.Column(db.Integer)
     
@@ -82,7 +82,7 @@ class Book(db.Model):
     read = db.Column(db.String(10), nullable=False)
     genre = db.Column(db.String(50), nullable=False)
     completion_date = db.Column(db.String(11), nullable=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    user_books = db.relationship('UserBooks', backref='book', lazy=True)
     user_readings = db.relationship('UserReadings', backref='book', lazy=True)  # Adicione este atributo de relacionamento
     loan_id = db.Column(db.Integer, db.ForeignKey('loans.id'), nullable=True)  # Chave estrangeira para a tabela Loan
     loan = db.relationship('Loan', backref='book', uselist=False,foreign_keys="[Loan.book_id]")
@@ -103,6 +103,19 @@ class Book(db.Model):
     def __repr__(self):
         return f'<code={self.code}, book={self.title}, author={self.author}, year={self.year}, pages={self.pages}, genre={self.genre}, publisher={self.publisher}, format={self.format}, status={self.status}>'
 
+class UserBooks(db.Model):
+    __tablename__ = 'user_books'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    book_id = db.Column(db.Integer, db.ForeignKey('books.id'), nullable=False)
+    # Se necessário, você pode adicionar mais informações específicas para a relação entre usuário e livro aqui
+
+    def __init__(self, user_id, book_id):
+        self.user_id = user_id
+        self.book_id = book_id
+
+    def __repr__(self):
+        return f'<UserBooks user_id={self.user_id}, book_id={self.book_id}>'
 
 class UserReadings(db.Model):
     __tablename__ = 'user_readings'

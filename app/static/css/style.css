@@ -9,7 +9,7 @@ body {
     justify-content: center;
     align-items: center;
     min-width: 100vh;
-    background: #222327;
+    background: #351235;
 }
 
 div.container {
@@ -23,7 +23,7 @@ div.container {
     font-size: 15px;
     background: linear-gradient(
         to right,
-        rgb(108, 224, 195) 55%,
+        #351235 55%,
         #222327
     );
     border-radius: 10px;
@@ -67,11 +67,11 @@ nav {
     height: 115px;    
     background: linear-gradient(
         to right,
-        #70faae,
-        #004720
+        #db59db,
+        #351235
     );
-    border: 2px ridge #ddffec;
-    box-shadow: 2px 2px 5px rgba(162, 255, 204, 0.5);
+    border: 2px ridge #e131e1;
+    box-shadow: 2px 2px 5px #e03de0;
     position: relative;
     display: flex;
     justify-content: center;
@@ -111,7 +111,7 @@ z-index: 1;
     font-size: 1.5em;
     text-align: center;
     transition: 0.5s;
-    color: #222327;
+    color: #351235;
 }
 
 .navigation ul li.active a .icon {
@@ -120,7 +120,7 @@ z-index: 1;
 
 .navigation ul li a .text {
     position: absolute;
-    color: #222327;
+    color: #351235;
     font-weight: 400;
     font-size: 0.75em;
     letter-spacing: 0.05em;
@@ -139,9 +139,9 @@ z-index: 1;
     top: -35%;
     width: 68px;
     height: 68px;
-    background: #5af49f;
+    background: #db59db;
     border-radius: 50%;
-    border: 6px solid #222327;
+    border: 6px solid #351235;
     transition: 0.5s;
 }
 
@@ -154,7 +154,7 @@ z-index: 1;
     height: 20px;
     background: transparent;
     border-top-right-radius: 20px;
-    box-shadow: -1px -10px 0 0 #222327;
+    box-shadow: -1px -10px 0 0 #351235;
 
 }
 
@@ -167,44 +167,44 @@ z-index: 1;
     height: 20px;
     background: transparent;
     border-top-left-radius: 20px;
-    box-shadow: -1px -10px 0 0 #222327;
+    box-shadow: -1px -10px 0 0 #351235;
 
 }
 
 .navigation ul li:nth-child(2).active ~ .indicator {
     transform: translateX(calc(70px * 1));
-    background-color: #52e092;
+    background-color: #da4dda;
 }
 
 .navigation ul li:nth-child(3).active ~ .indicator {
     transform: translateX(calc(70px * 2));
-    background-color: #43ca80;
+    background-color: #ab2fab;
 }
 
 .navigation ul li:nth-child(4).active ~ .indicator {
     transform: translateX(calc(70px * 3));
-    background-color: #33c273;
+    background-color: #c330c3;
 }
 
 .navigation ul li:nth-child(5).active ~ .indicator {
     transform: translateX(calc(70px * 4));
-    background-color: #25b164;
+    background-color: #c32dc3;
 }
 
 .navigation ul li:nth-child(6).active ~ .indicator {
     transform: translateX(calc(70px * 5));
-    background-color: #1da058;
+    background-color: #8d208d;
 }
 
 .navigation ul li:nth-child(7).active ~ .indicator {
     transform: translateX(calc(70px * 6));
-    background-color: #117e42;
+    background-color: #7b177b;
 }
 
 .navigation ul li:nth-child(8).active ~ .indicator {
     transform: translateX(calc(70px * 7));
-    background-color: #0c582e;
-}
+    background-color: #351235;
+}   
 
 .datetime {
     position: absolute;
@@ -217,15 +217,15 @@ div.datetime {
     height: 150px;
     background: linear-gradient(
         to right,
-        #70faae,
-        #004720
+        #db59db,
+        #351235
     );
     display: block;
     justify-content: center;
     align-items: center;
     border-radius: 10px;
-    border: 2px ridge #ddffec;
-    box-shadow: 2px 2px 5px rgba(162, 255, 204, 0.5);
+    border: 2px ridge #db59db;
+    box-shadow: 2px 2px 5px #db59db;
 }
 
 div.datetime p {
@@ -254,7 +254,7 @@ time {
     width: 140px;
     border: 1px solid #f7f7f7;
     padding: 4px 12px;
-    background-color: #222327;
+    background-color: #2c0b2c;
     color: #f7f7f7;
     font-size: 2em;
     font-weight: 300;
@@ -277,7 +277,7 @@ time {
 
 .moldura-um {
     width: 1350px; /*404+8+8(bordas)+15+15(paddings)*/
-    border:20px inset #c1292c;
+    border:20px inset #A40F3C;
     padding:25px;
     background: transparent url(../images/wallpaper.jpg);
     }

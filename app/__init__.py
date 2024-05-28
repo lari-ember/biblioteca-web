@@ -1,3 +1,5 @@
+import os
+
 from datetime import date
 
 from flask import Flask, flash, redirect, render_template, url_for, request
@@ -6,15 +8,24 @@ from flask_login import (LoginManager, current_user, login_required,
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import or_
 #from utils.forms import BookForm, LoginForm, SearchForm
-from werkzeug.security import check_password_hash, generate_password_hash
 from sqlalchemy.sql import text
 from sqlalchemy import func
+from werkzeug.middleware.proxy_fix import ProxyFix
+from werkzeug.security import generate_password_hash, check_password_hash
+
 
 app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"] = 'sqlite:///storage.db'
-db = SQLAlchemy(app)
+app.wsgi_app = ProxyFix(
+    app.wsgi_app, x_for=4, x_proto=4, x_host=4, x_prefix=4
+)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:V0lBaT3rComAcaraNoposte@172.17.0.2:5432'
 
-app.secret_key = 'secret'
+# initialize the app with the extension
+db = SQLAlchemy()
+db.init_app(app)
+
+
+app.secret_key = 'AmberlyqueriaS3erohalo'
 
 lm = LoginManager(app)
 
@@ -62,7 +73,7 @@ class User(db.Model):
         return f'{self.name}'
     
     def update_sum_pages(self):
-        total_pages_completed = db.session.query(func.sum(Book.pages)).filter(Book.read == 'read').scalar() or 0
+        total_pages_completed = db.session.query(func.sum(Book.pages)).filter(UserBooks.read == 'read').scalar() or 0
         total_pages_in_progress = db.session.query(func.sum(UserReadings.current_page)).filter(
             UserReadings.user_id == self.id).scalar() or 0
         self.sum_pages = total_pages_in_progress + total_pages_completed
@@ -72,47 +83,54 @@ class Book(db.Model):
     __tablename__ = 'books'
     id = db.Column(db.Integer, primary_key=True)
     code = db.Column(db.String(8), unique=True, nullable=False)
+    isbn = db.Column(db.String(13), nullable=False)
     title = db.Column(db.String(200), nullable=False)
     author = db.Column(db.String(100), nullable=False)
     publisher = db.Column(db.String(100), nullable=False)
     year = db.Column(db.Integer, nullable=False)
     pages = db.Column(db.Integer, nullable=False)
-    status = db.Column(db.String(50), nullable=False)  # 'available', 'borrowed', or 'ex-libris'
+    cover_url = db.Column(db.String(200), nullable=True)
     format = db.Column(db.String(50), nullable=False)  # 'physical', 'e-book', or 'pdf'
-    read = db.Column(db.String(10), nullable=False)
-    genre = db.Column(db.String(50), nullable=False)
-    completion_date = db.Column(db.String(11), nullable=True)
     user_books = db.relationship('UserBooks', backref='book', lazy=True)
+    genre = db.Column(db.String(50), nullable=False)
     user_readings = db.relationship('UserReadings', backref='book', lazy=True)  # Adicione este atributo de relacionamento
-    loan_id = db.Column(db.Integer, db.ForeignKey('loans.id'), nullable=True)  # Chave estrangeira para a tabela Loan
-    loan = db.relationship('Loan', backref='book', uselist=False,foreign_keys="[Loan.book_id]")
+    
 
-    def __init__(self, user_id, code, title, author, publisher, year, pages, genre, status, format, read):
+    def __init__(self, user_id, code, title, author, publisher, year, pages, genre, format, cover_url, isbn):
         self.user_id = user_id
         self.code = code
         self.title = title
         self.author = author
         self.publisher = publisher
-        self.status = status
         self.format = format
         self.year = year
         self.pages = pages
         self.genre = genre
-        self.read = read
+        self.cover_url = cover_url
+        self.isbn = isbn
 
     def __repr__(self):
-        return f'<code={self.code}, book={self.title}, author={self.author}, year={self.year}, pages={self.pages}, genre={self.genre}, publisher={self.publisher}, format={self.format}, status={self.status}>'
+        return f'<code={self.code}, id={self.id}, book={self.title}, author={self.author}, year={self.year}, pages={self.pages}, genre={self.genre}, publisher={self.publisher}, format={self.format}>'
 
 class UserBooks(db.Model):
     __tablename__ = 'user_books'
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     book_id = db.Column(db.Integer, db.ForeignKey('books.id'), nullable=False)
-    # Se necessário, você pode adicionar mais informações específicas para a relação entre usuário e livro aqui
+    code = db.Column(db.String(8), unique=True, nullable=False)
+    status = db.Column(db.String(50), nullable=False)  # 'available', 'borrowed', etc...
+    read = db.Column(db.String(10), nullable=False)
+    genre = db.Column(db.String(50), nullable=False)
+    completion_date = db.Column(db.String(11), nullable=True)
+    loan_id = db.Column(db.Integer, db.ForeignKey('loans.id'), nullable=True)  # Chave estrangeira para a tabela Loan
 
-    def __init__(self, user_id, book_id):
+    def __init__(self, user_id, book_id, status, read, genre, code):
         self.user_id = user_id
         self.book_id = book_id
+        self.status = status
+        self.read = read
+        self.genre = genre
+        self.code = code
 
     def __repr__(self):
         return f'<UserBooks user_id={self.user_id}, book_id={self.book_id}>'
@@ -122,18 +140,21 @@ class UserReadings(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     book_id = db.Column(db.Integer, db.ForeignKey('books.id'), nullable=False)
+    reading_status = db.Column(db.String(50), nullable=False)  # Status da leitura (por exemplo: em andamento, concluída, interrompida)
     current_page = db.Column(db.Integer)
     reading_percentage = db.Column(db.Float)
     time_spent = db.Column(db.Integer)
     estimated_time = db.Column(db.Integer)
 
-    def __init__(self, user_id, book_id, current_page, reading_percentage, time_spent, estimated_time):
+    def __init__(self, user_id, book_id, current_page, reading_percentage, time_spent, estimated_time, reading_status):
         self.user_id = user_id
         self.book_id = book_id
         self.current_page = current_page
         self.reading_percentage = reading_percentage
         self.time_spent = time_spent
         self.estimated_time = estimated_time
+        self.reading_status = reading_status
+
 
     def __repr__(self):
         return f'<UserReading user_id={self.user_id}, book_id={self.book_id}, current_page={self.current_page}, reading_percentage={self.reading_percentage}, time_spent={self.time_spent}, estimated_time={self.estimated_time}>'
@@ -160,16 +181,12 @@ class Loan(db.Model):
 class UserRead(db.Model):
     __tablename__ = 'user_reads'
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    book_id = db.Column(db.Integer, db.ForeignKey('books.id'), nullable=False)
-    end_date = db.Column(db.Date, nullable=False)
-    user = db.relationship('User', backref='user_book_reads')
-    book = db.relationship('Book', backref='user_read')
+    user_book_id = db.Column(db.Integer, db.ForeignKey('user_books.id'), nullable=False)
+    completion_date = db.Column(db.Date, nullable=False)  # Data de conclusão da leitura
 
-    def __init__(self, user_id, book_id, read_date):
-        self.user_id = user_id
-        self.book_id = book_id
-        self.read_date = read_date
+    def __init__(self, user_book_id, completion_date):
+        self.user_book_id = user_book_id
+        self.completion_date = completion_date
 
     def __repr__(self):
         return f'<UserBookRead user_id={self.user_id}, book_id={self.book_id}, read_date={self.read_date}>'

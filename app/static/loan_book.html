@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mt-4 mb-4">Loan Book</h1>
+    <form method="POST" action="{{ url_for('loan_book', book_id=book_id) }}">
+        <div class="mb-3">
+            <label for="borrower" class="form-label">Choose Borrower:</label>
+            <select class="form-select" id="borrower" name="borrower">
+                {% for user in users %}
+                <option value="{{ user.id }}">{{ user.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Loan Book</button>
+    </form>
+</div>
+
+
+{% endblock %}

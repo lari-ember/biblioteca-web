@@ -1,5 +1,11 @@
 {% extends "base.html" %}
 
+
+{% block head %}
+  {{ super() }}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/pages/register.css') }}">
+{% endblock %}
+
 {% block content %}
 <div class="">
     <div class="row justify-content-center">
@@ -9,6 +15,21 @@
                 <form action="{{ url_for('register_new_book') }}" method="POST">
                     {{ form.csrf_token }}
                     <div class="mb-3">
+                        <div id="">
+        <!-- Input de pesquisa -->
+        <div class="input-group">
+            <div class="input-icon">
+                <i class="fa-solid fa-magnifying-glass"></i>
+            </div>
+            <input id="search" type="text" class="input-field" placeholder="Pesquisar">
+        </div>
+
+        <!-- Lista de itens -->
+        <ul id="autocomplete-results" class="items"></ul>
+
+        <!-- Mensagem para nenhum resultado -->
+        <p id="no_results">Nenhum resultado encontrado</p>
+    </div>
                         <label for="title" class="form-label">Title</label>
                         {{ form.title(class="form-control", placeholder="Enter the book title") }}
                     </div>
@@ -80,5 +101,72 @@
     function confirmNewBook(bookId) {
         window.location.href = "/confirm_new_book/" + bookId;
     }
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+    const searchInput = document.getElementById('search');
+    const resultsList = document.getElementById('autocomplete-results');
+    const noResultsMessage = document.getElementById('no_results');
+    let debounceTimeout;
+
+    searchInput.addEventListener('input', function () {
+        const query = searchInput.value.trim();
+        if (query.length >= 3) {
+            clearTimeout(debounceTimeout);
+            debounceTimeout = setTimeout(function () {
+                fetch(`/autocomplete?query=${query}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        resultsList.innerHTML = ''; // Limpa os resultados anteriores
+                        noResultsMessage.style.display = 'none'; // Esconde a mensagem de "nenhum resultado"
+
+                        if (data.length > 0) {
+                            resultsList.style.display = 'block'; // Mostra a lista
+                            data.forEach(item => {
+                                const li = document.createElement('li');
+                                li.classList.add('item');
+
+                                // Estrutura do item
+                                li.innerHTML = `
+                                    <div class="item-image">
+                                        <img src="${item.cover_url || 'default.jpg'}" alt="${item.title}">
+                                    </div>
+                                    <div class="item-content">
+                                        <h2 class="item-title">${item.title}</h2>
+                                        <p class="item-subtitle">
+                                            <i class="fa-solid fa-user"></i> ${item.author}
+                                        </p>
+                                        <p class="item-description">${item.genre} | ${item.year}</p>
+                                    </div>
+                                `;
+
+                                // Evento de clique
+                                li.addEventListener('click', function () {
+                                    searchInput.value = item.title;
+                                    resultsList.style.display = 'none';
+                                });
+
+                                resultsList.appendChild(li);
+                            });
+                        } else {
+                            resultsList.style.display = 'none';
+                            noResultsMessage.style.display = 'block'; // Mostra a mensagem de "nenhum resultado"
+                        }
+                    })
+                    .catch(error => console.error('Erro ao buscar itens:', error));
+            }, 300); // Debounce de 300ms
+        } else {
+            resultsList.style.display = 'none'; // Esconde a lista
+            noResultsMessage.style.display = 'none'; // Esconde a mensagem
+        }
+    });
+
+    // Fecha os resultados se clicar fora
+    document.addEventListener('click', function (e) {
+        if (!resultsList.contains(e.target) && e.target !== searchInput) {
+            resultsList.style.display = 'none';
+        }
+    });
+});
 </script>
 {% endblock %}

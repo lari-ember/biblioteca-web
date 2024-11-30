@@ -1,6 +1,7 @@
-from flask import request
+from flask import request, jsonify
 import csv
 from datetime import date, datetime, timedelta
+from app.controllers import auth, books  # Certifique-se de importar
 
 from flask import (Flask, current_app, flash, redirect, render_template,
                    request, session, url_for)
@@ -19,8 +20,11 @@ from app.models.forms import (BookForm, EditReadingForm, LoginForm,
 def add_books_from_csv(file_path):
     with open(file_path, 'r', encoding='UTF-8') as file:
         reader = csv.DictReader(file)
+        um = 0
         for row in reader:
             book = Book(
+                isbn=um,
+                cover_url=f'a{um}',
                 user_id=1,
                 code=row['codigo'],
                 title=row['titulo'],
@@ -28,57 +32,50 @@ def add_books_from_csv(file_path):
                 publisher=row['editora'],
                 year=row['ano'],
                 pages=row['paginas'],
-                read=row['lido'],
                 genre=row['genero'],
-                status=row['possui'],
                 format=row['formato']
             )
             db.session.add(book)
             db.session.commit()
+            um += 1
 
 
 # Caminho para o arquivo CSV de exemplo
-csv_file_path = 'C:/Users/bolsista.SFDA-DOACAO-BOL/Documents/GitHub/Biblioteca/acervo.csv'
-
-
-@lm.user_loader
-def load_user(user_id):
-    #add_books_from_csv(csv_file_path)
-    # Implement the code to load the user from the database based on the user ID
-    # Return the user object if found, or None if not found
-    return User.query.get(int(user_id))
+csv_file_path = 'acervo.csv'
 
 
 @app.route('/index')
 @app.route('/home')
 @app.route('/')
 def index():
+    #add_books_from_csv(csv_file_path)
     return render_template('index.html')
 
 
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    form = LoginForm(request.form)
-    if request.method == 'POST' and form.validate():
-        user = User.query.filter_by(username=form.username.data).first()
-        if user and user.check_password(form.password.data):
-            login_user(user)
-            flash('Logged in successfully.', 'success')
-            return redirect(url_for('index'))
-        else:
-            flash('Invalid username or password.', 'error')
-    return render_template('login.html', form=form)
+@app.route('/teste')
+def texte():
+    return render_template('teste.html')
 
 
-@app.route('/logout')
-def logout():
-    # Clear the user's session
-    logout_user()
-    # Flash a message to notify the user
-    flash('You have been logged out.', 'info')
+@app.route('/autocomplete', methods=['GET'])
+def autocomplete():
+    query = request.args.get('query', '').strip()  # Pega e remove espaços em branco
+    if query:
+        # Busca livros cujo título contenha o texto digitado
+        books = Book.query.filter(Book.title.ilike(f'%{query}%')).limit(10).all()
+        # Retorna uma lista de dicionários com informações detalhadas
+        return jsonify([
+            {
+                "title": book.title,
+                "author": book.author,
+                "cover_url": book.cover_url or "default_cover.jpg",  # URL de imagem ou um padrão
+                "genre": book.genre,
+                "year": book.year
+            }
+            for book in books
+        ])
+    return jsonify([])  # Retorna uma lista vazia caso não haja consulta
 
-    # Redirect the user to the desired page (e.g., home page)
-    return redirect(url_for('index'))
 
 
 @app.route('/insert_test_data')
@@ -94,98 +91,6 @@ def insert_test_data():
     db.session.commit()
 
     return 'Test data inserted successfully!'
-
-
-@app.route('/register', methods=['GET', 'POST'])
-def register():
-    form = RegistrationForm(request.form)
-    if request.method == 'POST' and form.validate():
-        # Create a new user object with form data
-        user = User(
-            username=form.username.data,
-            password=form.password.data,
-            name=form.name.data
-        )
-
-        # Set the user's password (it will be automatically hashed)
-        user.set_password(form.password.data)
-
-        # Add the user to the database
-        db.session.add(user)
-        db.session.commit()
-
-        # Log in the newly registered user
-        login_user(user)
-
-        # Flash a success message and redirect to the home page
-        flash('Registration successful. You are now logged in.', 'success')
-        return redirect(url_for('index'))
-
-    # Render the registration form
-    return render_template('register.html', form=form)
-
-
-def get_logged_in_user():
-    if current_user.is_authenticated:
-        return current_user
-    else:
-        # If the user is not logged in, you can return None or take any other action depending on your requirement.
-        return None
-
-
-@app.route('/register_new_book', methods=['GET', 'POST'])
-def register_new_book():
-    # Verifique se o usuário está logado
-    user = get_logged_in_user()
-    if not user:
-        # Redirecione para a página de login ou tome qualquer outra ação que você desejar para lidar com usuários não logados
-        return redirect('/login')
-    form = BookForm(request.form)
-    if request.method == 'POST' and form.validate():
-        user = get_logged_in_user()
-        if user is None:
-            flash('User is not authenticated', 'error')
-            return redirect(url_for('login'))
-        with current_app.app_context():
-            code = generate_book_code(
-                form.genre.data, form.author.data, form.title.data)
-        if code is None:
-            flash(f'Genre not found. Do you want to add a new genre?', 'warning')
-            return redirect(url_for('index'))
-        book = Book(
-            user_id=user.id,
-            code=code,
-            author=form.author.data.lower(),
-            title=form.title.data.lower(),
-            publisher=form.publisher.data.lower(),
-            year=form.year.data,
-            pages=form.pages.data,
-            read=form.read.data,
-            genre=form.genre.data.lower(),
-            status=form.status.data.lower(),
-            format=form.format.data.lower()
-        )
-        db.session.add(book)
-        db.session.commit()
-        flash(
-            f'New book registered successfully: title - {book.title} author - {book.author} code - {book.code} genre - {book.genre}', 'success')
-        return redirect(url_for('your_collection'))
-    return render_template('register_new_book.html', form=form)
-
-
-@app.route('/your_collection')
-def your_collection():
-    # Verifique se o usuário está logado
-    user = get_logged_in_user()
-    if not user:
-        # Redirecione para a página de login ou tome qualquer outra ação que você desejar para lidar com usuários não logados
-        return redirect('/login')
-
-    # Recupere os livros da tabela 'Book' para o usuário logado
-    books = Book.query.filter_by(user_id=user.id).all()
-
-    # Renderize o template 'your_collection.html' e passe os livros como
-    return render_template('your_collection.html', books=books)
 
 
 @app.route('/delete_book/<int:book_id>', methods=['GET', 'POST'])
@@ -220,8 +125,8 @@ field_mapping = {
     'pages': Book.pages,
     'year': Book.year,
     'genre': Book.genre,
-    'read': Book.read,
-    'status': Book.status,
+    #'read': Book.read,
+    #'status': Book.status,
     'format': Book.format,
     'publisher': Book.publisher
 }

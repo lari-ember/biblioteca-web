@@ -13,12 +13,14 @@ from sqlalchemy import func
 from werkzeug.middleware.proxy_fix import ProxyFix
 from werkzeug.security import generate_password_hash, check_password_hash
 
-
 app = Flask(__name__)
 app.wsgi_app = ProxyFix(
     app.wsgi_app, x_for=4, x_proto=4, x_host=4, x_prefix=4
 )
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:V0lBaT3rComAcaraNoposte@172.17.0.2:5432'
+
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:V0lBaT3rComAcaraNoposte@db:5432/biblioteca'
+
+
 
 # initialize the app with the extension
 db = SQLAlchemy()
@@ -200,4 +202,4 @@ with app.app_context():
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-from app.controllers import defaut
+from app.controllers import defaut, auth, books

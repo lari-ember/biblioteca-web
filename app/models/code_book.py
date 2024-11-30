@@ -149,6 +149,7 @@ def generate_book_code(genre, author_fullname, title):
         genre_code = next((key for key, value in book_genres.items() if value == genre), None)
         if genre_code:
             base_code = f'{author_lastname_initial.upper()}{genre_code}{title_initial.lower()}'
+            print(base_code)
 
             last_code = Book.query.filter(Book.code.like(f'{base_code}%')).order_by(Book.code.desc()).first()
 
@@ -168,7 +169,7 @@ def generate_book_code(genre, author_fullname, title):
                 # Não existem códigos com base_code, então use o código base
                 new_code = base_code
 
-            return print(new_code)
+            return new_code
         else:
             # Não encontrou o gênero no dicionário de gêneros
             return None

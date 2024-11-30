@@ -1,17 +1,20 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-us">
 
 <head>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1377185441391417"
+     crossorigin="anonymous"></script>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="shortcut icon" href="./app/static/images/favicon.ico" type="image/x-icon">
 
   <!-- fonts -->
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
 
-  <link rel="stylesheet" href="../static/css/fonts.css" type="text/css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='images/favicon.ico') }}" type="text/css">
   <link
     href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
     rel="stylesheet">
@@ -21,11 +24,10 @@
 
   <!--css core -->
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<script src="https://www.gstatic.com/firebasejs/ui/6.0.1/firebase-ui-auth.js"></script>
 
   <style>
-    /*
-         * Dummy devices (replace them with your own or something else entirely!)
-         */
+    /**/
 
     .product-device {
       position: absolute;
@@ -54,7 +56,7 @@
       right: auto;
       bottom: 0;
       left: 5%;
-      background-color: #e5e5e5;
+      background-color: #351235;
     }
 
 
@@ -74,13 +76,13 @@
 
     .olar {
       background: linear-gradient(to right,
-          #351235 0%,
-          #780B78 90%,
-          #db59db 100%);
+          #251630 0%,
+          #500E50 70%,
+          #DD00DD 100%);
     }
 
     .text-white h1 {
-      font-family: Calibri;
+      font-family: 'Courier New', Courier, monospace;
       font-weight: bold;
       letter-spacing: 1px;
       color: rgb(240, 240, 240);
@@ -121,7 +123,7 @@
     }
 
     div.bg0 {
-      background: linear-gradient(to bottom, rgb(51, 51, 51) 0%, #daaabb 75%, #fcc2d7 100%);
+      background: linear-gradient(to bottom, #251630 0%, #500E50 75%, #9D009D 100%);
 
     }
 
@@ -171,7 +173,9 @@
 
 <body>
   <div class="d-none d-md-block d-lg-block d-xl-block">
+    
     <header>
+      {% if not is_book_page %}
       {% if current_user.is_authenticated %}
       <div id="hide" class="container bg-dark text-white">
         <a class="navbar-brand text-white-50" href="/home">Amber Archivily</a>
@@ -180,7 +184,7 @@
           <h2>welcome {{ current_user.username }}</h2>
           <p>Number of books in your library: {{ current_user.books|length }}</p>
           <p>total pages read: {{ current_user.sum_pages }}</p>
-          <p>Lorem ipsum dolor sit amet...</p>
+          <p></p>
           {% endif %}
           <div class="datetime">
             <p class="text-dark fw-bold">date & time</p>
@@ -238,7 +242,7 @@
                 </a>
               </li>
               <li class="list">
-                <a href="#">
+                <a href="https://www.catarse.me/cirurgia_da_larissa" target="_blank" rel="external">
                   <span class="icon">
                     <ion-icon name="help-buoy-outline"></ion-icon>
                   </span>
@@ -278,6 +282,7 @@
           </div>
         </nav>
       </div>
+      {% endif %}
     </header>
   </div>
   <br>
@@ -294,8 +299,12 @@
   {% endwith %}
 
   <main>
+    {% if not is_book_page %}
+    <hr class="bg-white">
+    {% endif %}
     {% block content %}
     {% endblock %}
+    <hr class="bg-white">
   </main>
   <footer class="container py-5 d-none d-md-block d-lg-block d-xl-block">
     <div class="row">
@@ -309,7 +318,7 @@
           <path
             d="M14.31 8l5.74 9.94M9.69 8h11.48M7.38 12l5.74-9.94M9.69 16L3.95 6.06M14.31 16H2.83m13.79-4l-5.74 9.94" />
         </svg>
-        <small class="d-block mb-3 text-light">&copy;Larissa Ember 2022</small>
+        <small class="d-block mb-3 text-light">&copy;Larissa Ember 2022-24</small>
       </div>
       <div class="col-6 col-md">
         <h5 class="text-white">more</h5>
@@ -421,7 +430,6 @@
       }
     });
   </script>
-
 </body>
 
 </html>

@@ -52,11 +52,6 @@ def index():
     return render_template('index.html')
 
 
-@app.route('/teste')
-def texte():
-    return render_template('teste.html')
-
-
 @app.route('/autocomplete', methods=['GET'])
 def autocomplete():
     query = request.args.get('query', '').strip()  # Pega e remove espaços em branco

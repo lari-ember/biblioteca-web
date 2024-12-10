@@ -1,20 +1,19 @@
-from flask import request, jsonify
 import csv
 from datetime import date, datetime, timedelta
-from app.controllers import auth, books  # Certifique-se de importar
 
-from flask import (Flask, current_app, flash, redirect, render_template,
-                   request, session, url_for)
-from flask_login import (LoginManager, UserMixin, current_user, login_required,
-                         login_user, logout_user)
+import requests
+from flask import (current_app, flash, redirect, render_template,
+                   request, url_for)
+from flask import jsonify
+from flask_login import (current_user, login_required)
+from sqlalchemy import and_
 from sqlalchemy import or_
 from sqlalchemy.sql import func
-from sqlalchemy import and_
 
-from app import Book, User, UserRead, UserReadings, Loan, app, db, lm
+from app import Book, User, UserReadings, Loan, app, db
+from app.controllers.auth import get_logged_in_user
 from app.models.code_book import book_genres, generate_book_code
-from app.models.forms import (BookForm, EditReadingForm, LoginForm,
-                              LogReadingForm, RegistrationForm, SearchForm)
+from app.models.forms import (BookForm, EditReadingForm, SearchForm)
 
 
 def add_books_from_csv(file_path):
@@ -52,24 +51,59 @@ def index():
     return render_template('index.html')
 
 
+def fetch_openlibrary_books(query):
+    url = f"https://openlibrary.org/search.json?title={query}"
+    response = requests.get(url)
+    if response.status_code == 200:
+        data = response.json()
+        results = []
+        for doc in data.get('docs', []):
+            results.append({
+                'title': doc.get('title'),
+                'author': ', '.join(doc.get('author_name', [])),
+                'cover_url': f"https://covers.openlibrary.org/b/id/{doc.get('cover_i', '0')}-M.jpg" if doc.get('cover_i') else None,
+                'genre': ', '.join(doc.get('subject', [])) if 'subject' in doc else 'Unknown',
+                'year': doc.get('first_publish_year', 'Unknown'),
+                'isbn': doc.get('isbn', [''])[0]
+            })
+        return results
+    return []
+
+
 @app.route('/autocomplete', methods=['GET'])
 def autocomplete():
     query = request.args.get('query', '').strip()  # Pega e remove espaços em branco
     if query:
-        # Busca livros cujo título contenha o texto digitado
+        # Busca livros cujo título contenha o texto digitado, no banco local
         books = Book.query.filter(Book.title.ilike(f'%{query}%')).limit(10).all()
+
         # Retorna uma lista de dicionários com informações detalhadas
+        # Se poucos resultados forem encontrados, buscar na API da OpenLibrary
+        if len(books) < 5:
+            openlibrary_results = fetch_openlibrary_books(query)
+            for result in openlibrary_results:
+                if not any(b.isbn == result['isbn'] for b in books):  # Evita duplicados
+                    books.append(Book(
+                        title=result['title'],
+                        author=result['author'],
+                        cover_url=result['cover_url'],
+                        genre=result['genre'],
+                        year=result['year'],
+                        isbn=result['isbn']
+                    ))
+
+        # Formata os resultados
         return jsonify([
             {
                 "title": book.title,
                 "author": book.author,
-                "cover_url": book.cover_url or "default_cover.jpg",  # URL de imagem ou um padrão
+                "cover_url": book.cover_url or "default_cover.jpg",
                 "genre": book.genre,
                 "year": book.year
             }
             for book in books
         ])
-    return jsonify([])  # Retorna uma lista vazia caso não haja consulta
+    return jsonify([]) # Retorna uma lista vazia caso não haja consulta
 
 
 

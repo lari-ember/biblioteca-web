@@ -84,8 +84,13 @@ def autocomplete():
             for result in openlibrary_results:
                 if not any(b.isbn == result['isbn'] for b in books):  # Evita duplicados
                     books.append(Book(
+                        user_id=1,
+                        code='01',
+                        publisher='OpenLibrary',
                         title=result['title'],
                         author=result['author'],
+                        pages=451,
+                        format='Papel',
                         cover_url=result['cover_url'],
                         genre=result['genre'],
                         year=result['year'],

@@ -1,14 +1,7 @@
-import os
-
-from datetime import date
-
-from flask import Flask, flash, redirect, render_template, url_for, request
-from flask_login import (LoginManager, current_user, login_required,
-                         login_user, logout_user, UserMixin)
+from flask import Flask
+from flask_login import (LoginManager)
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import or_
 #from utils.forms import BookForm, LoginForm, SearchForm
-from sqlalchemy.sql import text
 from sqlalchemy import func
 from werkzeug.middleware.proxy_fix import ProxyFix
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -98,7 +91,11 @@ class Book(db.Model):
     user_readings = db.relationship('UserReadings', backref='book', lazy=True)  # Adicione este atributo de relacionamento
     
 
-    def __init__(self, user_id, code, title, author, publisher, year, pages, genre, format, cover_url, isbn):
+    def __init__(self, user_id: object, code: object, title: object, author: object, publisher: object, year: object, pages: object, genre: object, format: object, cover_url: object, isbn: object) -> object:
+        """
+
+        :rtype: object
+        """
         self.user_id = user_id
         self.code = code
         self.title = title

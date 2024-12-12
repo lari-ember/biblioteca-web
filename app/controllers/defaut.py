@@ -89,7 +89,7 @@ def autocomplete():
                         publisher='OpenLibrary',
                         title=result['title'],
                         author=result['author'],
-                        pages=result['pages'],
+                        pages=451,
                         format='Papel',
                         cover_url=result['cover_url'],
                         genre=result['genre'],

@@ -80,3 +80,16 @@
     color: #666;
     margin-top: 8px;
 }
+
+.section-label {
+    font-weight: bold;
+    margin-top: 10px;
+    color: #500e50;
+}
+
+.divider {
+    border: 0;
+    height: 1px;
+    background: #ddd;
+    margin: 10px 0;
+}

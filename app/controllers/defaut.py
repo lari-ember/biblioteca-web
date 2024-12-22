@@ -51,8 +51,12 @@ def index():
     return render_template('index.html')
 
 
-def fetch_openlibrary_books(query):
-    url = f"https://openlibrary.org/search.json?title={query}"
+def fetch_openlibrary_books(query, limit):
+    """
+    Busca livros na API da OpenLibrary.
+    Limita os resultados para a quantidade especificada em `limit`.
+    """
+    url = f"https://openlibrary.org/search.json?title={query}&limit={limit}"
     response = requests.get(url)
     if response.status_code == 200:
         data = response.json()
@@ -69,47 +73,36 @@ def fetch_openlibrary_books(query):
         return results
     return []
 
-
 @app.route('/autocomplete', methods=['GET'])
 def autocomplete():
-    query = request.args.get('query', '').strip()  # Pega e remove espaços em branco
+    query = request.args.get('query', '').strip()
     if query:
-        # Busca livros cujo título contenha o texto digitado, no banco local
-        books = Book.query.filter(Book.title.ilike(f'%{query}%')).limit(10).all()
+        # Busca livros no banco local
+        local_books = Book.query.filter(Book.title.ilike(f'%{query}%')).limit(10).all()
 
-        # Retorna uma lista de dicionários com informações detalhadas
-        # Se poucos resultados forem encontrados, buscar na API da OpenLibrary
-        if len(books) < 5:
-            openlibrary_results = fetch_openlibrary_books(query)
-            for result in openlibrary_results:
-                if not any(b.isbn == result['isbn'] for b in books):  # Evita duplicados
-                    books.append(Book(
-                        user_id=1,
-                        code='01',
-                        publisher='OpenLibrary',
-                        title=result['title'],
-                        author=result['author'],
-                        pages=451,
-                        format='Papel',
-                        cover_url=result['cover_url'],
-                        genre=result['genre'],
-                        year=result['year'],
-                        isbn=result['isbn']
-                    ))
+        # Calcula a quantidade de resultados faltantes
+        remaining = 10 - len(local_books)
 
-        # Formata os resultados
-        return jsonify([
-            {
-                "title": book.title,
-                "author": book.author,
-                "cover_url": book.cover_url or "default_cover.jpg",
-                "genre": book.genre,
-                "year": book.year
-            }
-            for book in books
-        ])
-    return jsonify([]) # Retorna uma lista vazia caso não haja consulta
+        # Se faltar resultados, busca na OpenLibrary
+        suggestions = []
+        if remaining > 0:
+            suggestions = fetch_openlibrary_books(query, remaining)
 
+        # Retorna os resultados separados
+        return jsonify({
+            "local": [
+                {
+                    "title": book.title,
+                    "author": book.author,
+                    "cover_url": book.cover_url or "default_cover.jpg",
+                    "genre": book.genre,
+                    "year": book.year
+                }
+                for book in local_books
+            ],
+            "suggestions": suggestions
+        })
+    return jsonify({"local": [], "suggestions": []})  # Lista vazia caso não haja consulta
 
 
 @app.route('/insert_test_data')

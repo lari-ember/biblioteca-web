@@ -104,69 +104,114 @@
 </script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-    const searchInput = document.getElementById('search');
-    const resultsList = document.getElementById('autocomplete-results');
-    const noResultsMessage = document.getElementById('no_results');
-    let debounceTimeout;
+        const searchInput = document.getElementById('search');
+        const resultsList = document.getElementById('autocomplete-results');
+        const noResultsMessage = document.getElementById('no_results');
+        let debounceTimeout;
 
-    searchInput.addEventListener('input', function () {
-        const query = searchInput.value.trim();
-        if (query.length >= 3) {
-            clearTimeout(debounceTimeout);
-            debounceTimeout = setTimeout(function () {
-                fetch(`/autocomplete?query=${query}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        resultsList.innerHTML = ''; // Limpa os resultados anteriores
-                        noResultsMessage.style.display = 'none'; // Esconde a mensagem de "nenhum resultado"
+        searchInput.addEventListener('input', function () {
+            const query = searchInput.value.trim();
+            if (query.length >= 3) {
+                clearTimeout(debounceTimeout);
+                debounceTimeout = setTimeout(function () {
+                    fetch(`/autocomplete?query=${query}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            resultsList.innerHTML = ''; // Limpa os resultados anteriores
+                            noResultsMessage.style.display = 'none'; // Esconde a mensagem de "nenhum resultado"
 
-                        if (data.length > 0) {
-                            resultsList.style.display = 'block'; // Mostra a lista
-                            data.forEach(item => {
-                                const li = document.createElement('li');
-                                li.classList.add('item');
+                            if (data.local.length > 0 || data.suggestions.length > 0) {
+                                resultsList.style.display = 'block'; // Mostra a lista
 
-                                // Estrutura do item
-                                li.innerHTML = `
-                                    <div class="item-image">
-                                        <img src="${item.cover_url || 'default.jpg'}" alt="${item.title}">
-                                    </div>
-                                    <div class="item-content">
-                                        <h2 class="item-title">${item.title}</h2>
-                                        <p class="item-subtitle">
-                                            <i class="fa-solid fa-user"></i> ${item.author}
-                                        </p>
-                                        <p class="item-description">${item.genre} | ${item.year}</p>
-                                    </div>
-                                `;
+                                // Livros do Banco Local
+                                if (data.local.length > 0) {
+                                    const localLabel = document.createElement('label');
+                                    localLabel.textContent = 'Livros do Banco Local';
+                                    localLabel.classList.add('section-label');
+                                    resultsList.appendChild(localLabel);
 
-                                // Evento de clique
-                                li.addEventListener('click', function () {
-                                    searchInput.value = item.title;
-                                    resultsList.style.display = 'none';
-                                });
+                                    data.local.forEach(item => {
+                                        const li = document.createElement('li');
+                                        li.classList.add('item');
 
-                                resultsList.appendChild(li);
-                            });
-                        } else {
-                            resultsList.style.display = 'none';
-                            noResultsMessage.style.display = 'block'; // Mostra a mensagem de "nenhum resultado"
-                        }
-                    })
-                    .catch(error => console.error('Erro ao buscar itens:', error));
-            }, 300); // Debounce de 300ms
-        } else {
-            resultsList.style.display = 'none'; // Esconde a lista
-            noResultsMessage.style.display = 'none'; // Esconde a mensagem
-        }
+                                        li.innerHTML = `
+                                            <div class="item-image">
+                                                <img src="${item.cover_url || 'default.jpg'}" alt="${item.title}">
+                                            </div>
+                                            <div class="item-content">
+                                                <h2 class="item-title">${item.title}</h2>
+                                                <p class="item-subtitle">
+                                                    <i class="fa-solid fa-user"></i> ${item.author}
+                                                </p>
+                                                <p class="item-description">${item.genre} | ${item.year}</p>
+                                            </div>
+                                        `;
+
+                                        li.addEventListener('click', function () {
+                                            searchInput.value = item.title;
+                                            resultsList.style.display = 'none';
+                                        });
+
+                                        resultsList.appendChild(li);
+                                    });
+
+                                    // Linha divisória
+                                    const divider = document.createElement('hr');
+                                    divider.classList.add('divider');
+                                    resultsList.appendChild(divider);
+                                }
+
+                                // Sugestões da OpenLibrary
+                                if (data.suggestions.length > 0) {
+                                    const suggestionsLabel = document.createElement('label');
+                                    suggestionsLabel.textContent = 'Sugestões da OpenLibrary';
+                                    suggestionsLabel.classList.add('section-label');
+                                    resultsList.appendChild(suggestionsLabel);
+
+                                    data.suggestions.forEach(item => {
+                                        const li = document.createElement('li');
+                                        li.classList.add('item');
+
+                                        li.innerHTML = `
+                                            <div class="item-image">
+                                                <img src="${item.cover_url || 'default.jpg'}" alt="${item.title}">
+                                            </div>
+                                            <div class="item-content">
+                                                <h2 class="item-title">${item.title}</h2>
+                                                <p class="item-subtitle">
+                                                    <i class="fa-solid fa-user"></i> ${item.author}
+                                                </p>
+                                                <p class="item-description">${item.genre} | ${item.year}</p>
+                                            </div>
+                                        `;
+
+                                        li.addEventListener('click', function () {
+                                            searchInput.value = item.title;
+                                            resultsList.style.display = 'none';
+                                        });
+
+                                        resultsList.appendChild(li);
+                                    });
+                                }
+                            } else {
+                                resultsList.style.display = 'none';
+                                noResultsMessage.style.display = 'block'; // Mostra a mensagem de "nenhum resultado"
+                            }
+                        })
+                        .catch(error => console.error('Erro ao buscar itens:', error));
+                }, 300); // Debounce de 300ms
+            } else {
+                resultsList.style.display = 'none'; // Esconde a lista
+                noResultsMessage.style.display = 'none'; // Esconde a mensagem
+            }
+        });
+
+        // Fecha os resultados se clicar fora
+        document.addEventListener('click', function (e) {
+            if (!resultsList.contains(e.target) && e.target !== searchInput) {
+                resultsList.style.display = 'none';
+            }
+        });
     });
-
-    // Fecha os resultados se clicar fora
-    document.addEventListener('click', function (e) {
-        if (!resultsList.contains(e.target) && e.target !== searchInput) {
-            resultsList.style.display = 'none';
-        }
-    });
-});
 </script>
 {% endblock %}

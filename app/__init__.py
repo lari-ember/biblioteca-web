@@ -78,7 +78,7 @@ class Book(db.Model):
     __tablename__ = 'books'
     id = db.Column(db.Integer, primary_key=True)
     code = db.Column(db.String(8), unique=True, nullable=False)
-    isbn = db.Column(db.String(13), nullable=False)
+    isbn = db.Column(db.String(17), nullable=False)
     title = db.Column(db.String(200), nullable=False)
     author = db.Column(db.String(100), nullable=False)
     publisher = db.Column(db.String(100), nullable=False)

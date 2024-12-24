@@ -17,7 +17,7 @@ COPY . .
 EXPOSE 8080
 
 # Comando para iniciar o Gunicorn, rodando a aplicação Flask
-CMD ["gunicorn", "--workers", "2", "--timeout", "120", "--bind", "0.0.0.0:8080", "run:app"]
+CMD ["gunicorn", "--workers", "2", "--timeout", "300", "--bind", "0.0.0.0:8080", "run:app"]
 
 
 

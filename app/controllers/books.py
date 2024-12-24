@@ -1,9 +1,11 @@
-from flask import request, redirect, flash, url_for, render_template, current_app
+from flask import request, redirect, flash, url_for, render_template
 from flask_login import login_required, current_user
 from sqlalchemy.exc import SQLAlchemyError
+
 from app import app, Book, db, UserBooks
-from app.models.forms import BookForm
+from app.models.book_search import get_book_cover_url, search_book_by_title
 from app.models.code_book import generate_book_code
+from app.models.forms import BookForm
 
 
 def create_book(user, form):
@@ -13,10 +15,11 @@ def create_book(user, form):
     code = generate_book_code(form.genre.data, form.author.data, form.title.data)
     if not code:
         return None, "Genre not found. Please add a new genre."
+    isbn = search_book_by_title(form.title.data)
 
     book = Book(
-        isbn='1234',
-        cover_url='4321',
+        isbn=isbn,
+        cover_url=get_book_cover_url(isbn),
         user_id=user.id,
         code=code,
         author=form.author.data.lower(),

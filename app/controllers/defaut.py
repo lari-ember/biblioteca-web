@@ -10,33 +10,58 @@ from sqlalchemy import and_
 from sqlalchemy import or_
 from sqlalchemy.sql import func
 
-from app import Book, User, UserReadings, Loan, app, db
+from app import Book, User, UserReadings, Loan, app
+from app import db
 from app.controllers.auth import get_logged_in_user
+from app.models.book_search import get_book_cover_url
+from app.models.book_search import search_book_by_title
 from app.models.code_book import book_genres, generate_book_code
 from app.models.forms import (BookForm, EditReadingForm, SearchForm)
 
 
 def add_books_from_csv(file_path):
-    with open(file_path, 'r', encoding='UTF-8') as file:
-        reader = csv.DictReader(file)
-        um = 0
-        for row in reader:
-            book = Book(
-                isbn=um,
-                cover_url=f'a{um}',
-                user_id=1,
-                code=row['codigo'],
-                title=row['titulo'],
-                author=row['autore'],
-                publisher=row['editora'],
-                year=row['ano'],
-                pages=row['paginas'],
-                genre=row['genero'],
-                format=row['formato']
-            )
-            db.session.add(book)
-            db.session.commit()
-            um += 1
+    """
+    Lê um arquivo CSV e adiciona livros ao banco de dados.
+    Faz uso de `get_book_info` e `get_book_cover_url` para obter informações adicionais.
+    """
+    try:
+        print('tentando')
+        with open(file_path, 'r', encoding='UTF-8') as file:
+            reader = csv.DictReader(file)
+            books_to_add = []
+            print('tentando')
+            for row in reader:
+                print('tentando')
+                try:
+                    # Obtém informações do livro pelo ISBN
+                    isbn = row.get('titulo', '').strip()
+                    book_info = search_book_by_title(isbn) if isbn else None
+
+                    # Obtém a URL da capa do livro
+                    cover_url = get_book_cover_url(book_info) if book_info else None
+
+                    # Cria uma instância do livro
+                    book = Book(
+                        user_id=1,  # Ajuste se necessário
+                        code=row.get('codigo', 'er000').strip(),
+                        title=row.get('titulo', 'Desconhecido'),
+                        author=row.get('autore', 'Desconhecido'),
+                        publisher=row.get('editora', 'comunismo'),
+                        year=int(row.get('ano', 2024)),
+                        pages=row.get('paginas', 0),
+                        genre=row.get('genero', 'General'),
+                        format=row.get('formato', 'Desconhecido'),
+                        cover_url=cover_url,
+                        isbn=book_info
+                    )
+                    db.session.add(book)
+                    db.session.commit()
+                    print('esse foi')
+                except Exception as e:
+                    print(f"Erro ao processar o registro {row}: {e}")
+    except Exception as e:
+        print(f"Erro ao importar livros do CSV: {e}")
+        db.session.rollback()
 
 
 # Caminho para o arquivo CSV de exemplo
@@ -47,6 +72,8 @@ csv_file_path = 'acervo.csv'
 @app.route('/home')
 @app.route('/')
 def index():
+    #db.session.query(Book).delete()
+    #db.session.commit()
     #add_books_from_csv(csv_file_path)
     return render_template('index.html')
 
@@ -56,7 +83,7 @@ def fetch_openlibrary_books(query, limit):
     Busca livros na API da OpenLibrary.
     Limita os resultados para a quantidade especificada em `limit`.
     """
-    url = f"https://openlibrary.org/search.json?title={query}&limit={limit}"
+    url = f"https://openlibrary.org/search.json?q={query}&limit={limit}"
     response = requests.get(url)
     if response.status_code == 200:
         data = response.json()
@@ -66,8 +93,8 @@ def fetch_openlibrary_books(query, limit):
                 'title': doc.get('title'),
                 'author': ', '.join(doc.get('author_name', [])),
                 'cover_url': f"https://covers.openlibrary.org/b/id/{doc.get('cover_i', '0')}-M.jpg" if doc.get('cover_i') else None,
-                'genre': ', '.join(doc.get('subject', [])) if 'subject' in doc else 'Unknown',
-                'year': doc.get('first_publish_year', 'Unknown'),
+                'genre': ', '.join(doc.get('subject', [])) if 'subject' in doc else 'General',
+                'year': doc.get('first_publish_year', '2024'),
                 'isbn': doc.get('isbn', [''])[0]
             })
         return results
@@ -94,7 +121,7 @@ def autocomplete():
                 {
                     "title": book.title,
                     "author": book.author,
-                    "cover_url": book.cover_url or "default_cover.jpg",
+                    "cover_url": book.cover_url,
                     "genre": book.genre,
                     "year": book.year
                 }
@@ -103,21 +130,6 @@ def autocomplete():
             "suggestions": suggestions
         })
     return jsonify({"local": [], "suggestions": []})  # Lista vazia caso não haja consulta
-
-
-@app.route('/insert_test_data')
-def insert_test_data():
-    # Create a User object with the desired test data
-    user = User(username='test', password='password', name='Test Name')
-
-    # Set the user's password (it will be automatically hashed)
-    user.set_password('password')
-
-    # Add the user to the database
-    db.session.add(user)
-    db.session.commit()
-
-    return 'Test data inserted successfully!'
 
 
 @app.route('/delete_book/<int:book_id>', methods=['GET', 'POST'])

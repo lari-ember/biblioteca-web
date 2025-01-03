@@ -77,7 +77,6 @@ def index():
     #add_books_from_csv(csv_file_path)
     return render_template('index.html')
 
-
 def fetch_openlibrary_books(query, limit):
     """
     Busca livros na API da OpenLibrary.

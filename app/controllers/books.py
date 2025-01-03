@@ -1,3 +1,4 @@
+import requests
 from flask import request, redirect, flash, url_for, render_template
 from flask_login import login_required, current_user
 from sqlalchemy.exc import SQLAlchemyError

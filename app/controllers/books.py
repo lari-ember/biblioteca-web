@@ -65,3 +65,26 @@ def your_collection():
     user_books = UserBooks.query.filter_by(user_id=current_user.id).all()
     books = [ub.book for ub in user_books]  # Obtém os objetos de livros associados
     return render_template('your_collection.html', books=books)
+
+
+def fetch_openlibrary_books(query, limit):
+    """
+    Busca livros na API da OpenLibrary.
+    Limita os resultados para a quantidade especificada em `limit`.
+    """
+    url = f"https://openlibrary.org/search.json?q={query}&limit={limit}"
+    response = requests.get(url)
+    if response.status_code == 200:
+        data = response.json()
+        results = []
+        for doc in data.get('docs', []):
+            results.append({
+                'title': doc.get('title'),
+                'author': ', '.join(doc.get('author_name', [])),
+                'cover_url': f"https://covers.openlibrary.org/b/id/{doc.get('cover_i', '0')}-M.jpg" if doc.get('cover_i') else None,
+                'genre': ', '.join(doc.get('subject', [])) if 'subject' in doc else 'General',
+                'year': doc.get('first_publish_year', '2024'),
+                'isbn': doc.get('isbn', [''])[0]
+            })
+        return results
+    return []

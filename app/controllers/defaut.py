@@ -1,7 +1,6 @@
 import csv
 from datetime import date, datetime, timedelta
 
-import requests
 from flask import (current_app, flash, redirect, render_template,
                    request, url_for)
 from flask import jsonify
@@ -77,27 +76,6 @@ def index():
     #add_books_from_csv(csv_file_path)
     return render_template('index.html')
 
-def fetch_openlibrary_books(query, limit):
-    """
-    Busca livros na API da OpenLibrary.
-    Limita os resultados para a quantidade especificada em `limit`.
-    """
-    url = f"https://openlibrary.org/search.json?q={query}&limit={limit}"
-    response = requests.get(url)
-    if response.status_code == 200:
-        data = response.json()
-        results = []
-        for doc in data.get('docs', []):
-            results.append({
-                'title': doc.get('title'),
-                'author': ', '.join(doc.get('author_name', [])),
-                'cover_url': f"https://covers.openlibrary.org/b/id/{doc.get('cover_i', '0')}-M.jpg" if doc.get('cover_i') else None,
-                'genre': ', '.join(doc.get('subject', [])) if 'subject' in doc else 'General',
-                'year': doc.get('first_publish_year', '2024'),
-                'isbn': doc.get('isbn', [''])[0]
-            })
-        return results
-    return []
 
 @app.route('/autocomplete', methods=['GET'])
 def autocomplete():

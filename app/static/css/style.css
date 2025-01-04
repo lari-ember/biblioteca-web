@@ -12,6 +12,144 @@ body {
     background: #351235;
 }
 
+label {
+  margin-top: 10px;
+}
+
+table {
+  box-shadow: 2px 2px 12px rgba(255, 255, 255, 0.5);
+}
+
+select {
+  background-color: black;
+  color: aliceblue;
+}
+
+.product-device {
+      position: absolute;
+      right: 10%;
+      bottom: -30%;
+      width: 300px;
+      height: 540px;
+      background-color: #351235;
+      border-radius: 21px;
+      transform: rotate(30deg);
+    }
+
+.product-device::before {
+      position: absolute;
+      top: 10%;
+      right: 10px;
+      bottom: 10%;
+      left: 10px;
+      content: "";
+      background-color: #351235;
+      border-radius: 5px;
+    }
+
+.product-device-2 {
+  top: -25%;
+  right: auto;
+  bottom: 0;
+  left: 5%;
+  background-color: #351235;
+}
+
+
+/*
+     * Extra utilities
+     */
+
+.flex-equal>* {
+  flex: 1;
+}
+
+@media (min-width: 768px) {
+  .flex-md-equal>* {
+    flex: 1;
+  }
+}
+
+.olar {
+  background: linear-gradient(to right,
+      #251630 0%,
+      #500E50 70%,
+      #DD00DD 100%);
+}
+
+.text-white h1 {
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: bold;
+  letter-spacing: 1px;
+  color: rgb(240, 240, 240);
+  font-size: 60px;
+}
+
+.img-fluid {
+  height: 465px;
+  position: absolute;
+  bottom: 0%;
+  left: 65%;
+}
+
+.img1 {
+  align-content: center;
+}
+
+.text h1 {
+  text-align: left;
+  font-size: 60px;
+}
+
+.text p {
+  text-align: left;
+  font-size: 30px;
+  min-width: 200px;
+  max-width: 1000px;
+}
+
+.text h3 {
+  text-align: left;
+  font-size: 30px;
+}
+
+.display-1 {
+  font-weight: bold;
+  border-bottom: 2px solid;
+}
+
+div.bg0 {
+  background: linear-gradient(to bottom, #251630 0%, #500E50 75%, #9D009D 100%);
+
+}
+
+.bt1 {
+  margin-top: 25%;
+  font-size: 24px;
+}
+
+.cronicas {
+  background-image: url('images/jornais.jpg');
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+/* Adicione estilos para a janela pop-up */
+.popup-window {
+  width: 600px;
+  height: 400px;
+  border: 2px solid #ccc;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  font-family: Arial, sans-serif;
+  padding: 20px;
+  /* Centralize a janela pop-up */
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
 div.container {
     min-width: 100px;
     position: relative;

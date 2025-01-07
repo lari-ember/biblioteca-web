@@ -1,0 +1,117 @@
+/* Estilos globais e reset */
+
+/* Variáveis de tema definidas para consistência */
+:root {
+    --color-primary: #500E50;
+    --color-secondary: #DD00DD;
+    --color-background: #351235;
+    --color-text: #ffffff;
+    --border-radius: 5px;
+    --box-shadow: 2px 2px 12px rgba(255, 255, 255, 0.5);
+}
+
+/* Estilo para o corpo da página */
+body {
+    font-family: 'Poppins', sans-serif;
+    padding: 20px;
+    margin: 0;
+    justify-content: center;
+    align-items: center;
+    background: var(--color-background);
+    color: var(--color-text);
+    line-height: 1.5;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+@media (max-width: 768px) {
+    body {
+        padding: 10px;
+    }
+}
+
+/* Estilo global para labels */
+label {
+    margin-top: 10px;
+    font-size: 1rem; /* 16px */
+}
+
+/* Estilo global para tabelas */
+table {
+    box-shadow: var(--box-shadow);
+    width: 100%;
+    border-collapse: collapse;
+}
+
+@media (max-width: 768px) {
+    table {
+        display: block;
+        overflow-x: auto;
+    }
+}
+
+/* Foco visível para todos os elementos interativos */
+:focus {
+    outline: 3px solid var(--color-secondary);
+    outline-offset: 2px;
+    transition: outline 0.3s ease-in-out;
+}
+
+/* Alterar o estilo do cursor para links e botões */
+a, button {
+    cursor: pointer;
+}
+
+/* Tamanho mínimo para toques em dispositivos móveis */
+button, input, select, textarea {
+    min-height: 48px;
+    min-width: 48px;
+}
+
+/* Transições suaves para interações */
+* {
+    transition: all 0.2s ease-in-out;
+}
+
+/* Estilo global para botões para harmonizar com Bootstrap */
+button {
+    background-color: var(--color-primary);
+    color: var(--color-text);
+    border: 2px solid var(--color-secondary);
+    border-radius: var(--border-radius);
+    padding: 10px 20px;
+    font-weight: bold;
+}
+
+button:hover {
+    background-color: var(--color-secondary);
+    color: var(--color-primary);
+}
+
+/* Links consistentes com estilos visuais */
+a {
+    color: var(--color-secondary);
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+    color: var(--color-text);
+}
+
+/* Especificar tamanhos de fontes escaláveis e consistentes */
+html {
+    font-size: 16px;
+}
+
+h1 {
+    font-size: 2rem; /* 32px */
+}
+
+h2 {
+    font-size: 1.75rem; /* 28px */
+}
+
+p, label {
+    font-size: 1rem; /* 16px */
+}

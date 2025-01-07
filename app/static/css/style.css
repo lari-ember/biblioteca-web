@@ -202,7 +202,7 @@ nav {
 
 .navigation {
     width: 625px;
-    height: 115px;    
+    height: 115px;
     background: linear-gradient(
         to right,
         #db59db,
@@ -220,7 +220,7 @@ nav {
 .navigation ul {
     display: flex;
     width: 700px;
-    
+
 }
 
 .navigation ul li {
@@ -342,7 +342,7 @@ z-index: 1;
 .navigation ul li:nth-child(8).active ~ .indicator {
     transform: translateX(calc(70px * 7));
     background-color: #351235;
-}   
+}
 
 .datetime {
     position: absolute;
@@ -419,3 +419,4 @@ time {
     padding:25px;
     background: transparent url(../images/wallpaper.jpg);
     }
+

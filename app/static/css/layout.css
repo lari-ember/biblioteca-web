@@ -1,0 +1,63 @@
+/*algum outro estilo deve vir para cá?
+alguma alteração para acessibilidade, UX/UI,
+SEO ou responsividade em diversos dispositivos,
+que converse com o bootstrap 5.3.3?*\
+
+/* Estilos de Layout */
+
+/* Classes para distribuição igualitária de elementos */
+.flex-equal > * {
+    flex: 1;
+    margin: 0 10px; /* Espaçamento lateral */
+}
+
+@media (max-width: 768px) {
+    .flex-equal > * {
+        margin: 5px 0; /* Espaçamento vertical em telas pequenas */
+    }
+}
+
+@media (min-width: 768px) {
+    .flex-md-equal > * {
+        flex: 1;
+    }
+}
+
+/* Gradiente de fundo personalizado com fallback */
+.olar {
+    background: #251630; /* Fallback */
+    background: linear-gradient(to right, #251630 0%, #500E50 70%, #DD00DD 100%);
+}
+
+/* Gradiente de fundo vertical com fallback */
+div.bg0 {
+    background: #251630; /* Fallback */
+    background: linear-gradient(to bottom, #251630 0%, #500E50 75%, #9D009D 100%);
+}
+
+/* Configurações gerais de responsividade para containers */
+.container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+}
+
+@media (max-width: 576px) {
+    .container {
+        flex-direction: column;
+        padding: 10px; /* Adicionar espaçamento interno em telas menores */
+    }
+}
+
+@media (min-width: 1200px) {
+    .container {
+        max-width: 1400px; /* Limitar largura máxima para telas maiores */
+    }
+}
+
+/* Foco visível para elementos interativos dentro de containers */
+.container a:focus, .container button:focus {
+    outline: 2px solid #DD00DD;
+    outline-offset: 2px;
+}

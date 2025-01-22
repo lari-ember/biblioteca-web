@@ -1,0 +1,111 @@
+/* Estilos de Botões */
+
+/* Botão principal */
+.bt1 {
+    margin-top: 25%;
+    font-size: 24px;
+    padding: 10px 20px;
+    color: #fff;
+    background-color: #500E50;
+    border: none;
+    border-radius: 5px;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+    transition: all 0.3s ease, transform 0.2s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* Efeito de hover para o botão principal */
+.bt1:hover {
+    background-color: #DD00DD;
+    color: #fff;
+    box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.7);
+    transform: scale(1.05);
+}
+
+/* Efeito de clique para o botão principal */
+.bt1:active {
+    transform: scale(0.98);
+}
+
+/* Foco visível para acessibilidade */
+.bt1:focus {
+    outline: 2px solid #ffffff;
+    outline-offset: 2px;
+}
+
+/* Versão desabilitada do botão principal */
+.bt1:disabled {
+    background-color: #999;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+/* Botão secundário */
+.bt2 {
+    margin-top: 10%;
+    font-size: 18px;
+    padding: 8px 16px;
+    color: #500E50;
+    background-color: #fff;
+    border: 2px solid #500E50;
+    border-radius: 5px;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease, transform 0.2s ease;
+    text-transform: capitalize;
+    cursor: pointer;
+}
+
+/* Efeito de hover para o botão secundário */
+.bt2:hover {
+    background-color: #500E50;
+    color: #fff;
+    box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.5);
+    transform: scale(1.05);
+}
+
+/* Efeito de clique para o botão secundário */
+.bt2:active {
+    transform: scale(0.98);
+}
+
+/* Foco visível para acessibilidade no botão secundário */
+.bt2:focus {
+    outline: 2px dashed #500E50;
+    outline-offset: 3px;
+}
+
+/* Estilos para tamanhos de botões */
+.btn-sm {
+    font-size: 12px;
+    padding: 5px 10px;
+}
+
+.btn-lg {
+    font-size: 28px;
+    padding: 15px 30px;
+}
+
+/* Responsividade para dispositivos móveis */
+@media (max-width: 768px) {
+    .bt1, .bt2 {
+        font-size: 18px;
+        padding: 8px 16px;
+        width: 100%;
+        text-align: center;
+    }
+}
+
+/* Classe para elementos apenas para leitores de tela */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+}

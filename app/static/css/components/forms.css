@@ -1,0 +1,114 @@
+/* Estilos de Formulários */
+
+/* Grupo de inputs */
+.input-group {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px; /* Ajuste de espaçamento */
+    border: 1px solid #500E50;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    padding: 5px;
+    transition: border-color 0.3s ease;
+}
+
+/* Campo de entrada de dados */
+.input-field {
+    flex: 1;
+    padding: 10px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    outline: none;
+    background: transparent;
+    color: #251630;
+    font-family: 'Arial', sans-serif;
+}
+
+/* Estilo para o ícone dentro do input */
+.input-icon {
+    margin-right: 10px;
+    color: #500E50;
+    font-size: 18px;
+}
+
+/* Efeito de foco no input */
+.input-group:focus-within {
+    border-color: #DD00DD;
+    box-shadow: 0 0 5px #DD00DD;
+}
+
+/* Placeholder estilizado */
+.input-field::placeholder {
+    color: #999;
+    font-style: italic;
+}
+
+/* Mensagem de erro */
+.form-error {
+    color: #FF5C5C; /* Tom de vermelho para indicar erro */
+    font-size: 14px;
+    margin-top: 5px;
+    font-style: italic;
+}
+
+/* Botão do formulário */
+.form-button {
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #fff;
+    background-color: #500E50;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Efeito de hover para o botão */
+.form-button:hover {
+    background-color: #DD00DD;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Foco visível para acessibilidade */
+.form-button:focus {
+    outline: 2px solid #ffffff;
+    outline-offset: 2px;
+}
+
+/* Estado desabilitado do botão */
+.form-button:disabled {
+    background-color: #999;
+    cursor: not-allowed;
+}
+
+/* Ajustes responsivos */
+@media (max-width: 576px) {
+    .form-button {
+        padding: 8px 16px;
+        font-size: 14px;
+    }
+
+    .input-field {
+        font-size: 12px;
+    }
+
+    .input-group {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}
+
+@media (min-width: 1200px) {
+    .form-button {
+        font-size: 18px;
+    }
+
+    .input-field {
+        font-size: 16px;
+    }
+}

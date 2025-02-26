@@ -1,42 +1,68 @@
-from flask import render_template, flash, redirect, url_for, request
+# controllers/auth.py
+from app.extensions import db
+from app.forms import RegistrationForm
+from app.models.user import User
+from app.utils.security import validate_password_complexity
+from flask import Blueprint, render_template, flash, redirect, url_for, request
 from flask_login import login_user, logout_user, current_user
-from app import User, app, lm, db
-from app.models.forms import LoginForm, RegistrationForm
+from werkzeug.security import generate_password_hash
+
+auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
 
 
-@app.route('/register', methods=['GET', 'POST'])
+@auth_bp.route('/register', methods=['GET', 'POST'])
 def register():
-    form = RegistrationForm(request.form)
-    if request.method == 'POST' and form.validate():
-        # Verificar se o nome de usuário já existe
-        existing_user = User.query.filter_by(username=form.username.data).first()
-        if existing_user:
-            flash('Username already exists. Please choose a different one.', 'error')
-            return render_template('register.html', form=form)
+    """Handle user registration with validation and security checks."""
+    form = RegistrationForm()
 
-        # Criar um novo usuário se o nome de usuário não existir
-        user = User(
-            username=form.username.data,
-            password=form.password.data,
-            name=form.name.data
-        )
+    if form.validate_on_submit():
+        try:
+            # Validação de segurança adicional
+            if not validate_password_complexity(form.password.data):
+                flash('Password must contain at least 8 characters, one uppercase letter and one number.', 'danger')
+                return render_template('auth/register.html', form=form)
 
-        # Hash da senha
-        user.set_password(form.password.data)
+            # Verificar se o usuário já existe
+            existing_user = User.query.filter_by(username=form.username.data).first()
+            if existing_user:
+                flash('This username is already taken. Please choose another one.', 'danger')
+                return redirect(url_for('auth.register'))
 
-        # Adicionar o usuário ao banco de dados
-        db.session.add(user)
-        db.session.commit()
+            # Criar novo usuário com hash seguro
+            hashed_password = generate_password_hash(
+                form.password.data,
+                method='scrypt',
+                salt_length=16
+            )
 
-        # Fazer login automático após o registro
-        login_user(user)
+            new_user = User(
+                username=form.username.data,
+                password_hash=hashed_password,
+                name=form.name.data
+            )
 
-        # Mensagem de sucesso e redirecionamento
-        flash('Registration successful. You are now logged in.', 'success')
-        return redirect(url_for('index'))
+            db.session.add(new_user)
+            db.session.commit()
 
-    # Renderizar o formulário de registro
-    return render_template('register.html', form=form)
+            # Login automático após registro
+            login_user(new_user)
+
+            flash('Registration successful! Welcome to your library.', 'success')
+            return redirect(url_for('main.index'))
+
+        except Exception as e:
+            db.session.rollback()
+            flash('An error occurred during registration. Please try again.', 'danger')
+            # Logar o erro para monitoramento
+            app.logger.error(f'Registration error: {str(e)}')
+
+    elif request.method == 'POST':
+        # Lidar com erros de validação do formulário
+        for field, errors in form.errors.items():
+            for error in errors:
+                flash(f'{getattr(form, field).label.text}: {error}', 'danger')
+
+    return render_template('auth/register.html', form=form)
 
 
 @app.route('/login', methods=['GET', 'POST'])

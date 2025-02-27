@@ -1,11 +1,13 @@
 # controllers/auth.py
-from app.extensions import db
-from app.forms import RegistrationForm
-from app.models.user import User
-from app.utils.security import validate_password_complexity
 from flask import Blueprint, render_template, flash, redirect, url_for, request
-from flask_login import login_user, logout_user, current_user
+from flask_login import current_user
+from flask_login import login_user, logout_user
 from werkzeug.security import generate_password_hash
+
+from app import db, lm
+from app.models.forms import RegistrationForm, LoginForm
+from app.models.modelsdb import User
+from app.utils.security import validate_password_complexity
 
 auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
 
@@ -65,7 +67,7 @@ def register():
     return render_template('auth/register.html', form=form)
 
 
-@app.route('/login', methods=['GET', 'POST'])
+@auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm(request.form)
     if request.method == 'POST' and form.validate():
@@ -79,7 +81,7 @@ def login():
     return render_template('login.html', form=form)
 
 
-@app.route('/logout')
+@auth_bp.route('/logout')
 def logout():
     logout_user()
     flash('You have been logged out.', 'info')

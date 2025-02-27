@@ -3,10 +3,11 @@ from flask import request, redirect, flash, url_for, render_template
 from flask_login import login_required, current_user
 from sqlalchemy.exc import SQLAlchemyError
 
-from app import app, Book, db, UserBooks
+from app import db
 from app.models.book_search import get_book_cover_url, search_book_by_title
 from app.models.code_book import generate_book_code
 from app.models.forms import BookForm
+from app.models.modelsdb import Book, UserBooks
 
 
 def create_book(user, form):

@@ -1,10 +1,11 @@
-version: '3'
+version: '3.8'
 services:
   app:
     build: .
-    container_name: amberly
     environment:
-      - POSTGRES_URL=postgresql://postgres:V0lBaT3rComAcaraNoposte@db:5432/biblioteca
+      - DATABASE_URL=postgresql://postgres:V0lBaT3rComAcaraNoposte@db:5432/biblioteca
+      - SECRET_KEY=mberlyqueriaS3erohalo
+    container_name: amberly
     depends_on:
       - db
     volumes:
@@ -44,7 +45,7 @@ services:
     ports:
       - "80:80"
     volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/nginx.conf
     depends_on:
       - app
     deploy:

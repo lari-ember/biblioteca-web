@@ -1,6 +1,6 @@
 # Diretórios e arquivos a serem ignorados
 __pycache__/
-.iDEA/
+.idea/
 *.pyc
 *.pyo
 *.pyd

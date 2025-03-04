@@ -420,3 +420,7 @@ time {
     background: transparent url(../images/wallpaper.jpg);
     }
 
+.border-primary { border: 2px solid #4a00e0 !important; }
+.bg-dark { background: #1a1a1a !important; }
+.text-warning { color: #ffd700 !important; }
+.alert { border-radius: 12px; }

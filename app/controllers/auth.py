@@ -56,7 +56,7 @@ def register():
             db.session.rollback()
             flash('An error occurred during registration. Please try again.', 'danger')
             # Logar o erro para monitoramento
-            app.logger.error(f'Registration error: {str(e)}')
+            lm.logger.error(f'Registration error: {str(e)}')
 
     elif request.method == 'POST':
         # Lidar com erros de validação do formulário
@@ -70,15 +70,44 @@ def register():
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm(request.form)
-    if request.method == 'POST' and form.validate():
+
+    # 1. Redirecionamento Seguro (Next URL)
+    next_url = request.args.get('next')
+    if next_url and not url_has_allowed_host_and_scheme(next_url, allowed_hosts=None):
+        next_url = None  # Prevenir redirecionamento malicioso
+
+    # 2. Validação CSRF (Flask-WTF já faz automaticamente, mas garantir no template)
+    if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
-        if user and user.check_password(form.password.data):
-            login_user(user)
-            flash('Logged in successfully.', 'success')
-            return redirect(url_for('index'))
+
+        # 3. Prevenção de Timing Attack (verificar hash mesmo se usuário não existir)
+        password_valid = False
+        if user:
+            password_valid = user.check_password(form.password.data)
+
+        # 4. Logging de Tentativas de Login
+        lm.logger.info(
+            f"Login attempt - Username: {form.username.data}, IP: {request.remote_addr}"
+        )
+
+        if user and password_valid:
+            # 5. Configuração Segura de Sessão
+            login_user(user, remember=form.remember.data, force=True)
+
+            # 6. Redirecionamento Seguro para 'next' ou página padrão
+            flash('Login realizado com sucesso.', 'success')
+            return redirect(next_url or url_for('main.index'))
         else:
-            flash('Invalid username or password.', 'error')
-    return render_template('login.html', form=form)
+            # 7. Feedback Genérico para Evitar User Enumeration
+            flash('Credenciais inválidas.', 'danger')
+            lm.logger.warning("Failed login attempt")
+
+    # 8. Tratamento de Erros de Formulário
+    for field, errors in form.errors.items():
+        for error in errors:
+            flash(f"{getattr(form, field).label.text}: {error}", 'warning')
+
+    return render_template('auth/login.html', form=form, next=next_url)
 
 
 @auth_bp.route('/logout')

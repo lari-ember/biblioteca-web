@@ -1,7 +1,10 @@
 # controllers/auth.py
-from flask import Blueprint, render_template, flash, redirect, url_for, request
+from urllib.parse import urlparse
+
+from flask import Blueprint, render_template, flash, redirect, url_for, request, current_app
 from flask_login import current_user
 from flask_login import login_user, logout_user
+from sqlalchemy import func
 from werkzeug.security import generate_password_hash
 
 from app import db, lm
@@ -11,6 +14,18 @@ from app.utils.security import validate_password_complexity
 
 auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
 
+def url_has_allowed_host_and_scheme(url, allowed_hosts=None):
+    if not url:
+        return False
+
+    parsed_url = urlparse(url)
+    if parsed_url.scheme not in ('http', 'https'):
+        return False
+
+    if allowed_hosts is not None and parsed_url.hostname not in allowed_hosts:
+        return False
+
+    return True
 
 @auth_bp.route('/register', methods=['GET', 'POST'])
 def register():
@@ -56,7 +71,7 @@ def register():
             db.session.rollback()
             flash('An error occurred during registration. Please try again.', 'danger')
             # Logar o erro para monitoramento
-            lm.logger.error(f'Registration error: {str(e)}')
+            current_app.logger.error(f'Registration error: {str(e)}')
 
     elif request.method == 'POST':
         # Lidar com erros de validação do formulário
@@ -100,7 +115,7 @@ def login():
         else:
             # 7. Feedback Genérico para Evitar User Enumeration
             flash('Credenciais inválidas.', 'danger')
-            lm.logger.warning("Failed login attempt")
+            current_app.logger.warning("Failed login attempt")
 
     # 8. Tratamento de Erros de Formulário
     for field, errors in form.errors.items():
@@ -119,15 +134,19 @@ def logout():
 
 @lm.user_loader
 def load_user(user_id):
-    #add_books_from_csv(csv_file_path)
-    # Implement the code to load the user from the database based on the user ID
-    # Return the user object if found, or None if not found
-    return User.query.get(int(user_id))
+    """Carrega um usuário pelo ID para o Flask-Login."""
+    try:
+        return User.query.filter(func.lower(User.id) == func.lower(user_id)).first()
+    except (ValueError, TypeError):
+        # Log para IDs inválidos (ataques ou erros)
+        current_app.logger.warning(f"Tentativa de acesso com ID inválido: {user_id}")
+        return None
 
 
 def get_logged_in_user():
+    """Retorna o usuário autenticado ou None, com verificação de contexto."""
     if current_user.is_authenticated:
         return current_user
-    else:
-        # If the user is not logged in, you can return None or take any other action depending on your requirement.
-        return None
+    # Log para acesso não autenticado (opcional)
+    current_app.logger.debug("Acesso a recurso restrito sem autenticação")
+    return None

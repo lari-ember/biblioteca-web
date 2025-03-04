@@ -1,10 +1,13 @@
-from xml.dom import ValidationErr
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, IntegerField, SelectField
 from wtforms.validators import DataRequired, EqualTo
 
 
 class LoginForm(FlaskForm):
+    def __init__(self, formdata=_Auto, **kwargs):
+        super().__init__(formdata, kwargs)
+        self.remember = None
+
     username = StringField('Username', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
     remember_me = BooleanField('Remember')

@@ -1,5 +1,6 @@
 version: '3.8'
 services:
+
   app:
     build: .
     environment:
@@ -10,6 +11,11 @@ services:
       - db
     volumes:
       - .:/app
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-h", "db", "-U", "postgres", "-d", "biblioteca" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
     deploy:
       resources:
         limits:

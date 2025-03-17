@@ -12,7 +12,7 @@
         <div class="col-md-6 shadow-lg card" style="background-color: #220d35d2; padding: 20px; border-radius: 10px; border: 2px ridge #251630;">
             <div class="text-white card p-4" style="background-color: #500e50a9; border-radius: 10px; border: 2px ridge #500e50; box-shadow: 2px 2px 5px #DD00DD;>
                 <h2 class="text-center mb-4">Register New Book</h2>
-                <form action="{{ url_for('register_new_book') }}" method="POST">
+                <form action="{{ url_for('books.register_new_book') }}" method="POST">
                     {{ form.csrf_token }}
                     <div class="mb-3">
                         <div id="">

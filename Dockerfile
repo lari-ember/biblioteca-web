@@ -1,6 +1,9 @@
 # Usa uma imagem base do Python
 FROM python:3.10-slim
 
+# Garante que o pip esteja instalado
+RUN apt update && apt install -y python3-pip
+
 #ENV SECRET_KEY=AmberlyqueriaS3erohalo
 #ENV DATABASE_URL=postgresql://postgres:V0lBaT3rComAcaraNoposte@db:5432/biblioteca
 
@@ -16,6 +19,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copia o código da aplicação para o container
 COPY config.py .
 COPY . .
+COPY postgres/conf/postgresql.conf /postgresql.conf
 
 # Exponha a porta 8080 (ou 5000, se preferir)
 EXPOSE 8080

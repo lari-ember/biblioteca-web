@@ -10,7 +10,7 @@ from werkzeug.security import generate_password_hash
 from app import db, lm
 from app.models.forms import RegistrationForm, LoginForm
 from app.models.modelsdb import User
-from app.utils.security import validate_password_complexity
+from app.security.security import validate_password_complexity
 
 auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
 

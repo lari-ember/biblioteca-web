@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   app:
-    command: ["sh", "-c", "sleep 2 && gunicorn --workers 2 --timeout 300 --bind 0.0.0.0:8080 run:app"]
+    command: ["sh", "-c", "gunicorn --workers 2 --timeout 300 --bind 0.0.0.0:8080 run:app"]
     build: .
     environment:
       - DATABASE_URL=postgresql://postgres:V0lBaT3rComAcaraNoposte@db:5432/biblioteca
@@ -12,7 +12,7 @@ services:
       db:
         condition: service_healthy
     volumes:
-      - .:/app
+      - /home/larisssa/Documentos/projetosdeprog/biblioteca/biblioteca-web:/app
     healthcheck:
       test: ["CMD", "curl", "-f", "http://app:8080/health"]
       interval: 30s
@@ -46,6 +46,7 @@ services:
       - "80:80"
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - /home/larisssa/Documentos/projetosdeprog/biblioteca/biblioteca-web/app/static:/app/static  # Mapeia os arquivos estáticos para o Nginx
     depends_on:
       - app
     # Removido a seção 'deploy'

@@ -6,10 +6,11 @@ from datetime import timedelta
 SECRET_KEY = os.getenv('SECRET_KEY', 'AmberlyqueriaS3erohalo')
 SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL', 'postgresql://postgres:V0lBaT3rComAcaraNoposte@db:5432/biblioteca')
 SQLALCHEMY_TRACK_MODIFICATIONS = False
+PREFERRED_URL_SCHEME = 'https'
+SESSION_COOKIE_SECURE = True
+REMEMBER_COOKIE_SECURE = True
 
 CSRF_ENABLED = True
-SESSION_COOKIE_SECURE = os.getenv('FLASK_ENV') == 'production'
-REMEMBER_COOKIE_SECURE = True
 SESSION_COOKIE_HTTPONLY = True
 PERMANENT_SESSION_LIFETIME = timedelta(hours=2)  # Tempo de sessão
 SESSION_PROTECTION = "strong"

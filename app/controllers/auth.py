@@ -12,7 +12,7 @@ from app.models.forms import RegistrationForm, LoginForm
 from app.models.modelsdb import User
 from app.security.security import validate_password_complexity
 
-auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
+auth_bp = Blueprint('auth', __name__, url_prefix='')
 
 def url_has_allowed_host_and_scheme(url, allowed_hosts=None):
     if not url:

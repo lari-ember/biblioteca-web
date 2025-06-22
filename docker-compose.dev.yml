@@ -21,7 +21,7 @@ services:
     environment:
       POSTGRES_DB: biblioteca
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: ${DATABASE_URL#*://postgres:}  # extrai senha do DATABASE_URL
+      POSTGRES_PASSWORD: senha_dev
     volumes:
       - pgdata:/var/lib/postgresql/data
       - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql

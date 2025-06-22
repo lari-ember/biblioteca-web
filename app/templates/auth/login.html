@@ -31,7 +31,7 @@
                         <!-- Campo Username -->
                         <div class="mb-3">
                             {{ form.username.label(class="form-label") }}
-                            {{ form.username(class="form-control" + (" is-invalid" if form.username.errors else ""), placeholder="Seu username") }}
+                            {{ form.username(class="form-control" + (" is-invalid" if form.username.errors else ""), placeholder="username") }}
                             {% for error in form.username.errors %}
                                 <div class="invalid-feedback">{{ error }}</div>
                             {% endfor %}
@@ -40,7 +40,7 @@
                         <!-- Campo Password -->
                         <div class="mb-4">
                             {{ form.password.label(class="form-label") }}
-                            {{ form.password(class="form-control" + (" is-invalid" if form.password.errors else ""), placeholder="Sua senha") }}
+                            {{ form.password(class="form-control" + (" is-invalid" if form.password.errors else ""), placeholder="password") }}
                             {% for error in form.password.errors %}
                                 <div class="invalid-feedback">{{ error }}</div>
                             {% endfor %}
@@ -54,13 +54,12 @@
 
                         <!-- Botões -->
                         <div class="d-grid gap-2 mb-3">
-                            <button class="btn btn-primary" type="submit">Entrar</button>
+                            <button class="btn btn-primary" type="submit">enter</button>
                         </div>
 
                         <!-- Links Adicionais -->
                         <div class="text-center small">
-                            <a class="text-warning" href="{{ url_for('auth.register') }}">Criar conta</a> |
-                            <a class="text-warning" href="{{ url_for('auth.reset_password_request') }}">Esqueceu a senha?</a>
+                            <a class="text-warning" href="{{ url_for('auth.register') }}">register</a> |
                         </div>
                     </form>
                 </div>

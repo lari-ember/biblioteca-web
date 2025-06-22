@@ -1,37 +1,37 @@
-# Usa uma imagem base do Python
+# Dockerfile.dev
 FROM python:3.10-slim
 
-# Garante que o pip esteja instalado
-RUN apt update && apt install -y python3-pip
-
-RUN apt-get update && apt-get install -y \
-    build-essential \
-    libpq-dev \
-    && rm -rf /var/lib/apt/lists/*
-
-#ENV SECRET_KEY=AmberlyqueriaS3erohalo
-#ENV DATABASE_URL=postgresql://postgres:V0lBaT3rComAcaraNoposte@db:5432/biblioteca
-
-# Define o diretório de trabalho dentro do container
+# Configura working directory
 WORKDIR /app
 
-# Copia o arquivo de dependências para o container
-COPY requirements.txt requirements.txt
+# Atualiza pip e instala dependências de runtime
+# Assumimos que requirements.txt inclui todas as libs necessárias (Flask, SQLAlchemy, psycopg2-binary, etc).
+RUN pip install --no-cache-dir --upgrade pip
 
-# Instala as dependências
+# Copia apenas requirements para aproveitar cache de camadas ao alterar código sem mudar dependencies
+COPY requirements.txt .
+
+# Instala dependências
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copia o código da aplicação para o container
-COPY config.py .
-COPY app/static/ /app/static/
+# Copia todo o código para /app
 COPY . .
-COPY postgres/conf/postgresql.conf /postgresql.conf
 
-# Exponha a porta 8080 (ou 5000, se preferir)
+# Cria usuário não-root
+RUN adduser --disabled-password --gecos "" appuser \
+    && chown -R appuser /app
+
+# Use o usuário não-root
+USER appuser
+
+# Variáveis de ambiente para desenvolvimento
+ENV FLASK_APP=run.py
+ENV FLASK_ENV=development
+# Se precisar instalar curl ou wget para healthcheck em dev, descomente:
+# RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
+
+# Exponha porta padrão do Flask em dev
 EXPOSE 8080
 
-# Comando para iniciar o Gunicorn, rodando a aplicação Flask
-CMD ["gunicorn", "--workers", "2", "--timeout", "300", "--bind", "0.0.0.0:8080", "run:app"]
-
-
-
+# Comando padrão: rodar Flask dev server com hot reload
+CMD ["flask", "run", "--host=0.0.0.0", "--port=8080"]

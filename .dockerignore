@@ -1,0 +1,16 @@
+# Ignorar ambiente virtual local
+.venv
+venv
+ENV/
+# Git
+.git
+# Arquivos de IDE
+.idea
+__pycache__
+*.pyc
+# Dados locais
+data/
+*.sqlite3
+*.log
+# Outros
+docker-compose.override.yml

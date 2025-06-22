@@ -14,7 +14,7 @@ COPY requirements.txt .
 # Instala dependências
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copia todo o código para /app
+# Copia to o código para /app
 COPY . .
 
 # Cria usuário não-root

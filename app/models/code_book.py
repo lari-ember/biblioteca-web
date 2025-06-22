@@ -1,5 +1,5 @@
 from sqlalchemy import func
-from app import Book
+from app.models.modelsdb import Book
 
 book_genres = {
     '000': 'General',

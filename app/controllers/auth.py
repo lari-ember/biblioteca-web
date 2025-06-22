@@ -7,7 +7,7 @@ from flask_login import login_user, logout_user
 from sqlalchemy import func
 from werkzeug.security import generate_password_hash
 
-from app import db, lm
+from app import db, login_manager
 from app.models.forms import RegistrationForm, LoginForm
 from app.models.modelsdb import User
 from app.security.security import validate_password_complexity
@@ -101,7 +101,7 @@ def login():
             password_valid = user.check_password(form.password.data)
 
         # 4. Logging de Tentativas de Login
-        lm.logger.info(
+        login_manager.logger.info(
             f"Login attempt - Username: {form.username.data}, IP: {request.remote_addr}"
         )
 
@@ -132,7 +132,7 @@ def logout():
     return redirect(url_for('index'))
 
 
-@lm.user_loader
+@login_manager.user_loader
 def load_user(user_id):
     """Carrega um usuário pelo ID para o Flask-Login."""
     try:

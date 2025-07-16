@@ -6,7 +6,7 @@ import requests
 from flask import Blueprint
 from flask import request, redirect, flash, url_for, render_template, current_app
 from flask_login import login_required, current_user
-from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.exc import SQLAlchemyError, IntegrityError
 
 from app import db, cache
 from app.models.book_search import get_book_cover_url, search_book_by_title
@@ -150,11 +150,13 @@ def register_new_book():
             flash_custom_errors(form)
 
     except SQLAlchemyError as e:
-        handle_database_error(e)
+        from app.utils.helpers import handle_database_error
+        current_app.logger.error(f"Database error in register_new_book: {str(e)}")
         return render_template('books/register_new_book.html', form=form), 503
 
     except IntegrityError as e:
-        handle_integrity_error(e)
+        # Tratamento específico para erros de integridade
+        current_app.logger.error(f"Integrity error in register_new_book: {str(e)}")
         return redirect(url_for('books.register_new_book'))
 
     except Exception as e:
@@ -174,7 +176,7 @@ def your_collection():
     Exibe a coleção de livros do usuário com paginação e filtragem eficiente.
 
     Returns:
-        Template renderizado com os livros do usuário ou redirecionamento em caso de erro.
+        Modelo renderizado com os livros do usuário ou redirecionamento em caso de erro.
     """
     try:
         # Parâmetros de paginação

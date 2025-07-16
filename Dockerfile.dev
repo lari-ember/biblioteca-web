@@ -34,4 +34,4 @@ ENV FLASK_ENV=development
 EXPOSE 8080
 
 # Comando padrão: rodar Flask dev server com hot reload
-CMD ["flask", "run", "--host=0.0.0.0", "--port=8080"]
+CMD ["sh", "-c", "sleep 12 && flask run --host=0.0.0.0 --port=8080"]

@@ -1,21 +1,6 @@
 version: '3.8'
 
 services:
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile.dev
-    image: biblioteca-web-dev
-    env_file:
-      - .env
-    volumes:
-      - ./:/app                  # hot reload do código
-    ports:
-      - "8080:8080"
-    depends_on:
-      db:
-        condition: service_healthy
-
   db:
     image: postgres:13
     environment:
@@ -28,12 +13,28 @@ services:
       - ./postgres/conf/pg_hba.conf:/etc/postgresql/pg_hba.conf:ro
       - ./postgres/conf/postgresql.conf:/etc/postgresql/postgresql.conf:ro
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d biblioteca"]
+      test: [ "CMD-SHELL", "pg_isready -U postgres -d biblioteca" ]
       interval: 10s
       timeout: 5s
       retries: 12
     ports:
       - "5432:5432"
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    image: biblioteca-web-dev
+    env_file:
+      - .env
+    volumes:
+      - ./:/app                  # hot reload do código
+    ports:
+      - "8080:8080"
+    environment:
+      - DATABASE_URL=postgresql://postgres:senha_dev@db:5432/biblioteca
+    depends_on:
+      - db
 
 volumes:
   pgdata:

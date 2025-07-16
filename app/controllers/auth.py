@@ -65,7 +65,7 @@ def register():
             login_user(new_user)
 
             flash('Registration successful! Welcome to your library.', 'success')
-            return redirect(url_for('main.index'))
+            return redirect(url_for('core.index'))
 
         except Exception as e:
             db.session.rollback()
@@ -134,12 +134,11 @@ def logout():
 
 @login_manager.user_loader
 def load_user(user_id):
-    """Carrega um usuário pelo ID para o Flask-Login."""
+    from app.models.modelsdb import User
     try:
-        return User.query.filter(func.lower(User.id) == func.lower(user_id)).first()
-    except (ValueError, TypeError):
-        # Log para IDs inválidos (ataques ou erros)
-        current_app.logger.warning(f"Tentativa de acesso com ID inválido: {user_id}")
+        return User.query.get(int(user_id))
+    except Exception:
+        current_app.logger.warning("load_user: ID inválido %s", user_id)
         return None
 
 

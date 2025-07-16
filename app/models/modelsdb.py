@@ -12,7 +12,7 @@ class User(db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), unique=True, nullable=False, index=True)
-    password_hash = db.Column(db.String(128), nullable=False)
+    password_hash = db.Column(db.String(), nullable=False)
     name = db.Column(db.String(100), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     last_login = db.Column(db.DateTime)
@@ -63,7 +63,7 @@ class Book(db.Model):
     __tablename__ = 'books'
     id = db.Column(db.Integer, primary_key=True)
     code = db.Column(db.String(13), unique=True, nullable=False) # código de localização na prateleira fisica
-    isbn = db.Column(db.String(17), nullable=False, unique=True)  # ISBN-13 format
+    isbn = db.Column(db.String(17), nullable=True, unique=False)  # ISBN-13 format
     title = db.Column(db.String(200), nullable=False)
     author = db.Column(db.String(100), nullable=False)
     publisher = db.Column(db.String(100), nullable=False)
@@ -86,11 +86,42 @@ class Book(db.Model):
 
     @validates('isbn')
     def validate_isbn(self, key, isbn):
-        # Basic ISBN-13 validation
-        isbn = isbn.replace('-', '')
-        if len(isbn) != 13 or not isbn.isdigit():
-            raise ValueError("Invalid ISBN-13 format")
-        return isbn
+        if not isbn:
+            return None
+
+        # 1. Limpeza básica
+        s = isbn.replace('-', '').replace(' ', '').upper()
+
+        # 2. ISBN-10?
+        if len(s) == 10:
+            if not all(c.isdigit() or (i == 9 and c == 'X') for i, c in enumerate(s)):
+                raise ValueError("ISBN-10 deve ter 9 dígitos e um dígito verificador (0–9 ou X).")
+            # checksum ISBN-10
+            total = sum((10 - i) * (10 if c == 'X' else int(c)) for i, c in enumerate(s))
+            if total % 11 != 0:
+                raise ValueError("Checksum inválido para ISBN-10.")
+            # converte para ISBN-13 (prefixo 978)
+            core = '978' + s[:-1]
+            # calcula novo dígito verificador ISBN-13
+            check = 0
+            for i, ch in enumerate(core):
+                n = int(ch)
+                check += n if i % 2 == 0 else 3 * n
+            cd = (10 - (check % 10)) % 10
+            return core + str(cd)
+
+        # 3. ISBN-13?
+        if len(s) == 13 and s.isdigit():
+            # checksum ISBN-13
+            total = sum((1 if i % 2 == 0 else 3) * int(ch) for i, ch in enumerate(s[:-1]))
+            cd = (10 - (total % 10)) % 10
+            if cd != int(s[-1]):
+                raise ValueError("Checksum inválido para ISBN-13.")
+            return s
+
+        # 4. Qualquer outro formato
+        raise ValueError("ISBN deve ser ISBN-10 (10 chars, último pode ser X) ou ISBN-13 (13 dígitos).")
+
 
 
 class UserBooks(db.Model):

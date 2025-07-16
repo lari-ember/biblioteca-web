@@ -53,6 +53,7 @@ def wait_for_db(app, retries=10, delay=2):
             try:
                 # Consulta simples para verificar disponibilidade
                 db.session.execute('SELECT 1')
+                print("Banco disponível após %d tentativa(s)")
                 app.logger.info("Banco disponível após %d tentativa(s)", attempt)
                 return True
             except OperationalError as e:
@@ -66,13 +67,17 @@ def register_login_manager(app):
     login_manager.init_app(app)
     login_manager.login_view = 'auth.login'
     login_manager.session_protection = "strong"
+
     @login_manager.user_loader
     def load_user(user_id):
         from app.models.modelsdb import User
         try:
             return User.query.get(int(user_id))
-        except Exception:
-            app.logger.warning("load_user: ID inválido %s", user_id)
+        except (ValueError, TypeError):
+            app.logger.warning("load_user: Invalid user_id %s", user_id)
+            return None
+        except Exception as e:
+            app.logger.error("load_user: Unexpected error for user_id %s: %s", user_id, str(e))
             return None
 
 def register_blueprints(app):
@@ -152,6 +157,7 @@ def create_app():
 
     # Em ambiente de desenvolvimento, criar tabelas após banco disponível
     if app.config.get('FLASK_ENV') == 'development':
+        print('asaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')
         app.logger.info("Ambiente de desenvolvimento: aguardando banco e criando tabelas se necessário.")
         if wait_for_db(app):
             with app.app_context():
@@ -170,3 +176,5 @@ app = create_app()
 
 # Importação de modelos (apenas para registrar no ORM); mantida após create_app
 from app.models.modelsdb import User, Book, UserBooks, UserReadings, Loan, UserRead
+with app.app_context():
+    db.create_all()

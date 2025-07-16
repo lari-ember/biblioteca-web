@@ -15,11 +15,12 @@ from app.models.forms import BookForm
 from app.models.modelsdb import Book, UserBooks
 from app.utils.helpers import flash_custom_errors
 from app.utils.notifications import format_success_message
+from app.utils.sanitize import sanitize_string
 
 # Criação do Blueprint
-books_bp = Blueprint('books', __name__, url_prefix='/books')
+books_bp = Blueprint('books', __name__, url_prefix='')
 
-def create_book(user, form):
+def create_book(form):
     """
         Cria um objeto Book validando dados, prevenindo duplicatas e garantindo consistência.
 
@@ -46,54 +47,63 @@ def create_book(user, form):
         if form.pages.data < 1:
             raise ValueError("Page count must be at least 1")
     except TypeError:
-        return None, "Invalid numeric format"
+        return None, "Invalid numeric format."
 
     # Geração de código com tratamento de erro
     try:
         code = generate_book_code(
-            form.genre.data.strip().title(),
-            form.author.data.strip(),
-            form.title.data.strip()
+            sanitize_string(form.genre.data, 'title'),
+            sanitize_string(form.author.data),
+            sanitize_string(form.title.data)
         )
         if not code:
             return None, "Invalid genre. Use the predefined categories."
     except Exception as e:
         current_app.logger.error(f"Code generation error: {str(e)}")
-        return None, "Error generating book code"
+        return None, "Error generating book code."
 
     # Busca de metadados com fallback
+    raw_isbn = None
     try:
-        isbn = search_book_by_title(form.title.data) or "ISBN-NOT-FOUND"
+        raw_isbn = search_book_by_title(form.title.data)
+        if raw_isbn == 'Na':
+            raw_isbn = None
+    except Exception as e:
+        current_app.logger.error(f"Metadata fetch error: {e}")
+    # Se o formulário tiver campo isbn, leia-o; senão, None
+    user_isbn = getattr(form, 'isbn', None) and form.isbn.data.strip()
+
+    # Define ISBN a usar
+    isbn_candidate = raw_isbn
+    isbn = None
+    if isbn_candidate:
+        clean = isbn_candidate.replace('-', '').strip()
+        if len(clean) == 13 and clean.isdigit():
+            isbn = clean
+        else:
+            return None, f"{raw_isbn} Invalid ISBN: must be exactly 13 numeric digits."
+    try:
         cover_url = get_book_cover_url(isbn) or url_for('static', filename='images/default_cover.jpg')
     except Exception as e:
-        current_app.logger.error(f"Metadata fetch error: {str(e)}")
-        isbn = "ISBN-ERROR"
         cover_url = url_for('static', filename='images/default_cover.jpg')
-
-    #code = generate_book_code(form.genre.data, form.author.data, form.title.data)
-
-    #if not code:
-    #    return None, "Genre not found. Please add a new genre."
-    #isbn = search_book_by_title(form.title.data)
 
     # Construção do objeto com sanitização
     try:
         return Book(
-            isbn=isbn[:17],  # Garante compatibilidade com campo de 17 caracteres
+            isbn=isbn,
             cover_url=cover_url,
-            user_id=user.id,
             code=code,
-            title=form.title.data.strip(),
-            author=form.author.data.strip().title(),  # Capitalização apropriada
-            publisher=form.publisher.data.strip(),
-            year=form.year.data,
+            title=sanitize_string(form.title.data),
+            author=sanitize_string(form.author.data, 'title'),
+            publisher=sanitize_string(form.publisher.data),
+            publication_year=form.year.data,
             pages=form.pages.data,
-            genre=form.genre.data.strip().capitalize(),
-            format=form.format.data.strip().lower()
+            genre=sanitize_string(form.genre.data, 'capitalize'),
+            format=sanitize_string(form.format.data, 'lower')
         ), None
     except Exception as e:
         current_app.logger.error(f"Book creation error: {str(e)}")
-        return None, "Error creating book record"
+        return None, "Error creating book record."
 
 
 @books_bp.route('/register_new_book', methods=['GET', 'POST'])
@@ -104,13 +114,25 @@ def register_new_book():
     try:
         if form.validate_on_submit():
             # Criar livro com validação adicional
-            book, error = create_book(current_user, form)
+            book, error = create_book(form)
             if error:
                 flash(error, 'warning')
                 return render_template('books/register_new_book.html', form=form), 400
             # Transação atômica com tratamento de concorrência
             with db.session.begin_nested():
                 db.session.add(book)
+                # faz flush para garantir que book.id seja gerado
+                db.session.flush()
+
+
+                # 2) cria o vínculo UserBooks
+                user_book = UserBooks(
+                    user_id=current_user.id,
+                    book_id=book.id,
+                    status='available',
+                    acquisition_date=datetime.utcnow()
+                )
+                db.session.add(user_book)
 
             db.session.commit()
 
@@ -141,7 +163,6 @@ def register_new_book():
         return redirect(url_for('main.index'))
 
     # Mantém dados do formulário após recarregamento
-    preserve_form_state(form)
     return render_template('books/register_new_book.html', form=form)
 
 
@@ -162,8 +183,8 @@ def your_collection():
 
         # Query otimizada com JOIN e filtragem
         books_query = Book.query.join(UserBooks).filter(
-            UserBooks.user_id == current_user.id,
-            Book.deleted == False  # Filtro para soft delete
+            UserBooks.user_id == current_user.id
+            #Book.deleted == False  # Filtro para soft delete
         ).order_by(Book.title.asc())
 
         # Paginação
@@ -189,7 +210,7 @@ def your_collection():
     except Exception as e:
         current_app.logger.critical(f"Unexpected error in your_collection: {traceback.format_exc()}")
         flash('A system error occurred. Please contact support.', 'danger')
-        return redirect(url_for('main.index'))
+        return redirect(url_for('core.index'))
 
 
 def fetch_openlibrary_books(query, limit):

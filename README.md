@@ -1,174 +1,310 @@
----
+# 📚 Biblioteca Web - Personal Library Management System
 
-# 📚 Biblioteca Web
+> A comprehensive digital library management system built with Flask, featuring automated book metadata retrieval, user authentication, and advanced book organization capabilities.
 
-Um sistema de gerenciamento de bibliotecas desenvolvido com **Flask** e **SQLAlchemy**, permitindo que usuários façam cadastro, gerenciem coleções de livros, emprestem e pesquisem informações sobre livros utilizando a [API da Open Library](https://openlibrary.org/developers/api). Este projeto também inclui integração com **Docker** para facilitar o deploy e o desenvolvimento.
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
+[![Flask](https://img.shields.io/badge/Flask-3.0.3-green.svg)](https://flask.palletsprojects.com/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-13+-blue.svg)](https://www.postgresql.org/)
+[![Docker](https://img.shields.io/badge/Docker-ready-blue.svg)](https://www.docker.com/)
 
----
+## 🌟 Features
 
-## 🖥️ Demonstração
+### 📖 Book Management
+- **Smart Book Registration**: Automatic ISBN lookup and metadata retrieval from Open Library API
+- **Intelligent Cover Detection**: Automatic book cover fetching with fallback mechanisms
+- **Advanced Cataloging System**: Dewey-inspired classification with custom genre codes
+- **Reading Progress Tracking**: Monitor current readings with page progress and completion dates
+- **Book Lending System**: Track borrowed and lent books between users
 
-- **URL da aplicação local**: [http://localhost](http://localhost)  
-- **Requisitos para acesso**: Navegador web compatível (Chrome, Firefox).
+### 👤 User Experience
+- **Secure Authentication**: Flask-Login with password hashing and session management
+- **Personal Collections**: Private book libraries with customizable organization
+- **Advanced Search**: Multi-field search with filters (author, genre, year, format, etc.)
+- **Reading Analytics**: Track pages read, completion dates, and reading statistics
 
----
+### 🔧 Technical Features
+- **RESTful API Design**: Clean, maintainable route structure
+- **Database Migrations**: SQLAlchemy ORM with relationship management
+- **Caching Layer**: Flask-Caching for improved performance
+- **Security Headers**: CSRF protection and secure session handling
+- **Docker Support**: Complete containerization with PostgreSQL and Nginx
+- **Responsive Design**: Mobile-friendly CSS with modern UI components
 
-## 🚀 Funcionalidades
+## 🚀 Quick Start
 
-### Gerenciamento de Usuários:
-- Cadastro e login de usuários.
-- Gerenciamento de perfis.
+### Prerequisites
+- [Docker](https://docs.docker.com/get-docker/) and Docker Compose
+- [Git](https://git-scm.com/)
+- Python 3.10+ (for local development)
 
-### Gerenciamento de Livros:
-- Registro de novos livros com informações completas (autor, título, ano, gênero, formato, etc.).
-- Visualização da coleção de livros pessoais.
-- Pesquisas detalhadas com filtros customizados.
-- Empréstimos de livros entre usuários.
-
-### APIs e Integrações:
-- Busca e registro de informações sobre livros utilizando a [Open Library API](https://openlibrary.org/developers/api).
-- Verificação de capas de livros por ISBN.
-
-### Administração:
-- Gerenciamento global de livros (edição e exclusão por administradores).
-- Visualização de dados sobre o sistema.
-
-### Estilo e Design:
-- Estilos personalizados com suporte para CSS avançado.
-- Autocompletar para busca por títulos.
-
----
-
-## 🛠️ Tecnologias
-
-### Backend:
-- **[Python](https://www.python.org/)** (3.10+)
-- **[Flask](https://flask.palletsprojects.com/)** e **[Flask-Login](https://flask-login.readthedocs.io/)**
-- **[SQLAlchemy](https://docs.sqlalchemy.org/)**
-- **[psycopg2](https://www.psycopg.org/docs/)** (para integração com PostgreSQL)
-
-### Frontend:
-- **HTML5** e **[Jinja2](https://jinja.palletsprojects.com/en/3.0.x/)** (templates dinâmicos)
-- **CSS3** (com arquivos como `product.css`, `estilos.css`, `pestilio.css` e `more.css`)
-- **JavaScript**:
-  - Integração com APIs externas.
-  - Scripts para autocomplete de títulos.
-
-### DevOps:
-- **[Docker](https://docs.docker.com/)**:
-  - Configurado para rodar o Flask, PostgreSQL e Nginx.
-  - Imagens separadas para banco de dados e backend.
-- **[Nginx](https://nginx.org/)**:
-  - Proxy reverso configurado para balancear a aplicação.
-- **[PostgreSQL](https://www.postgresql.org/)**:
-  - Utilizado para armazenar informações de usuários e livros.
-
----
-
-## 📂 Estrutura do Projeto
-
-```plaintext
-biblioteca-web/
-├── app/
-│   ├── controllers/
-│   │   ├── auth.py  # Gerenciamento de usuários
-│   │   ├── books.py # Gerenciamento de livros
-│   │   ├── default.py # Rotas padrão (index, home, etc.)
-│   ├── models/
-│   │   ├── book.py # Definição do modelo "Book"
-│   │   ├── user.py # Definição do modelo "User"
-│   ├── templates/
-│   │   ├── register_new_book.html # Página de registro de livros
-│   │   ├── login.html # Página de login
-│   │   ├── your_collection.html # Página da coleção do usuário
-│   └── static/
-│       ├── css/ # Arquivos de estilo
-│       ├── js/  # Scripts
-├── tests/
-│   └── test_app.py # Testes unitários e de integração
-├── Dockerfile
-├── docker-compose.yml
-├── README.md
+### 1. Clone and Setup
+```bash
+git clone https://github.com/lari-ember/biblioteca-web.git
+cd biblioteca-web
 ```
 
+### 2. Environment Configuration
+Create a `.env` file in the root directory:
+```env
+# Security
+SECRET_KEY=your-super-secret-key-here
+FLASK_ENV=development
+
+# Database
+DATABASE_URL=postgresql://postgres:senha_dev@db:5432/biblioteca
+POSTGRES_DB=biblioteca
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=senha_dev
+
+# Optional: API Keys
+OPENLIBRARY_API_TIMEOUT=10
+```
+
+### 3. Launch with Docker
+```bash
+# Development environment
+docker-compose -f docker-compose.dev.yml up --build
+
+# Production environment
+docker-compose up --build
+```
+
+### 4. Access the Application
+- **Web Interface**: http://localhost (production) or http://localhost:8080 (development)
+- **Database**: localhost:5432 (development only)
+
+## 📁 Project Structure
+
+```
+biblioteca-web/
+├── app/                          # Main application package
+│   ├── __init__.py              # Application factory and configuration
+│   ├── controllers/             # Route handlers (MVC pattern)
+│   │   ├── auth.py             # Authentication routes
+│   │   ├── books.py            # Book management routes
+│   │   └── routes.py           # Core application routes
+│   ├── models/                  # Data models and forms
+│   │   ├── modelsdb.py         # SQLAlchemy database models
+│   │   ├── forms.py            # WTForms definitions
+│   │   ├── book_search.py      # External API integration
+│   │   └── code_book.py        # Book classification system
+│   ├── security/               # Security utilities
+│   │   ├── middleware.py       # Security headers and middleware
+│   │   └── security.py         # Password validation and utilities
+│   ├── utils/                  # Helper utilities
+│   │   ├── helpers.py          # Form and UI helpers
+│   │   ├── sanitize.py         # Input sanitization
+│   │   └── notifications.py    # User notification formatting
+│   ├── templates/              # Jinja2 templates
+│   └── static/                 # CSS, JavaScript, images
+├── tests/                      # Test suite
+│   ├── conftest.py            # Test configuration
+│   └── test_books.py          # Book functionality tests
+├── data/                       # Sample data and imports
+├── nginx/                      # Nginx configuration
+├── scripts/                    # Utility scripts
+├── docker-compose.yml          # Production Docker setup
+├── docker-compose.dev.yml      # Development Docker setup
+├── Dockerfile.dev             # Development container
+├── requirements.txt           # Python dependencies
+└── config.py                 # Application configuration
+```
+
+## 🛠️ Development Setup
+
+### Local Development (without Docker)
+```bash
+# Create virtual environment
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Set up database (PostgreSQL required)
+createdb biblioteca
+export DATABASE_URL="postgresql://user:password@localhost:5432/biblioteca"
+
+# Run application
+python run.py
+```
+
+### Database Management
+```bash
+# Reset database (development)
+./scripts/reset.sh
+
+# Manual database access
+docker exec -it biblioteca-web_db_1 psql -U postgres -d biblioteca
+```
+
+## 🧪 Testing
+
+Run the test suite to ensure everything works correctly:
+
+```bash
+# Using Docker
+docker-compose exec app python -m pytest tests/ -v
+
+# Local environment
+python -m pytest tests/ -v --cov=app
+```
+
+### Test Coverage
+The project includes tests for:
+- User authentication and registration
+- Book creation and validation
+- Database models and relationships
+- API integrations
+- Form validation
+
+## 📊 Architecture Overview
+
+### Database Schema
+The application uses a relational database with the following key entities:
+
+- **Users**: Authentication and profile management
+- **Books**: Core book information with ISBN integration
+- **UserBooks**: Many-to-many relationship for personal collections
+- **UserReadings**: Reading progress tracking
+- **Loans**: Book lending between users
+
+### API Integration
+- **Open Library API**: Automatic book metadata retrieval
+- **Cover Image API**: Intelligent book cover detection
+- **Fallback Mechanisms**: Amazon scraping as backup for cover images
+
+### Security Features
+- **Password Hashing**: Scrypt-based secure password storage
+- **CSRF Protection**: Form-based attack prevention
+- **Session Security**: Secure cookie configuration
+- **Input Validation**: Comprehensive data sanitization
+
+## 🔧 Configuration
+
+### Environment Variables
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `SECRET_KEY` | Flask secret key for sessions | `dev-secret-key-fallback` |
+| `DATABASE_URL` | PostgreSQL connection string | Development database |
+| `FLASK_ENV` | Environment mode | `development` |
+| `SESSION_COOKIE_SECURE` | Enable secure cookies | `False` (dev) |
+
+### Application Settings
+Key configuration options in `config.py`:
+- Session timeout and security settings
+- Database connection pooling
+- Logging configuration
+- CSRF and security headers
+
+## 📈 Performance Optimization
+
+### Caching Strategy
+- **Flask-Caching**: Route-level caching for book collections
+- **Database Indexing**: Optimized queries for search operations
+- **Static File Serving**: Nginx for efficient asset delivery
+
+### Database Optimization
+- **Connection Pooling**: SQLAlchemy connection management
+- **Query Optimization**: Eager loading for related entities
+- **Pagination**: Efficient large dataset handling
+
+## 🚀 Deployment
+
+### Production Deployment
+```bash
+# Build production images
+docker-compose build
+
+# Deploy with environment variables
+export SECRET_KEY="your-production-secret"
+export DATABASE_URL="your-production-db-url"
+docker-compose up -d
+```
+
+### Health Monitoring
+- **Health Check Endpoint**: `/health` for load balancer monitoring
+- **Logging**: Structured logging with rotation
+- **Error Tracking**: Comprehensive error handling and logging
+
+## 🤝 Contributing
+
+We welcome contributions! Please read our contributing guidelines:
+
+1. **Fork the repository** and create a feature branch
+2. **Write tests** for new functionality
+3. **Follow code style** guidelines (PEP 8 for Python)
+4. **Update documentation** for significant changes
+5. **Submit a pull request** with clear description
+
+### Code Style
+- Use meaningful variable and function names
+- Add docstrings for functions and classes
+- Follow Flask best practices and patterns
+- Maintain test coverage above 80%
+
+## 📝 API Documentation
+
+### Book Management Endpoints
+```http
+GET    /your_collection          # List user's books
+POST   /register_new_book        # Add new book
+GET    /search                   # Search books
+POST   /delete_book/<id>         # Remove book
+```
+
+### Authentication Endpoints
+```http
+POST   /register                 # User registration
+POST   /login                    # User login
+GET    /logout                   # User logout
+```
+
+## 🐛 Troubleshooting
+
+### Common Issues
+
+**Database Connection Issues**
+```bash
+# Check database status
+docker-compose ps db
+docker-compose logs db
+
+# Reset database
+./scripts/reset.sh
+```
+
+**Nginx 502 Errors**
+```bash
+# Check application logs
+docker-compose logs app
+
+# Restart services
+docker-compose restart
+```
+
+**Book Metadata Not Loading**
+- Verify internet connection for Open Library API
+- Check API rate limits
+- Review application logs for API errors
+
+## 📄 License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+## 👩‍💻 Author
+
+**Larissa Ember**
+- GitHub: [@lari-ember](https://github.com/lari-ember)
+- Project Link: [biblioteca-web](https://github.com/lari-ember/biblioteca-web)
+
+## 🙏 Acknowledgments
+
+- [Open Library](https://openlibrary.org/) for book metadata API
+- [Flask](https://flask.palletsprojects.com/) community for excellent documentation
+- All contributors who have helped improve this project
+
 ---
 
-## ⚙️ Instalação e Uso
-
-### Pré-requisitos
-- **[Docker](https://docs.docker.com/get-docker/)** (recomendado)
-- **[Python](https://www.python.org/)** (para rodar localmente)
-- **[PostgreSQL](https://www.postgresql.org/)** (banco de dados)
-
-### Configuração Local com Docker
-
-1. **Clone o repositório**:
-   ```bash
-   git clone https://github.com/lari-ember/biblioteca-web.git
-   cd biblioteca-web
-   ```
-
-2. **Inicie os containers**:
-   ```bash
-   docker-compose up --build
-   ```
-
-3. **Acesse a aplicação**:
-   - Abra o navegador e acesse: [http://localhost](http://localhost)
-
-4. **Para encerrar os containers**:
-   ```bash
-   docker-compose down
-   ```
-
----
-
-## 🧪 Testes
-
-O projeto inclui testes para validar a funcionalidade de rotas e modelos.
-
-- **Executar testes**:
-  ```bash
-  python -m unittest discover tests
-  ```
-
----
-
-## 🔧 Solução de Problemas
-
-- **Erro 502 no Nginx**:
-  - Verifique se os containers estão em execução.
-  - Reinicie os serviços:
-    ```bash
-    docker-compose down && docker-compose up --build
-    ```
-
-- **Banco de dados com dados persistentes indesejados**:
-  - Limpe os volumes do Docker:
-    ```bash
-    docker volume rm $(docker volume ls -q)
-    ```
-
-- **Problemas de rede em API externa (Open Library)**:
-  - Verifique sua conexão e o status da API [aqui](https://status.openlibrary.org/).
-
----
-
-## 🌟 Contribuições
-
-Contribuições são bem-vindas! Sinta-se à vontade para abrir [issues](https://github.com/lari-ember/biblioteca-web/issues) ou enviar [pull requests](https://github.com/lari-ember/biblioteca-web/pulls).
-
----
-
-## 📜 Licença
-
-Este projeto está licenciado sob a [licença MIT](LICENSE).
-
----
-
-## 👩‍💻 Autor
-
-Desenvolvido por **[Larissa Ember](https://github.com/lari-ember)**.  
-[Siga no GitHub](https://github.com/lari-ember) para mais projetos.
-
----
+⭐ If you find this project useful, please consider giving it a star on GitHub!

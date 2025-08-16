@@ -344,6 +344,8 @@ See [CHANGELOG.md](CHANGELOG.md) for a detailed list of changes and version hist
 - [Code of Conduct](CODE_OF_CONDUCT.md)
 - [Security Policy](SECURITY.md)
 - [Changelog](CHANGELOG.md)
+- [Project Structure Guide](docs/PROJECT_STRUCTURE.md)
+- [Milestone Planning](docs/MILESTONES.md)
 
 ---
 

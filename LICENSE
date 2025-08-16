@@ -1,60 +1,53 @@
----
+MIT License
 
-# MIT License
+Copyright (c) 2025 Larissa Ember
 
-Copyright (c) 2025 **Larissa Ember**
-
-Permission is hereby granted, free of charge, to any person obtaining a copy  
-of this software and associated documentation files (the "Software"), to deal  
-in the Software without restriction, including without limitation the rights  
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell  
-copies of the Software, and to permit persons to whom the Software is  
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
 furnished to do so, subject to the following conditions:
 
----
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
 
-## 📝 Condições
-
-1. **Inclusão de Direitos Autorais**:  
-   Este aviso de direitos autorais deve ser incluído em todas as cópias ou partes substanciais do Software distribuído.
-
-2. **Gratuidade do Uso**:  
-   O Software pode ser utilizado de forma gratuita, tanto para fins comerciais quanto pessoais.
-
----
-
-## ⚠️ Isenção de Garantias
-
-O SOFTWARE É FORNECIDO "NO ESTADO EM QUE SE ENCONTRA", SEM QUALQUER TIPO DE GARANTIA,  
-EXPRESSA OU IMPLÍCITA, INCLUINDO, MAS NÃO SE LIMITANDO A GARANTIAS DE  
-COMERCIALIZAÇÃO, ADEQUAÇÃO A UM DETERMINADO PROPÓSITO E NÃO VIOLAÇÃO.  
-EM NENHUMA CIRCUNSTÂNCIA OS AUTORES OU DETENTORES DE DIREITOS AUTORAIS  
-SERÃO RESPONSÁVEIS POR QUALQUER REIVINDICAÇÃO, DANOS OU OUTRAS  
-RESPONSABILIDADES, SEJA EM UMA AÇÃO DE CONTRATO, ATO ILÍCITO OU OUTRA FORMA,  
-DECORRENTES DE, OU RELACIONADAS AO SOFTWARE OU USO OU OUTRAS NEGOCIAÇÕES  
-NO SOFTWARE.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
 
 ---
 
-## 📌 Uso Recomendado
+## 📝 Condições de Uso / Usage Terms
 
-1. **Para desenvolvedores e organizações**:  
-   Você pode usar, modificar e distribuir este projeto livremente, desde que o aviso de licença seja mantido em todas as cópias.
+### Para desenvolvedores e organizações / For developers and organizations:
+Você pode usar, modificar e distribuir este projeto livremente, desde que o aviso de licença seja mantido em todas as cópias.
 
-2. **Para contribuições públicas**:  
-   - Ao enviar uma contribuição, você aceita que ela será licenciada sob os mesmos termos do projeto (MIT).  
-   - Recomenda-se seguir as práticas de boas contribuições descritas em [CONTRIBUTING.md](https://github.com/lari-ember/biblioteca-web/blob/main/CONTRIBUTING.md) (se aplicável).
+*You can use, modify and distribute this project freely, as long as the license notice is kept in all copies.*
 
-3. **Distribuições Comerciais**:  
-   Caso pretenda usar o software como base para um projeto comercial, é altamente recomendável atribuir o devido crédito a **Larissa Ember**, conforme mencionado nos termos da licença.
+### Para contribuições públicas / For public contributions:
+- Ao enviar uma contribuição, você aceita que ela será licenciada sob os mesmos termos do projeto (MIT).
+- Recomenda-se seguir as práticas de boas contribuições descritas em [CONTRIBUTING.md](CONTRIBUTING.md).
 
----
+*- By submitting a contribution, you agree that it will be licensed under the same terms as the project (MIT).
+- It is recommended to follow the good contribution practices described in [CONTRIBUTING.md](CONTRIBUTING.md).*
 
-## 🌟 Informações Adicionais
+### Distribuições Comerciais / Commercial Distributions:
+Caso pretenda usar o software como base para um projeto comercial, é altamente recomendável atribuir o devido crédito a **Larissa Ember**, conforme mencionado nos termos da licença.
 
-- **Documentação oficial da licença MIT**: [opensource.org/licenses/MIT](https://opensource.org/licenses/MIT)  
-- **Sobre o projeto**: Para mais informações sobre o propósito deste software, consulte o arquivo [README.md](https://github.com/lari-ember/biblioteca-web/blob/main/README.md).
-
-Desenvolvido com ❤️ por **[Larissa Ember](https://github.com/lari-ember)**.  
+*If you intend to use the software as a basis for a commercial project, it is highly recommended to give due credit to **Larissa Ember**, as mentioned in the license terms.*
 
 ---
+
+## 🌟 Informações Adicionais / Additional Information
+
+- **Documentação oficial da licença MIT / Official MIT license documentation**: [opensource.org/licenses/MIT](https://opensource.org/licenses/MIT)  
+- **Sobre o projeto / About the project**: Para mais informações sobre o propósito deste software, consulte o arquivo [README.md](README.md).
+
+Desenvolvido com ❤️ por **[Larissa Ember](https://github.com/lari-ember)**.
+
+*Developed with ❤️ by **[Larissa Ember](https://github.com/lari-ember)**.*

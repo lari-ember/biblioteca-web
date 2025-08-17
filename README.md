@@ -8,6 +8,23 @@
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-13+-blue.svg)](https://www.postgresql.org/)
 [![Docker](https://img.shields.io/badge/Docker-ready-blue.svg)](https://www.docker.com/)
 
+## 📋 Table of Contents
+
+- [Features](#-features)
+- [Quick Start](#-quick-start)
+- [Project Structure](#-project-structure)
+- [Architecture Overview](#-architecture-overview)
+- [Configuration](#-configuration)
+- [Testing](#-testing)
+- [Performance Optimization](#-performance-optimization)
+- [Deployment](#-deployment)
+- [API Documentation](#-api-documentation)
+- [Contributing](#-contributing)
+- [Troubleshooting](#-troubleshooting)
+- [License](#-license)
+- [Security](#-security)
+- [Additional Resources](#-additional-resources)
+
 ## 🌟 Features
 
 ### 📖 Book Management
@@ -230,13 +247,21 @@ docker-compose up -d
 
 ## 🤝 Contributing
 
-We welcome contributions! Please read our contributing guidelines:
+We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for detailed information.
+
+**Quick Start for Contributors:**
 
 1. **Fork the repository** and create a feature branch
-2. **Write tests** for new functionality
+2. **Read our [Code of Conduct](CODE_OF_CONDUCT.md)**
 3. **Follow code style** guidelines (PEP 8 for Python)
-4. **Update documentation** for significant changes
-5. **Submit a pull request** with clear description
+4. **Write tests** for new functionality
+5. **Update documentation** for significant changes
+6. **Submit a pull request** using our [PR template](.github/pull_request_template.md)
+
+### 📋 Issue Templates
+- [🐛 Bug Report](.github/ISSUE_TEMPLATE/bug_report.md)
+- [✨ Feature Request](.github/ISSUE_TEMPLATE/feature_request.md)
+- [❓ Question](.github/ISSUE_TEMPLATE/question.md)
 
 ### Code Style
 - Use meaningful variable and function names
@@ -293,6 +318,14 @@ docker-compose restart
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
+## 🔒 Security
+
+Please see our [Security Policy](SECURITY.md) for reporting security vulnerabilities.
+
+## 📋 Changelog
+
+See [CHANGELOG.md](CHANGELOG.md) for a detailed list of changes and version history.
+
 ## 👩‍💻 Author
 
 **Larissa Ember**
@@ -304,6 +337,15 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 - [Open Library](https://openlibrary.org/) for book metadata API
 - [Flask](https://flask.palletsprojects.com/) community for excellent documentation
 - All contributors who have helped improve this project
+
+## 📚 Additional Resources
+
+- [Contributing Guidelines](CONTRIBUTING.md)
+- [Code of Conduct](CODE_OF_CONDUCT.md)
+- [Security Policy](SECURITY.md)
+- [Changelog](CHANGELOG.md)
+- [Project Structure Guide](docs/PROJECT_STRUCTURE.md)
+- [Milestone Planning](docs/MILESTONES.md)
 
 ---
 

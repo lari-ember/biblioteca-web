@@ -346,6 +346,7 @@ See [CHANGELOG.md](CHANGELOG.md) for a detailed list of changes and version hist
 - [Changelog](CHANGELOG.md)
 - [Project Structure Guide](docs/PROJECT_STRUCTURE.md)
 - [Milestone Planning](docs/MILESTONES.md)
+- [Full Release Milestone Template](docs/FULL_RELEASE_MILESTONE_TEMPLATE.md)
 
 ---
 

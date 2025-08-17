@@ -1,0 +1,66 @@
+---
+name: ✨ Feature Request / Solicitação de Funcionalidade
+about: Suggest an idea for this project / Sugira uma ideia para este projeto
+title: '[FEATURE] '
+labels: ['enhancement', 'needs-discussion']
+assignees: ['lari-ember']
+---
+
+## 🎯 Feature Summary / Resumo da Funcionalidade
+
+**English:** A clear and concise description of the feature you would like to see implemented.
+**Português:** Uma descrição clara e concisa da funcionalidade que você gostaria de ver implementada.
+
+## 🤔 Problem Statement / Declaração do Problema
+
+**English:** Is your feature request related to a problem? Please describe.
+**Português:** Sua solicitação de funcionalidade está relacionada a um problema? Por favor, descreva.
+
+## 💡 Proposed Solution / Solução Proposta
+
+**English:** Describe the solution you'd like to see implemented.
+**Português:** Descreva a solução que você gostaria de ver implementada.
+
+## 🔄 User Story / História do Usuário
+
+**English:** As a [type of user], I want [goal] so that [benefit].
+**Português:** Como um [tipo de usuário], eu quero [objetivo] para que [benefício].
+
+## 📋 Acceptance Criteria / Critérios de Aceitação
+
+**English:** List the specific requirements that must be met for this feature to be considered complete:
+**Português:** Liste os requisitos específicos que devem ser atendidos para que esta funcionalidade seja considerada completa:
+
+- [ ] Requirement 1 / Requisito 1
+- [ ] Requirement 2 / Requisito 2
+- [ ] Requirement 3 / Requisito 3
+
+## 🎨 Design Considerations / Considerações de Design
+
+**English:** Any specific design, UI/UX, or technical considerations for this feature.
+**Português:** Quaisquer considerações específicas de design, UI/UX ou técnicas para esta funcionalidade.
+
+## 🔧 Technical Details / Detalhes Técnicos
+
+**English:** If you have technical suggestions, implementation ideas, or architectural considerations.
+**Português:** Se você tiver sugestões técnicas, ideias de implementação ou considerações arquiteturais.
+
+## 📈 Priority / Prioridade
+
+**English:** How important is this feature to you?
+**Português:** Quão importante é esta funcionalidade para você?
+
+- [ ] Low / Baixa
+- [ ] Medium / Média  
+- [ ] High / Alta
+- [ ] Critical / Crítica
+
+## 📱 Mockups/Screenshots / Mockups/Capturas de tela
+
+**English:** If you have mockups, wireframes, or examples from other applications, please attach them.
+**Português:** Se você tiver mockups, wireframes ou exemplos de outras aplicações, por favor anexe-os.
+
+## 🌟 Additional Context / Contexto Adicional
+
+**English:** Add any other context, links, or examples about the feature request here.
+**Português:** Adicione qualquer outro contexto, links ou exemplos sobre a solicitação de funcionalidade aqui.

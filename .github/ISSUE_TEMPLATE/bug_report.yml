@@ -1,0 +1,53 @@
+---
+name: 🐛 Bug Report / Relatório de Bug
+about: Create a report to help us improve / Crie um relatório para nos ajudar a melhorar
+title: '[BUG] '
+labels: ['bug', 'needs-triage']
+assignees: ['lari-ember']
+---
+
+## 🐛 Bug Description / Descrição do Bug
+
+**English:** A clear and concise description of what the bug is.
+**Português:** Uma descrição clara e concisa do que é o bug.
+
+## 🔄 Steps to Reproduce / Passos para Reproduzir
+
+**English:** Steps to reproduce the behavior:
+**Português:** Passos para reproduzir o comportamento:
+
+1. Go to '...' / Vá para '...'
+2. Click on '...' / Clique em '...'
+3. Scroll down to '...' / Role para baixo até '...'
+4. See error / Veja o erro
+
+## ✅ Expected Behavior / Comportamento Esperado
+
+**English:** A clear and concise description of what you expected to happen.
+**Português:** Uma descrição clara e concisa do que você esperava que acontecesse.
+
+## 📱 Screenshots / Capturas de Tela
+
+**English:** If applicable, add screenshots to help explain your problem.
+**Português:** Se aplicável, adicione capturas de tela para ajudar a explicar seu problema.
+
+## 🔧 Environment / Ambiente
+
+**Browser / Navegador:** 
+**OS / Sistema Operacional:** 
+**Python Version / Versão do Python:** 
+**Docker:** Yes/No - Sim/Não
+
+## 📋 Additional Context / Contexto Adicional
+
+**English:** Add any other context about the problem here.
+**Português:** Adicione qualquer outro contexto sobre o problema aqui.
+
+## 🧪 Console Logs / Logs do Console
+
+**English:** If applicable, paste relevant console logs or error messages.
+**Português:** Se aplicável, cole logs do console relevantes ou mensagens de erro.
+
+```
+Paste console output here / Cole a saída do console aqui
+```

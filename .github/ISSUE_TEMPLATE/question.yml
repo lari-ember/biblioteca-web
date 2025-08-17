@@ -1,0 +1,45 @@
+---
+name: ❓ Question / Pergunta
+about: Ask a question about the project / Faça uma pergunta sobre o projeto
+title: '[QUESTION] '
+labels: ['question', 'help-wanted']
+assignees: []
+---
+
+## ❓ Question / Pergunta
+
+**English:** What would you like to know?
+**Português:** O que você gostaria de saber?
+
+## 📚 Context / Contexto
+
+**English:** Provide any relevant context or background information.
+**Português:** Forneça qualquer contexto relevante ou informações de base.
+
+## 🔍 What I've Tried / O que Eu Tentei
+
+**English:** What have you already tried to solve this?
+**Português:** O que você já tentou para resolver isso?
+
+- [ ] Checked the documentation / Verifiquei a documentação
+- [ ] Searched existing issues / Pesquisei issues existentes
+- [ ] Looked at the code / Olhei o código
+- [ ] Asked in community forums / Perguntei em fóruns da comunidade
+
+## 💻 Environment / Ambiente
+
+**English:** If your question is environment-specific, please provide details:
+**Português:** Se sua pergunta é específica do ambiente, forneça detalhes:
+
+**OS / Sistema Operacional:** 
+**Python Version / Versão do Python:** 
+**Installation Method / Método de Instalação:** (Docker, local, etc.)
+
+## 📋 Additional Information / Informações Adicionais
+
+**English:** Any additional information, code snippets, or examples that might help.
+**Português:** Qualquer informação adicional, trechos de código ou exemplos que possam ajudar.
+
+```python
+# Code example if applicable / Exemplo de código se aplicável
+```

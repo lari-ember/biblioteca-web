@@ -322,7 +322,7 @@ class CardManager {
     }
 
     /**
-     * Método público para adicionar novos cards dinamicamente
+     * Mé público para adicionar novos cards dinamicamente
      */
     addCard(cardElement) {
         if (cardElement.hasAttribute('data-href')) {
@@ -332,7 +332,7 @@ class CardManager {
     }
 
     /**
-     * Método público para obter estatísticas dos cards
+     * Mé público para obter estatísticas dos cards
      */
     getCardStats() {
         return {

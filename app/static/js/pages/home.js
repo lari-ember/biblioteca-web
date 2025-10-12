@@ -440,7 +440,7 @@ class HomePage {
     }
 
     /**
-     * Método utilitário para log de erros
+     * Mé utilitário para log de erros
      */
     logError(error, context) {
         console.error(`Erro na página inicial [${context}]:`, error);

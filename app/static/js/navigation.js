@@ -214,7 +214,7 @@ class NavigationManager {
     }
 
     /**
-     * Método público para definir item ativo externamente
+     * Mé público para definir item ativo externamente
      */
     setActive(index) {
         this.setActiveItem(index);
@@ -222,7 +222,7 @@ class NavigationManager {
     }
 
     /**
-     * Método público para obter item ativo atual
+     * Mé público para obter item ativo atual
      */
     getActiveIndex() {
         return parseInt(localStorage.getItem('activeNavIndex') || '0');

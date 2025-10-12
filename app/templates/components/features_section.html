@@ -1,0 +1,187 @@
+{#
+  Componentes Modulares para Features Section
+  Sistema de macros reutilizáveis para exibir funcionalidades
+  Segue padrões de acessibilidade WCAG 2.1 AA
+#}
+
+{# Macro: Cabeçalho da seção de features #}
+{% macro features_header(title, subtitle) %}
+<div class="features-header text-center mb-5">
+  <h2 class="features-header__title display-4 text-white">{{ title }}</h2>
+  <p class="features-header__subtitle lead text-white-50">{{ subtitle }}</p>
+</div>
+{% endmacro %}
+
+{# Macro: Grid de features com cards dinâmicos #}
+{% macro features_grid(features_list) %}
+<div class="cards-grid cards-grid--equal-height">
+  {% for feature in features_list %}
+  <article
+    class="card {% if feature.featured %}card--featured{% endif %}"
+    role="article"
+    aria-labelledby="{{ feature.id }}"
+    tabindex="0"
+    {% if feature.cta_url %}data-href="{{ feature.cta_url }}"{% endif %}
+  >
+    {% if feature.image %}
+    <div class="card-media">
+      <img
+        src="{{ url_for('static', filename=feature.image) }}"
+        alt="{{ feature.image_alt }}"
+        loading="lazy"
+      >
+    </div>
+    {% endif %}
+
+    <div class="card-body">
+      <span class="card-eyebrow">{{ feature.eyebrow }}</span>
+      <h3 id="{{ feature.id }}" class="card-title">{{ feature.title }}</h3>
+      <p class="card-desc">{{ feature.description }}</p>
+    </div>
+
+    <div class="card-footer">
+      <small class="card-meta">{{ feature.meta }}</small>
+      <a
+        href="{{ feature.cta_url }}"
+        class="card-cta{% if feature.cta_secondary %} card-cta--secondary{% endif %}"
+        aria-label="{{ feature.cta_label }}"
+      >
+        {{ feature.cta_text }}
+      </a>
+    </div>
+  </article>
+  {% endfor %}
+</div>
+{% endmacro %}
+
+{# Macro: Seção da desenvolvedora #}
+{% macro developer_section() %}
+<aside class="developer-section" aria-label="Sobre a desenvolvedora">
+  <div class="developer-card">
+    <article class="card card--no-media" role="article" aria-labelledby="card-title-dev">
+      <div class="card-body">
+        <span class="card-eyebrow">👑 Lenda Viva</span>
+        <h3 id="card-title-dev" class="card-title">A Lenda da Lady Lari</h3>
+        <p class="card-desc">
+          Nas brumas do tempo digital, surgiu Lady Larissa - a Arquiteta dos Sonhos Bibliográficos.
+          Como uma moderna Hypatia de Alexandria, ela forjou este reino místico onde tecnologia e
+          literatura dançam em harmonia eterna.
+        </p>
+      </div>
+      <div class="card-footer">
+        <small class="card-meta">Era: Digital • Legado: Eterno</small>
+        <a
+          href="/profile"
+          class="card-cta card-cta--secondary"
+          aria-label="Conhecer a lenda da criadora"
+        >
+          Conhecer a Lenda 🌟
+        </a>
+      </div>
+    </article>
+
+    <div class="mascot-container">
+      <figure>
+        <a
+          href="https://www.pinterest.cl/pin/579768152016330995/"
+          target="_blank"
+          rel="external noopener"
+          aria-label="Ver a origem mística desta imagem (abre em nova aba)"
+        >
+          <picture>
+            <source
+              srcset="{{ url_for('static', filename='images/mascot-still.png') }}"
+              media="(prefers-reduced-motion: reduce)"
+            >
+            <img
+              src="{{ url_for('static', filename='images/mascot.gif') }}"
+              class="img-fluid rounded"
+              alt="Lady Lari aquecendo as mãos com a magia dos livros, invocando o calor do conhecimento"
+              loading="lazy"
+            >
+          </picture>
+        </a>
+        <figcaption class="sr-only">
+          A Guardiã do Amber Archivily aquecendo as mãos com o fogo sagrado do conhecimento,
+          simbolizando o calor acolhedor que apenas uma biblioteca bem organizada pode proporcionar
+        </figcaption>
+      </figure>
+    </div>
+  </div>
+</aside>
+{% endmacro %}
+
+{# Macro: Seção de destaques de livros (futuro) #}
+{% macro featured_books_section(books_list) %}
+<section class="featured-books-section" aria-label="Destaques do acervo">
+  <div class="container">
+    <div class="features-header text-center mb-5">
+      <h2 class="features-header__title display-4 text-white">Tesouros em Destaque</h2>
+      <p class="features-header__subtitle lead text-white-50">
+        Jóias raras do acervo que aguardam sua descoberta
+      </p>
+    </div>
+
+    {% if books_list and books_list|length > 0 %}
+    <div class="books-carousel">
+      <div class="books-carousel__track">
+        {% for book in books_list %}
+        <article class="book-highlight-card" aria-labelledby="book-{{ book.id }}-title">
+          <div class="book-highlight-card__cover">
+            {% if book.cover_image %}
+            <img
+              src="{{ book.cover_image }}"
+              alt="Capa de {{ book.title }}"
+              loading="lazy"
+            >
+            {% else %}
+            <div class="book-highlight-card__placeholder">
+              <span class="book-highlight-card__icon">📚</span>
+            </div>
+            {% endif %}
+          </div>
+          <div class="book-highlight-card__info">
+            <h3 id="book-{{ book.id }}-title" class="book-highlight-card__title">
+              {{ book.title }}
+            </h3>
+            <p class="book-highlight-card__author">{{ book.author }}</p>
+            <span class="book-highlight-card__genre">{{ book.genre }}</span>
+          </div>
+        </article>
+        {% endfor %}
+      </div>
+    </div>
+    {% else %}
+    <div class="empty-state" role="status">
+      <div class="empty-state__icon">📖</div>
+      <p class="empty-state__message">
+        Ainda não há livros em destaque. Que tal adicionar alguns tesouros ao acervo?
+      </p>
+      <a href="/register_new_book" class="btn btn--primary">
+        Adicionar Primeiro Livro ✨
+      </a>
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endmacro %}
+
+{# Macro: Dashboard de boas-vindas para usuários autenticados #}
+{% macro welcome_dashboard(user) %}
+<section class="dashboard-welcome" aria-label="Bem-vindo à sua biblioteca">
+  <div class="container">
+    <div class="welcome-frame">
+      <div class="welcome-avatar" aria-label="Selo místico do bibliotecário">
+        {{ user.username[0]|upper }}
+      </div>
+      <h1 class="h2 mb-3">
+        Que os ventos da sabedoria te tragam de volta, {{ user.username }}!
+      </h1>
+      <p class="lead mb-0">
+        Teu reino literário aguarda tua presença, nobre Guardião dos Livros.
+      </p>
+    </div>
+  </div>
+</section>
+{% endmacro %}
+

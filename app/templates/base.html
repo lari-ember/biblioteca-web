@@ -1,338 +1,322 @@
 <!DOCTYPE html>
-<html lang="en-us">
+<html lang="pt-BR">
 
 <head>
     <!-- Meta Tags Essenciais -->
-  <meta charset="UTF-8">
-  <meta content="width=device-width, initial-scale=1.0, maximum-scale=5.0" name="viewport">
-  <meta content="IE=edge" http-equiv="X-UA-Compatible">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-  <!-- Meta Tags para SEO -->
-<meta content="{{ description | default('Manage your personal library, discover books, and access detailed information.') }}" name="description">
-  <meta content="{{ keywords | default('biblioteca, livros, gerenciamento, pesquisa de livros, Open Library, library management, books, reading, book collection, Open Library API, personal library, book search, borrow books, digital library, book catalog') }}" name="keywords">
-  <meta content="Larissa Ember" name="author">
-  <meta content="index, follow" name="robots">
+    <!-- Meta Tags para SEO -->
+    <meta name="description" content="{{ description | default('Gerencie sua biblioteca pessoal, descubra livros e acesse informações detalhadas com o Amber Archivily - sua biblioteca digital inteligente.') }}">
+    <meta name="keywords" content="{{ keywords | default('biblioteca digital, gerenciamento de livros, acervo pessoal, catalogação de livros, ISBN, código de barras, QR code, Open Library API, sistema de biblioteca, organização de livros, leitura digital') }}">
+    <meta name="author" content="Larissa Ember">
+    <meta name="robots" content="index, follow">
+    <meta name="language" content="pt-BR">
 
-  <!-- Tags de Acessibilidade -->
-  <meta content="#220d35" name="theme-color">
-  <meta content="telephone=no" name="format-detection">
+    <!-- Tags de Acessibilidade e Performance -->
+    <meta name="theme-color" content="#220d35">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="color-scheme" content="dark light">
 
-  <!-- Redes Sociais (Open Graph e Twitter Cards) -->
-  <meta content="{{ title | default('Amber Archivily') }}" property="og:title">
-<meta content="{{ description | default('Manage your personal library, discover books, and access detailed information.') }}" property="og:description">
-  <meta content="{{ url_for('static', filename='images/og_image.png') }}" property="og:image">
-  <meta content="{{ request.url }}" property="og:url">
-  <meta content="website" property="og:type">
-  <meta content="summary_large_image" name="twitter:card">
-  <meta content="{{ title | default('Amber Archivily') }}" name="twitter:title">
-  <meta content="{{ description | default('Gerencie sua biblioteca pessoal e encontre informações sobre livros.') }}" name="twitter:description">
-  <meta content="{{ url_for('static', filename='images/twitter_image.png') }}" name="twitter:image">
+    <!-- Redes Sociais (Open Graph e Twitter Cards) -->
+    <meta property="og:title" content="{{ title | default('Amber Archivily - Sua Biblioteca Digital') }}">
+    <meta property="og:description" content="{{ description | default('Sistema inteligente de gerenciamento de biblioteca pessoal com recursos modernos de catalogação e organização.') }}">
+    <meta property="og:image" content="{{ url_for('static', filename='images/og_image.png', _external=True) }}">
+    <meta property="og:url" content="{{ request.url }}">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Amber Archivily">
+    <meta property="og:locale" content="pt_BR">
 
-  <!-- Título da Página -->
-  <title>{{ title | default('Amber Archivily') }}</title>
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ title | default('Amber Archivily') }}">
+    <meta name="twitter:description" content="{{ description | default('Sistema inteligente de gerenciamento de biblioteca pessoal.') }}">
+    <meta name="twitter:image" content="{{ url_for('static', filename='images/twitter_image.png', _external=True) }}">
 
-    <!-- CSS Externo centralizado -->
+    <!-- Structured Data para SEO -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Amber Archivily",
+        "description": "Sistema de gerenciamento de biblioteca pessoal",
+        "url": "{{ request.url_root }}",
+        "applicationCategory": "Library Management",
+        "operatingSystem": "Web Browser",
+        "author": {
+            "@type": "Person",
+            "name": "Larissa Ember"
+        }
+    }
+    </script>
+
+    <!-- Título da Página -->
+    <title>{{ title | default('Amber Archivily - Sua Biblioteca Digital Inteligente') }}</title>
+
+    <!-- Preload de recursos críticos -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Nunito:wght@200;300;400;600;700;800;900&family=Courier+Prime:wght@400;700&display=swap" as="style">
+    <link rel="preload" href="{{ url_for('static', filename='css/base.css') }}" as="style">
+
+    <!-- Favicon e ícones -->
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/favicon.ico') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='images/apple-touch-icon.png') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='images/favicon-32x32.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='images/favicon-16x16.png') }}">
+
+    <!-- CSS - Ordem otimizada para performance -->
+    <!-- 1. Bootstrap (framework base) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+    <!-- 2. Fontes externas -->
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@200;300;400;600;700;800;900&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+
+    <!-- 3. CSS customizado na ordem correta -->
     <link href="{{ url_for('static', filename='css/base.css') }}" rel="stylesheet">
     <link href="{{ url_for('static', filename='css/layout.css') }}" rel="stylesheet">
+
+    <!-- 4. Componentes CSS -->
+    <link href="{{ url_for('static', filename='css/components/cards.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/components/features.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/components/buttons.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/components/forms.css') }}" rel="stylesheet">
+
     <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
 
-  <!-- Favicon -->
-  <link href="{{ url_for('static', filename='images/favicon.ico') }}" rel="icon" type="image/x-icon">
+    <!-- CSS específico da página -->
+    {% if request.endpoint == 'core.index' or request.endpoint == 'index' %}
+    <link href="{{ url_for('static', filename='css/pages/home.css') }}" rel="stylesheet">
+    {% endif %}
 
-<script async crossorigin="anonymous"
-     src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1377185441391417"></script>
+    <!-- Scripts críticos -->
+    <script>
+        // Detecção de preferências do usuário
+        (function() {
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  <!-- fonts -->
-
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-  <link
-    href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
-    rel="stylesheet">
-  <!-- CSS Bootstrap -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-
-  <script src="https://www.gstatic.com/firebasejs/ui/6.0.1/firebase-ui-auth.js"></script>
-  <style>
-    /**/
-
-    .product-device {
-      position: absolute;
-      right: 10%;
-      bottom: -30%;
-      width: 300px;
-      height: 540px;
-      background-color: #351235;
-      border-radius: 21px;
-      transform: rotate(30deg);
-    }
-
-    .product-device::before {
-      position: absolute;
-      top: 10%;
-      right: 10px;
-      bottom: 10%;
-      left: 10px;
-      content: "";
-      background-color: #351235;
-      border-radius: 5px;
-    }
-
-    .product-device-2 {
-      top: -25%;
-      right: auto;
-      bottom: 0;
-      left: 5%;
-      background-color: #351235;
-    }
-
-
-    /*
-         * Extra utilities
-         */
-
-    .flex-equal>* {
-      flex: 1;
-    }
-
-    @media (min-width: 768px) {
-      .flex-md-equal>* {
-        flex: 1;
-      }
-    }
-
-    .olar {
-      background: linear-gradient(to right,
-          #251630 0%,
-          #500E50 70%,
-          #DD00DD 100%);
-    }
-
-    .text-white h1 {
-      font-family: 'Courier New', Courier, monospace;
-      font-weight: bold;
-      letter-spacing: 1px;
-      color: rgb(240, 240, 240);
-      font-size: 60px;
-    }
-
-    .img-fluid {
-      height: 465px;
-      position: absolute;
-      bottom: 0%;
-      left: 65%;
-    }
-
-    .img1 {
-      align-content: center;
-    }
-
-    .text h1 {
-      text-align: left;
-      font-size: 60px;
-    }
-
-    .text p {
-      text-align: left;
-      font-size: 30px;
-      min-width: 200px;
-      max-width: 1000px;
-    }
-
-    .text h3 {
-      text-align: left;
-      font-size: 30px;
-    }
-
-    .display-1 {
-      font-weight: bold;
-      border-bottom: 2px solid;
-    }
-
-    div.bg0 {
-      background: linear-gradient(to bottom, #251630 0%, #500E50 75%, #9D009D 100%);
-
-    }
-
-    .bt1 {
-      margin-top: 25%;
-      font-size: 24px;
-    }
-
-    .cronicas {
-      background: linear-gradient(to bottom, #251630 0%, #500E50 75%, #9D009D 100%);
-      background-repeat: no-repeat;
-      background-size: cover;
-    }
-
-    label {
-      margin-top: 10px;
-    }
-
-    table {
-      box-shadow: 2px 2px 12px rgba(255, 255, 255, 0.5);
-    }
-
-    select {
-      background-color: black;
-      color: aliceblue;
-    }
-
-    /* Adicione estilos para a janela pop-up */
-    .popup-window {
-      width: 600px;
-      height: 400px;
-      border: 2px solid #ccc;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-      background-color: #fff;
-      font-family: Arial, sans-serif;
-      padding: 20px;
-      /* Centralize a janela pop-up */
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-    }
-  </style>
+            document.documentElement.classList.toggle('dark-theme', prefersDark);
+            document.documentElement.classList.toggle('reduced-motion', prefersReducedMotion);
+        })();
+    </script>
 </head>
 
 <body>
-  <div class="d-none d-md-block d-lg-block d-xl-block">
+    <!-- Skip Link para acessibilidade -->
+    <a href="#main-content" class="skip-link">Pular para conteúdo principal</a>
 
-    <header>
-      {% if not is_book_page %}
-      {% if current_user.is_authenticated %}
-      <div class="container bg-dark text-white" id="hide">
-        <a class="navbar-brand text-white-50" href="/home">Amber Archivily</a>
-        <div class="navbar-text">
-          {% if current_user.is_authenticated %}
-          <h2>welcome {{ current_user.username }}</h2>
-          <p>Number of books in your library: {{ current_user.books|length }}</p>
-          <p>total pages read: {{ current_user.sum_pages }}</p>
-          <p></p>
-          {% endif %}
-          <div class="datetime">
-            <p class="text-dark fw-bold">date & time</p>
-            <hr class="bg-dark">
-            <p class="text-dark"><span id="date"></span>
-            </p>
-            <div>
-              <time></time>
+    <!-- Mobile Header -->
+    <header class="mobile-header d-md-none" role="banner">
+        <div class="d-flex justify-content-between align-items-center">
+            <a class="navbar-brand" href="/home" aria-label="Página inicial do Amber Archivily">
+                Amber Archivily
+            </a>
+            {% if current_user.is_authenticated %}
+            <div class="user-stats-mobile">
+                <small class="text-muted">{{ current_user.books|length }} livros</small>
             </div>
-          </div>
+            {% endif %}
         </div>
-      </div> {% endif %}
-      <div class="d-none d-md-block d-lg-block d-xl-block">
-        <nav class="">
-          <div class="navigation">
-            <ul>
-              <li class="list active">
-                <a href="/home">
-                  <span class="icon">
-                    <!--suppress HtmlUnknownTag -->
-                    <ion-icon name="compass-outline"></ion-icon>
-                  </span>
-                  <span class="text">home</span>
-                </a>
-              </li>
-              <li class="list">
-                <a href="/register_new_book">
-                  <span class="icon">
-                    <ion-icon name="medkit-outline"></ion-icon>
-                  </span>
-                  <span class="text">register new book</span>
-                </a>
-              </li>
-              <li class="list">
-                <a href="/your_collection">
-                  <span class="icon">
-                    <ion-icon name="library-outline"></ion-icon>
-                  </span>
-                  <span class="text">your collection</span>
-                </a>
-              </li>
-              <li class="list">
-                <a href="/search">
-                  <span class="icon">
-                    <ion-icon name="search-outline"></ion-icon>
-                  </span>
-                  <span class="text">search</span>
-                </a>
-              </li>
-              <li class="list">
-                <a href="/about_your_library">
-                  <span class="icon">
-                    <ion-icon name="podium-outline"></ion-icon>
-                  </span>
-                  <span class="text">about your library</span>
-                </a>
-              </li>
-              <li class="list">
-                <a href="https://www.catarse.me/cirurgia_da_larissa" rel="external" target="_blank">
-                  <span class="icon">
-                    <ion-icon name="help-buoy-outline"></ion-icon>
-                  </span>
-                  <span class="text">help</span>
-                </a>
-              </li>
-              <li class="list">
-                <a href="#">
-                  <span class="icon">
-                    <ion-icon name="logo-discord"></ion-icon>
-                  </span>
-                  <span class="text">contact</span>
-                </a>
-              </li>
-              {% if current_user.is_authenticated %}
-              <li class="list">
-                <a href="/logout">
-                  <span class="icon">
-                    <ion-icon name="power-outline"></ion-icon>
-                  </span>
-                  <span class="text">logout</span>
-                </a>
-              </li>
-              {% else %}
-              <li class="list">
-                <a href="/login">
-                  <span class="icon">
-                    <ion-icon name="power-outline"></ion-icon>
-                  </span>
-                  <span class="text">login</span>
-                </a>
-              </li>
-              {% endif %}
-              <!--suppress HtmlUnknownTag -->
-              <div class="indicator"></div>
-            </ul>
-          </div>
-        </nav>
-      </div>
-      {% endif %}
     </header>
-  </div>
-  <br>
-  {% with messages = get_flashed_messages() %}
-  {% if messages %}
-  <div class="alert alert-warning">
-    <ul class=flashes>
-      {% for message in messages %}
-      <li>{{ message }}</li>
-      {% endfor %}
-    </ul>
-  </div>
-  {% endif %}
-  {% endwith %}
 
-  <main>
-    {% if not is_book_page %}
-    <hr class="bg-white">
-    {% endif %}
-    {% block content %}
-    {% endblock %}
-    <hr class="bg-white">
-  </main>
-  <footer class="container py-5 d-none d-md-block d-lg-block d-xl-block">
+    <!-- Wrapper para desktop -->
+    <div class="desktop-wrapper d-none d-md-block">
+        <header role="banner">
+            {% if not is_book_page %}
+                {% if current_user.is_authenticated %}
+                <!-- Dashboard do usuário logado -->
+                <div class="user-dashboard container bg-dark text-white" id="user-info" role="complementary" aria-label="Informações do usuário">
+                    <div class="d-flex justify-content-between align-items-center py-3">
+                        <a class="navbar-brand text-white-50 h3 mb-0" href="/home" aria-label="Página inicial do Amber Archivily">
+                            Amber Archivily
+                        </a>
+                        <div class="user-stats">
+                            <h2 class="h5 mb-1">Bem-vindo, {{ current_user.username }}</h2>
+                            <div class="stats-grid d-flex gap-4">
+                                <div class="stat-item">
+                                    <span class="stat-number fw-bold">{{ current_user.books|length }}</span>
+                                    <span class="stat-label">livros</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-number fw-bold">{{ current_user.sum_pages }}</span>
+                                    <span class="stat-label">páginas lidas</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="datetime" role="timer" aria-label="Data e hora atual">
+                            <p class="text-light fw-bold mb-1">Data & Hora</p>
+                            <time id="current-time" class="text-light" aria-live="polite"></time>
+                            <p id="date" class="text-light mb-0" aria-live="polite"></p>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Navegação principal CORRIGIDA -->
+                <nav role="navigation" aria-label="Menu principal" class="main-navigation">
+                    <div class="navigation">
+                        <ul aria-label="Funcionalidades principais">
+                            <li>
+                                <a href="/home" aria-label="Ir para página inicial" aria-current="{% if request.endpoint == 'core.index' or request.endpoint == 'index' %}page{% endif %}">
+                                    <span class="icon" aria-hidden="true">
+                                        <ion-icon name="compass-outline"></ion-icon>
+                                    </span>
+                                    <span class="text">Início</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="/register_new_book" aria-label="Registrar novo livro na biblioteca" aria-current="{% if request.endpoint == 'books.register_new_book' %}page{% endif %}">
+                                    <span class="icon" aria-hidden="true">
+                                        <ion-icon name="add-circle-outline"></ion-icon>
+                                    </span>
+                                    <span class="text">Novo Livro</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="/your_collection" aria-label="Ver sua coleção de livros" aria-current="{% if request.endpoint == 'books.your_collection' %}page{% endif %}">
+                                    <span class="icon" aria-hidden="true">
+                                        <ion-icon name="library-outline"></ion-icon>
+                                    </span>
+                                    <span class="text">Sua Coleção</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="/search" aria-label="Pesquisar livros" aria-current="{% if request.endpoint == 'books.search' %}page{% endif %}">
+                                    <span class="icon" aria-hidden="true">
+                                        <ion-icon name="search-outline"></ion-icon>
+                                    </span>
+                                    <span class="text">Pesquisar</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="/about_your_library" aria-label="Estatísticas da sua biblioteca" aria-current="{% if request.endpoint == 'books.about_your_library' %}page{% endif %}">
+                                    <span class="icon" aria-hidden="true">
+                                        <ion-icon name="analytics-outline"></ion-icon>
+                                    </span>
+                                    <span class="text">Estatísticas</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://www.catarse.me/cirurgia_da_larissa" aria-label="Ajudar o projeto (abre em nova aba)" target="_blank" rel="external noopener noreferrer">
+                                    <span class="icon" aria-hidden="true">
+                                        <ion-icon name="heart-outline"></ion-icon>
+                                    </span>
+                                    <span class="text">Ajudar</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="/profile" aria-label="Entrar em contato" aria-current="{% if request.endpoint == 'auth.profile' %}page{% endif %}">
+                                    <span class="icon" aria-hidden="true">
+                                        <ion-icon name="mail-outline"></ion-icon>
+                                    </span>
+                                    <span class="text">Contato</span>
+                                </a>
+                            </li>
+                            {% if current_user.is_authenticated %}
+                            <li>
+                                <a href="/logout" aria-label="Sair da conta">
+                                    <span class="icon" aria-hidden="true">
+                                        <ion-icon name="log-out-outline"></ion-icon>
+                                    </span>
+                                    <span class="text">Sair</span>
+                                </a>
+                            </li>
+                            {% else %}
+                            <li>
+                                <a href="/login" aria-label="Entrar na conta" aria-current="{% if request.endpoint == 'auth.login' %}page{% endif %}">
+                                    <span class="icon" aria-hidden="true">
+                                        <ion-icon name="log-in-outline"></ion-icon>
+                                    </span>
+                                    <span class="text">Entrar</span>
+                                </a>
+                            </li>
+                            {% endif %}
+                        </ul>
+                        <!-- Indicator FORA do ul -->
+                        <div class="indicator" aria-hidden="true"></div>
+                    </div>
+                </nav>
+            {% endif %}
+        </header>
+    </div>
+
+    <!-- Mobile Navigation CORRIGIDA -->
+    <nav class="mobile-nav d-md-none" role="navigation" aria-label="Menu mobile">
+        <ul>
+            <li>
+                <a href="/home" aria-label="Início" aria-current="{% if request.endpoint == 'core.index' or request.endpoint == 'index' %}page{% endif %}">
+                    <span class="icon" aria-hidden="true">
+                        <ion-icon name="compass-outline"></ion-icon>
+                    </span>
+                    <span class="text">Início</span>
+                </a>
+            </li>
+            {% if current_user.is_authenticated %}
+            <li>
+                <a href="/register_new_book" aria-label="Novo Livro" aria-current="{% if request.endpoint == 'books.register_new_book' %}page{% endif %}">
+                    <span class="icon" aria-hidden="true">
+                        <ion-icon name="add-circle-outline"></ion-icon>
+                    </span>
+                    <span class="text">Novo</span>
+                </a>
+            </li>
+            <li>
+                <a href="/your_collection" aria-label="Sua Coleção" aria-current="{% if request.endpoint == 'books.your_collection' %}page{% endif %}">
+                    <span class="icon" aria-hidden="true">
+                        <ion-icon name="library-outline"></ion-icon>
+                    </span>
+                    <span class="text">Coleção</span>
+                </a>
+            </li>
+            <li>
+                <a href="/search" aria-label="Pesquisar" aria-current="{% if request.endpoint == 'books.search' %}page{% endif %}">
+                    <span class="icon" aria-hidden="true">
+                        <ion-icon name="search-outline"></ion-icon>
+                    </span>
+                    <span class="text">Buscar</span>
+                </a>
+            </li>
+            <li>
+                <a href="/profile" aria-label="Perfil" aria-current="{% if request.endpoint == 'auth.profile' %}page{% endif %}">
+                    <span class="icon" aria-hidden="true">
+                        <ion-icon name="person-outline"></ion-icon>
+                    </span>
+                    <span class="text">Perfil</span>
+                </a>
+            </li>
+            {% else %}
+            <li>
+                <a href="/login" aria-label="Entrar" aria-current="{% if request.endpoint == 'auth.login' %}page{% endif %}">
+                    <span class="icon" aria-hidden="true">
+                        <ion-icon name="log-in-outline"></ion-icon>
+                    </span>
+                    <span class="text">Entrar</span>
+                </a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+
+    <!-- Mensagens flash -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-messages" role="alert" aria-live="assertive">
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar mensagem"></button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <!-- Conteúdo principal -->
+    <main id="main-content" role="main">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Rodapé -->
+    <footer class="site-footer py-5 d-none d-md-block" role="contentinfo">
     <div class="row">
       <div class="col-12 col-md">
         <br>
@@ -347,116 +331,57 @@
         <small class="d-block mb-3 text-light">&copy;Larissa Ember 2022-24</small>
       </div>
       <div class="col-6 col-md">
-        <h5 class="text-white">more</h5>
+        <h5 class="text-white">mais</h5>
         <ul class="list-unstyled text-small">
-          <li><a class="link-secondary" href="#">more projects</a></li>
-          <li><a class="link-secondary" href="#">Portfolio</a></li>
+          <li><a class="link-secondary" href="#">mais projetos</a></li>
+          <li><a class="link-secondary" href="#">Portfólio</a></li>
         </ul>
       </div>
       <div class="col-6 col-md">
-        <h5 class="text-white">Midia</h5>
+        <h5 class="text-white">Mídia</h5>
         <ul class="list-unstyled text-small">
-          <li><a class="link-secondary" href="https://discord.gg/jWzjDQSE">discord server</a></li>
-          <li><a class="link-secondary" href="/profile">contact</a></li>
+          <li><a class="link-secondary" href="https://discord.gg/jWzjDQSE">servidor do discord</a></li>
+          <li><a class="link-secondary" href="/profile">contato</a></li>
         </ul>
       </div>
       <div class="col-6 col-md">
-        <h5 class="text-white">please</h5>
+        <h5 class="text-white">por favor</h5>
         <ul class="list-unstyled text-small">
-          <li><a class="link-secondary" href="/help">help me</a></li>
-          <li><a class="link-secondary" href="#">please me</a></li>
+          <li><a class="link-secondary" href="/help">ajude-me</a></li>
+          <li><a class="link-secondary" href="#">por favor</a></li>
         </ul>
       </div>
       <div class="col-6 col-md">
-        <h5 class="text-white">about</h5>
+        <h5 class="text-white">sobre</h5>
         <ul class="list-unstyled text-small">
-          <li><a class="link-secondary" href="/profile">the larissa</a></li>
+          <li><a class="link-secondary" href="/profile">a larissa</a></li>
           <li><a class="link-secondary" href="/copyright">copyright</a></li>
-          <li><a class="link-secondary" href="/only_fans">Privacy</a></li>
-          <li><a class="link-secondary" href="/terms">terms</a></li>
+          <li><a class="link-secondary" href="/only_fans">Privacidade</a></li>
+          <li><a class="link-secondary" href="/terms">termos</a></li>
         </ul>
       </div>
     </div>
   </footer>
-  <script>
-    const list = document.querySelectorAll('.list');
 
-    function activeLink() {
-      list.forEach((item, index) => {
-        item.classList.remove('active');
-        if (index === parseInt(localStorage.getItem('activeIndex'))) {
-          item.classList.add('active');
-        }
-      });
+    <!-- Scripts -->
+    <!-- Scripts externos -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js" type="module"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 
-      localStorage.setItem('activeIndex', this.dataset.index);
-    }
+    <!-- Scripts customizados -->
+    <script src="{{ url_for('static', filename='js/navigation.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 
-    list.forEach((item, index) => {
-      item.dataset.index = index;
-      item.addEventListener('click', activeLink);
-    });
+    <!-- Scripts de componentes -->
+    <script src="{{ url_for('static', filename='js/components/cards.js') }}"></script>
 
-    // Ao carregar a página, aplicar a classe "active" ao elemento correspondente
-    document.addEventListener('DOMContentLoaded', () => {
-      const activeIndex = localStorage.getItem('activeIndex');
-      if (activeIndex !== null) {
-        list.forEach((item, index) => {
-          if (index === parseInt(activeIndex)) {
-            item.classList.add('active');
-          }
-        });
-      }
-    });
-  </script>
-
-  <script src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js" type="module"></script>
-  <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
-  <script>
-    const showTimeNow = () => {
-      const clockTag = document.querySelector('time');
-      let dateNow = new Date();
-
-      //pegando os valores desejados
-      let hh = dateNow.getHours();
-      let mm = dateNow.getMinutes();
-      let ss = dateNow.getSeconds();
-
-      //validando a necessidade de adicionar zero na exibição
-      hh = hh < 10 ? '0' + hh : hh;
-      mm = mm < 10 ? '0' + mm : mm;
-
-      // atribuindo os valores e montando o formato da hora a ser exibido
-      clockTag.innerText = hh + ':' + mm;
-    }
-
-    //executando a funcao a cada 1 segundo
-    showTimeNow()
-    setInterval(showTimeNow, 10000);
-  </script>
-  <script>
-    function updateDateTime() {
-      const dateTime = new Date();
-      const dateStr = dateTime.toLocaleDateString();
-      document.getElementById("date").textContent = dateStr;
-    }
-
-    setInterval(updateDateTime, 1000);
-  </script>
-  <script>
-    const link = document.querySelector('.author');
-    const table = document.getElementById('author-table');
-
-    link.addEventListener('click', () => {
-      if (table.style.display === 'none') {
-        table.style.display = 'flex';
-      } else {
-        table.style.display = 'none';
-      }
-    });
-  </script>
-  <!-- Inclusão centralizada do JS customizado -->
-  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <!-- Script específico da página -->
+    {% if request.endpoint == 'core.index' or request.endpoint == 'index' %}
+    <script src="{{ url_for('static', filename='js/components/features.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/pages/home.js') }}"></script>
+    {% endif %}
 </body>
 
 </html>
+

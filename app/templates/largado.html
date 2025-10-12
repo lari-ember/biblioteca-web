@@ -1,0 +1,1949 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bioma Vivo - Ecossistema Completo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            overflow: hidden;
+            background: linear-gradient(135deg, #87CEEB 0%, #98FB98 50%, #90EE90 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            transition: background 2s ease;
+        }
+
+        #canvas {
+            display: block;
+            cursor: crosshair;
+            background: transparent;
+        }
+
+        .controls {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .controls h3 {
+            margin-bottom: 10px;
+            color: #4CAF50;
+            text-align: center;
+        }
+
+        .control-group {
+            margin-bottom: 8px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 5px;
+        }
+
+        .control-group label {
+            display: block;
+            margin-bottom: 3px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .control-group select, .control-group input[type="range"] {
+            width: 100%;
+            margin-bottom: 3px;
+            font-size: 11px;
+        }
+
+        .button-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 5px;
+            margin-top: 10px;
+        }
+
+        .button-group button {
+            padding: 8px;
+            border: none;
+            border-radius: 5px;
+            background: #4CAF50;
+            color: white;
+            cursor: pointer;
+            font-size: 10px;
+        }
+
+        .button-group button:hover {
+            background: #45a049;
+        }
+
+        .stats {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+            font-size: 11px;
+            z-index: 1000;
+        }
+
+        .ecosystem-info {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 10px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+            font-size: 10px;
+            z-index: 1000;
+        }
+
+        .night {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%) !important;
+        }
+
+        .celebration {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #ffeaa7) !important;
+            background-size: 400% 400% !important;
+            animation: gradient 3s ease infinite !important;
+        }
+
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .dragging {
+            cursor: grabbing !important;
+        }
+
+        .notification {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(76, 175, 80, 0.9);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            font-size: 18px;
+            z-index: 2000;
+            animation: fadeInOut 3s ease-in-out;
+        }
+
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+            10%, 90% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+
+    <div class="controls">
+        <h3>🌿 Bioma Vivo Completo</h3>
+
+        <div class="control-group">
+            <label>🕐 Modo de Tempo:</label>
+            <select id="timeMode">
+                <option value="auto">Auto (Horário Real)</option>
+                <option value="day">Dia</option>
+                <option value="night">Noite</option>
+                <option value="dawn">Amanhecer</option>
+                <option value="dusk">Anoitecer</option>
+            </select>
+        </div>
+
+        <div class="control-group">
+            <label>🦎 Animal Principal:</label>
+            <select id="animalType">
+                <option value="lizard">Lagarto 8 Patas</option>
+                <option value="crab">Caranguejo</option>
+                <option value="butterfly">Borboleta</option>
+                <option value="owl">Coruja (Noturna)</option>
+            </select>
+        </div>
+
+        <div class="control-group">
+            <label>🏊 Peixes no Lago: <span id="fishCountValue">5</span></label>
+            <input type="range" id="fishCount" min="0" max="15" value="5">
+        </div>
+
+        <div class="control-group">
+            <label>🐜 Densidade de Formigas: <span id="antCountValue">10</span></label>
+            <input type="range" id="antCount" min="0" max="30" value="10">
+        </div>
+
+        <div class="control-group">
+            <label>🐛 Joaninhas: <span id="ladybugCountValue">3</span></label>
+            <input type="range" id="ladybugCount" min="0" max="8" value="3">
+        </div>
+
+        <div class="control-group">
+            <label>✨ Vagalumes: <span id="fireflyCountValue">8</span></label>
+            <input type="range" id="fireflyCount" min="0" max="20" value="8">
+        </div>
+
+        <div class="control-group">
+            <label>⚡ Velocidade: <span id="speedValue">5</span></label>
+            <input type="range" id="speedSlider" min="1" max="10" value="5">
+        </div>
+
+        <div class="control-group">
+            <label>🌦️ Clima:</label>
+            <select id="weather">
+                <option value="clear">Limpo</option>
+                <option value="rain">Chuva</option>
+                <option value="wind">Vento</option>
+                <option value="storm">Tempestade</option>
+            </select>
+        </div>
+
+        <div class="control-group">
+            <label>🎯 Modo Interação:</label>
+            <select id="interactionMode">
+                <option value="follow">Seguir</option>
+                <option value="drag">Arrastar Objetos</option>
+                <option value="feed">Alimentar</option>
+                <option value="observe">Observar</option>
+            </select>
+        </div>
+
+        <div class="button-group">
+            <button onclick="pauseAnimation()">⏸️ Pausar</button>
+            <button onclick="feedAnimal()">🍃 Alimentar</button>
+            <button onclick="startPartyMode()">🎉 Festa!</button>
+            <button onclick="resetEcosystem()">🔄 Reset</button>
+            <button onclick="addLeafPile()">🍂 + Folhas</button>
+            <button onclick="triggerEvent()">⚡ Evento</button>
+        </div>
+
+        <div style="margin-top: 10px; font-size: 9px; color: #ccc;">
+            <strong>Atalhos:</strong><br>
+            Espaço: Pausar | F: Alimentar | P: Festa<br>
+            1-4: Trocar animal | Clique triplo: Evento especial
+        </div>
+    </div>
+
+    <div class="stats">
+        <div><strong>📊 Sistema</strong></div>
+        <div>FPS: <span id="fps">60</span></div>
+        <div>Hora: <span id="currentTime">--:--</span></div>
+        <div>Estação: <span id="season">Primavera</span></div>
+        <br>
+        <div><strong>🦎 Animal Principal</strong></div>
+        <div>Humor: <span id="mood">Neutro</span></div>
+        <div>Energia: <span id="energy">100%</span></div>
+        <div>Atividade: <span id="activity">Normal</span></div>
+        <br>
+        <div><strong>🌿 Ecossistema</strong></div>
+        <div>Peixes: <span id="activeFish">0</span></div>
+        <div>Formigas: <span id="activeAnts">0</span></div>
+        <div>Vagalumes: <span id="activeFireflies">0</span></div>
+        <div>Pulgões: <span id="activeAphids">0</span></div>
+    </div>
+
+    <div class="ecosystem-info">
+        <div><strong>🌍 Status do Ecossistema</strong></div>
+        <div id="ecosystemStatus">Sistema iniciando...</div>
+        <div id="eventInfo"></div>
+    </div>
+
+    <script>
+        // Sistema de Canvas e Controles Globais
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        let animationId;
+        let isPaused = false;
+        let isPartyMode = false;
+        let partyModeTimer = 0;
+
+        // Configurações globais
+        let config = {
+            speed: 5,
+            animalType: 'lizard',
+            timeMode: 'auto',
+            weather: 'clear',
+            interactionMode: 'follow',
+            fishCount: 5,
+            antCount: 10,
+            ladybugCount: 3,
+            fireflyCount: 8
+        };
+
+        // Sistema de mouse e interação
+        const mouse = {
+            x: window.innerWidth / 2,
+            y: window.innerHeight / 2,
+            clicked: false,
+            longPress: false,
+            dragging: false,
+            dragTarget: null,
+            clickCount: 0,
+            lastClickTime: 0
+        };
+
+        // Sistema de lago virtual
+        const lake = {
+            x: window.innerWidth * 0.75,
+            y: window.innerHeight * 0.7,
+            width: 200,
+            height: 120,
+            ripples: [],
+            reflectionOffset: 0
+        };
+
+        // Sistema de calendário e eventos
+        const calendar = {
+            currentDate: new Date(),
+            specialDates: [
+                { date: '12-25', event: 'natal', message: '🎄 Especial de Natal!' },
+                { date: '01-01', event: 'ano_novo', message: '🎊 Feliz Ano Novo!' },
+                { date: '10-31', event: 'halloween', message: '🎃 Halloween Assombrado!' },
+                { date: '06-05', event: 'meio_ambiente', message: '🌍 Dia do Meio Ambiente!' }
+            ],
+            activeEvent: null
+        };
+
+        // Resize canvas
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            lake.x = window.innerWidth * 0.75;
+            lake.y = window.innerHeight * 0.7;
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        // Classe base para todos os seres vivos
+        class LivingBeing {
+            constructor(x, y, type) {
+                this.x = x;
+                this.y = y;
+                this.initialX = x;
+                this.initialY = y;
+                this.type = type;
+                this.energy = Math.random() * 50 + 50;
+                this.mood = 'neutral';
+                this.speed = Math.random() * 2 + 1;
+                this.size = 10;
+                this.color = '#4CAF50';
+                this.age = 0;
+                this.lifespan = 1000 + Math.random() * 2000;
+                this.isAlive = true;
+                this.targetX = x;
+                this.targetY = y;
+                this.behaviorTimer = 0;
+                this.state = 'idle';
+            }
+
+            update() {
+                if (!this.isAlive) return;
+
+                this.age++;
+                this.behaviorTimer++;
+                this.energy = Math.max(0, this.energy - 0.01);
+
+                if (this.age > this.lifespan) {
+                    this.isAlive = false;
+                }
+
+                // Comportamento baseado em energia
+                if (this.energy < 20) {
+                    this.mood = 'hungry';
+                    this.speed *= 0.5;
+                } else if (this.energy > 80) {
+                    this.mood = 'energetic';
+                    this.speed *= 1.2;
+                } else {
+                    this.mood = 'neutral';
+                }
+            }
+
+            draw() {
+                if (!this.isAlive) return;
+
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            distanceTo(other) {
+                return Math.sqrt((this.x - other.x) ** 2 + (this.y - other.y) ** 2);
+            }
+
+            moveTowards(targetX, targetY, speed = 1) {
+                const dx = targetX - this.x;
+                const dy = targetY - this.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+
+                if (distance > 1) {
+                    this.x += (dx / distance) * speed;
+                    this.y += (dy / distance) * speed;
+                }
+            }
+        }
+
+        // Lagarto melhorado (já existente, mas otimizado)
+        class Lizard extends LivingBeing {
+            constructor(x, y) {
+                super(x, y, 'lizard');
+                this.segments = [];
+                this.numSegments = 8;
+                this.segmentLength = 25;
+                this.color = '#228B22';
+                this.legPhase = 0;
+                this.camouflageActive = false;
+
+                for (let i = 0; i < this.numSegments; i++) {
+                    this.segments.push({
+                        x: x - i * this.segmentLength,
+                        y: y,
+                        angle: 0
+                    });
+                }
+            }
+
+            update() {
+                super.update();
+
+                this.legPhase += 0.2;
+
+                // Camuflagem noturna
+                if (isNightTime() && Math.random() < 0.01) {
+                    this.camouflageActive = !this.camouflageActive;
+                }
+
+                // Seguir mouse ou comportamento autônomo
+                if (config.interactionMode === 'follow') {
+                    this.moveTowards(mouse.x, mouse.y, this.speed * 0.1);
+                } else {
+                    // Comportamento autônomo
+                    if (this.behaviorTimer % 120 === 0) {
+                        this.targetX = Math.random() * canvas.width;
+                        this.targetY = Math.random() * canvas.height;
+                    }
+                    this.moveTowards(this.targetX, this.targetY, this.speed * 0.05);
+                }
+
+                // Atualizar segmentos
+                this.segments[0].x = this.x;
+                this.segments[0].y = this.y;
+
+                for (let i = 1; i < this.segments.length; i++) {
+                    const prevSegment = this.segments[i - 1];
+                    const currentSegment = this.segments[i];
+
+                    const dx = prevSegment.x - currentSegment.x;
+                    const dy = prevSegment.y - currentSegment.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance > this.segmentLength) {
+                        const angle = Math.atan2(dy, dx);
+                        currentSegment.x = prevSegment.x - Math.cos(angle) * this.segmentLength;
+                        currentSegment.y = prevSegment.y - Math.sin(angle) * this.segmentLength;
+                        currentSegment.angle = angle;
+                    }
+                }
+            }
+
+            draw() {
+                if (this.camouflageActive) {
+                    ctx.globalAlpha = 0.3;
+                }
+
+                // Desenhar corpo
+                ctx.strokeStyle = this.mood === 'hungry' ? '#8B4513' : this.color;
+                ctx.lineWidth = 15;
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+
+                ctx.beginPath();
+                ctx.moveTo(this.segments[0].x, this.segments[0].y);
+                for (let i = 1; i < this.segments.length; i++) {
+                    ctx.lineTo(this.segments[i].x, this.segments[i].y);
+                }
+                ctx.stroke();
+
+                // Desenhar patas com animação melhorada
+                for (let i = 0; i < this.segments.length; i += 2) {
+                    const segment = this.segments[i];
+                    const legOffset = Math.sin(this.legPhase + i * 0.5) * 10;
+
+                    ctx.strokeStyle = '#1a5a1a';
+                    ctx.lineWidth = 3;
+                    ctx.beginPath();
+
+                    // Patas esquerdas
+                    ctx.moveTo(segment.x, segment.y);
+                    ctx.lineTo(segment.x - 20, segment.y + 15 + legOffset);
+                    ctx.moveTo(segment.x - 20, segment.y + 15 + legOffset);
+                    ctx.lineTo(segment.x - 15, segment.y + 25 + legOffset);
+
+                    // Patas direitas
+                    ctx.moveTo(segment.x, segment.y);
+                    ctx.lineTo(segment.x + 20, segment.y + 15 - legOffset);
+                    ctx.moveTo(segment.x + 20, segment.y + 15 - legOffset);
+                    ctx.lineTo(segment.x + 15, segment.y + 25 - legOffset);
+                    ctx.stroke();
+                }
+
+                // Cabeça com expressão
+                ctx.fillStyle = this.mood === 'hungry' ? '#ff4444' :
+                                 this.mood === 'energetic' ? '#00ff44' : this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, 12, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Olhos expressivos
+                ctx.fillStyle = 'black';
+                const eyeSize = this.mood === 'energetic' ? 3 : 2;
+                ctx.beginPath();
+                ctx.arc(this.x - 5, this.y - 3, eyeSize, 0, Math.PI * 2);
+                ctx.arc(this.x + 5, this.y - 3, eyeSize, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.globalAlpha = 1;
+            }
+        }
+
+        // Coruja noturna
+        class Owl extends LivingBeing {
+            constructor(x, y) {
+                super(x, y, 'owl');
+                this.color = '#8B4513';
+                this.wingSpread = 0;
+                this.blinkTimer = 0;
+                this.isBlinking = false;
+                this.notificationBlink = false;
+                this.size = 25;
+                this.isVisible = false;
+            }
+
+            update() {
+                super.update();
+
+                this.isVisible = isNightTime();
+                if (!this.isVisible) return;
+
+                this.wingSpread += 0.1;
+                this.blinkTimer++;
+
+                // Piscar aleatório
+                if (this.blinkTimer % 180 === 0) {
+                    this.isBlinking = true;
+                    setTimeout(() => this.isBlinking = false, 200);
+                }
+
+                // Movimento suave e majestoso
+                if (this.behaviorTimer % 240 === 0) {
+                    this.targetX = Math.random() * canvas.width;
+                    this.targetY = Math.random() * canvas.height * 0.4; // Voa mais alto
+                }
+
+                this.moveTowards(this.targetX, this.targetY, this.speed * 0.02);
+
+                // Reagir a notificações (simulado)
+                if (Math.random() < 0.001) {
+                    this.notificationBlink = true;
+                    setTimeout(() => this.notificationBlink = false, 1000);
+                }
+            }
+
+            draw() {
+                if (!this.isVisible) return;
+
+                ctx.save();
+                ctx.translate(this.x, this.y);
+
+                // Corpo da coruja
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.ellipse(0, 0, 20, 25, 0, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Asas
+                const wingOffset = Math.sin(this.wingSpread) * 15;
+                ctx.fillStyle = '#654321';
+
+                ctx.save();
+                ctx.rotate(-0.3);
+                ctx.beginPath();
+                ctx.ellipse(-15 - wingOffset, 0, 12, 20, 0, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+
+                ctx.save();
+                ctx.rotate(0.3);
+                ctx.beginPath();
+                ctx.ellipse(15 + wingOffset, 0, 12, 20, 0, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+
+                // Olhos grandes e expressivos
+                const eyeColor = this.notificationBlink ? '#ff4444' : '#ffff44';
+                ctx.fillStyle = eyeColor;
+                if (!this.isBlinking) {
+                    ctx.beginPath();
+                    ctx.arc(-8, -5, 6, 0, Math.PI * 2);
+                    ctx.arc(8, -5, 6, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    // Pupilas
+                    ctx.fillStyle = 'black';
+                    ctx.beginPath();
+                    ctx.arc(-8, -5, 3, 0, Math.PI * 2);
+                    ctx.arc(8, -5, 3, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+
+                // Bico
+                ctx.fillStyle = '#ff8c00';
+                ctx.beginPath();
+                ctx.moveTo(0, 2);
+                ctx.lineTo(-3, 8);
+                ctx.lineTo(3, 8);
+                ctx.closePath();
+                ctx.fill();
+
+                ctx.restore();
+            }
+        }
+
+        // Peixe no lago
+        class Fish extends LivingBeing {
+            constructor(x, y) {
+                super(x, y, 'fish');
+                this.color = `hsl(${Math.random() * 60 + 180}, 70%, 50%)`;
+                this.swimDirection = Math.random() * Math.PI * 2;
+                this.swimSpeed = Math.random() * 2 + 1;
+                this.size = Math.random() * 8 + 5;
+                this.glowIntensity = 0;
+                this.tailPhase = 0;
+            }
+
+            update() {
+                super.update();
+
+                this.tailPhase += 0.3;
+
+                // Manter dentro do lago
+                const lakeLeft = lake.x - lake.width/2;
+                const lakeRight = lake.x + lake.width/2;
+                const lakeTop = lake.y - lake.height/2;
+                const lakeBottom = lake.y + lake.height/2;
+
+                // Mudança de direção nas bordas do lago
+                if (this.x <= lakeLeft || this.x >= lakeRight) {
+                    this.swimDirection = Math.PI - this.swimDirection;
+                }
+                if (this.y <= lakeTop || this.y >= lakeBottom) {
+                    this.swimDirection = -this.swimDirection;
+                }
+
+                // Movimento natural
+                this.swimDirection += (Math.random() - 0.5) * 0.1;
+                this.x += Math.cos(this.swimDirection) * this.swimSpeed;
+                this.y += Math.sin(this.swimDirection) * this.swimSpeed;
+
+                // Manter dentro do lago (força)
+                this.x = Math.max(lakeLeft, Math.min(lakeRight, this.x));
+                this.y = Math.max(lakeTop, Math.min(lakeBottom, this.y));
+
+                // Brilho noturno
+                if (isNightTime()) {
+                    this.glowIntensity = Math.min(1, this.glowIntensity + 0.02);
+                } else {
+                    this.glowIntensity = Math.max(0, this.glowIntensity - 0.02);
+                }
+
+                // Reagir a ondulações
+                lake.ripples.forEach(ripple => {
+                    const dist = this.distanceTo(ripple);
+                    if (dist < ripple.radius) {
+                        const angle = Math.atan2(this.y - ripple.y, this.x - ripple.x);
+                        this.x += Math.cos(angle) * 2;
+                        this.y += Math.sin(angle) * 2;
+                    }
+                });
+            }
+
+            draw() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.swimDirection);
+
+                // Brilho noturno
+                if (this.glowIntensity > 0) {
+                    ctx.shadowColor = this.color;
+                    ctx.shadowBlur = 20 * this.glowIntensity;
+                }
+
+                // Corpo do peixe
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.ellipse(0, 0, this.size, this.size * 0.6, 0, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Cauda animada
+                const tailOffset = Math.sin(this.tailPhase) * 5;
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.moveTo(-this.size, 0);
+                ctx.lineTo(-this.size - 8, -5 + tailOffset);
+                ctx.lineTo(-this.size - 8, 5 + tailOffset);
+                ctx.closePath();
+                ctx.fill();
+
+                // Olho
+                ctx.fillStyle = 'white';
+                ctx.beginPath();
+                ctx.arc(this.size * 0.3, -this.size * 0.2, this.size * 0.2, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.fillStyle = 'black';
+                ctx.beginPath();
+                ctx.arc(this.size * 0.3, -this.size * 0.2, this.size * 0.1, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.shadowBlur = 0;
+                ctx.restore();
+            }
+        }
+
+        // Formiga trabalhadora
+        class Ant extends LivingBeing {
+            constructor(x, y) {
+                super(x, y, 'ant');
+                this.color = '#8B4513';
+                this.size = 3;
+                this.carryingLeaf = false;
+                this.leafPile = null;
+                this.task = 'explore';
+                this.antHill = { x: x, y: y };
+                this.pathMemory = [];
+            }
+
+            update() {
+                super.update();
+
+                const distanceToHill = this.distanceTo(this.antHill);
+
+                switch (this.task) {
+                    case 'explore':
+                        if (this.behaviorTimer % 60 === 0) {
+                            this.targetX = this.antHill.x + (Math.random() - 0.5) * 200;
+                            this.targetY = this.antHill.y + (Math.random() - 0.5) * 200;
+                        }
+
+                        // Procurar folhas
+                        leafPiles.forEach(pile => {
+                            if (this.distanceTo(pile) < 30 && !this.carryingLeaf) {
+                                this.targetX = pile.x;
+                                this.targetY = pile.y;
+                                this.task = 'collect';
+                            }
+                        });
+                        break;
+
+                    case 'collect':
+                        leafPiles.forEach(pile => {
+                            if (this.distanceTo(pile) < 5 && pile.leaves > 0) {
+                                this.carryingLeaf = true;
+                                pile.leaves--;
+                                this.task = 'return';
+                                this.targetX = this.antHill.x;
+                                this.targetY = this.antHill.y;
+                            }
+                        });
+                        break;
+
+                    case 'return':
+                        if (distanceToHill < 10) {
+                            this.carryingLeaf = false;
+                            this.task = 'explore';
+
+                            // Criar afídeos ocasionalmente
+                            if (Math.random() < 0.1) {
+                                aphids.push(new Aphid(
+                            Math.random() * canvas.width,
+                            Math.random() * canvas.height
+                        ));
+                    }
+                },
+                () => {
+                    showNotification('🌙 Noite dos vagalumes especial!');
+                    fireflies.forEach(firefly => {
+                        firefly.isVisible = true;
+                        firefly.lightIntensity = 1;
+                    });
+
+                    setTimeout(() => {
+                        fireflies.forEach(firefly => {
+                            firefly.lightIntensity = 0.5;
+                        });
+                    }, 5000);
+                },
+                () => {
+                    showNotification('🌊 Festa aquática dos peixes!');
+                    fish.forEach(f => {
+                        f.swimSpeed *= 2;
+                        f.glowIntensity = 1;
+                    });
+
+                    setTimeout(() => {
+                        fish.forEach(f => {
+                            f.swimSpeed /= 2;
+                            f.glowIntensity = 0.3;
+                        });
+                    }, 8000);
+                }
+            ];
+
+            const randomEvent = events[Math.floor(Math.random() * events.length)];
+            randomEvent();
+        }
+
+        // Atualizar ambiente baseado no horário
+        function updateEnvironment() {
+            const now = new Date();
+            const hour = now.getHours();
+            let isNight = false;
+
+            switch (config.timeMode) {
+                case 'auto':
+                    isNight = hour < 6 || hour > 20;
+                    break;
+                case 'night':
+                case 'dusk':
+                    isNight = true;
+                    break;
+                case 'day':
+                case 'dawn':
+                    isNight = false;
+                    break;
+            }
+
+            if (isNight) {
+                document.body.classList.add('night');
+            } else {
+                document.body.classList.remove('night');
+            }
+
+            // Atualizar informações na interface
+            document.getElementById('currentTime').textContent =
+                now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+
+            document.getElementById('season').textContent = getCurrentSeason();
+        }
+
+        // Desenhar lago com reflexos
+        function drawLake() {
+            // Fundo do lago
+            ctx.fillStyle = isNightTime() ? 'rgba(25, 25, 112, 0.8)' : 'rgba(173, 216, 230, 0.8)';
+            ctx.beginPath();
+            ctx.ellipse(lake.x, lake.y, lake.width/2, lake.height/2, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Borda do lago
+            ctx.strokeStyle = isNightTime() ? 'rgba(100, 149, 237, 0.5)' : 'rgba(70, 130, 180, 0.5)';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+
+            // Reflexos simples do desktop (simulado)
+            lake.reflectionOffset += 0.01;
+            ctx.save();
+            ctx.globalAlpha = 0.3;
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
+
+            for (let i = 0; i < 5; i++) {
+                const x = lake.x - lake.width/2 + (lake.width / 5) * i;
+                const y = lake.y + Math.sin(lake.reflectionOffset + i) * 10;
+                ctx.fillRect(x, y - 30, lake.width/5 - 10, 60);
+            }
+            ctx.restore();
+
+            // Ondulações
+            lake.ripples = lake.ripples.filter(ripple => {
+                ripple.update();
+                ripple.draw();
+                return ripple.life > 0;
+            });
+        }
+
+        // Sistema de clima melhorado
+        function updateWeather() {
+            switch (config.weather) {
+                case 'rain':
+                    if (Math.random() < 0.3) {
+                        particles.push(new Particle(
+                            Math.random() * canvas.width,
+                            -10,
+                            'rain',
+                            {
+                                color: '#87ceeb',
+                                vy: Math.random() * 5 + 3,
+                                decay: 0.015,
+                                size: 2
+                            }
+                        ));
+                    }
+                    break;
+
+                case 'wind':
+                    if (Math.random() < 0.1) {
+                        particles.push(new Particle(
+                            -10,
+                            Math.random() * canvas.height,
+                            'leaf',
+                            {
+                                color: ['#90EE90', '#8FBC8F', '#228B22'][Math.floor(Math.random() * 3)],
+                                vx: Math.random() * 3 + 2,
+                                vy: (Math.random() - 0.5) * 2,
+                                decay: 0.008,
+                                size: 3
+                            }
+                        ));
+                    }
+                    break;
+
+                case 'storm':
+                    // Combinação de chuva e vento
+                    if (Math.random() < 0.5) {
+                        particles.push(new Particle(
+                            Math.random() * canvas.width,
+                            -10,
+                            'rain',
+                            {
+                                color: '#4682B4',
+                                vy: Math.random() * 8 + 5,
+                                vx: (Math.random() - 0.5) * 4,
+                                decay: 0.02,
+                                size: 3
+                            }
+                        ));
+                    }
+
+                    if (Math.random() < 0.05) {
+                        // Relâmpago simulado
+                        ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+                        ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    }
+                    break;
+            }
+
+            // Atualizar e desenhar todas as partículas
+            particles = particles.filter(particle => {
+                particle.update();
+                particle.draw();
+
+                return particle.life > 0 &&
+                       particle.x > -50 && particle.x < canvas.width + 50 &&
+                       particle.y > -50 && particle.y < canvas.height + 50;
+            });
+        }
+
+        // Loop principal de animação
+        let lastTime = 0;
+        let fps = 60;
+
+        function animate(currentTime) {
+            if (!isPaused) {
+                // Calcular FPS
+                if (lastTime > 0) {
+                    fps = Math.round(1000 / (currentTime - lastTime));
+                    document.getElementById('fps').textContent = fps;
+                }
+                lastTime = currentTime;
+
+                if (isPartyMode) {
+                    partyModeTimer++;
+                }
+
+                // Limpar canvas
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                // Desenhar lago
+                drawLake();
+
+                // Desenhar pilhas de folhas
+                leafPiles.forEach(pile => pile.draw());
+
+                // Atualizar e desenhar peixes
+                fish.forEach(f => {
+                    f.update();
+                    f.draw();
+                });
+
+                // Atualizar e desenhar formigas
+                ants = ants.filter(ant => {
+                    if (ant.isAlive) {
+                        ant.update();
+                        ant.draw();
+                        return true;
+                    }
+                    return false;
+                });
+
+                // Regenerar formigas se necessário
+                while (ants.length < config.antCount) {
+                    ants.push(new Ant(
+                        Math.random() * canvas.width,
+                        Math.random() * canvas.height
+                    ));
+                }
+
+                // Atualizar e desenhar vagalumes
+                fireflies.forEach(firefly => {
+                    firefly.update();
+                    firefly.draw();
+                });
+
+                // Atualizar e desenhar joaninhas
+                ladybugs = ladybugs.filter(ladybug => {
+                    if (ladybug.isAlive) {
+                        ladybug.update();
+                        ladybug.draw();
+                        return true;
+                    }
+                    return false;
+                });
+
+                // Regenerar joaninhas se necessário
+                while (ladybugs.length < config.ladybugCount) {
+                    ladybugs.push(new Ladybug(
+                        Math.random() * canvas.width,
+                        Math.random() * canvas.height
+                    ));
+                }
+
+                // Atualizar e desenhar afídeos
+                aphids = aphids.filter(aphid => {
+                    if (aphid.isAlive) {
+                        aphid.update();
+                        aphid.draw();
+                        return true;
+                    }
+                    return false;
+                });
+
+                // Animal principal
+                if (currentAnimal) {
+                    currentAnimal.update();
+                    currentAnimal.draw();
+                }
+
+                // Sistema de clima
+                updateWeather();
+
+                // Atualizar estatísticas da interface
+                document.getElementById('activeFish').textContent = fish.length;
+                document.getElementById('activeAnts').textContent = ants.length;
+                document.getElementById('activeFireflies').textContent = fireflies.filter(f => f.isVisible).length;
+                document.getElementById('activeAphids').textContent = aphids.length;
+
+                if (currentAnimal) {
+                    const moodTexts = {
+                        'hungry': 'Faminto',
+                        'curious': 'Curioso',
+                        'happy': 'Feliz',
+                        'energetic': 'Energético',
+                        'neutral': 'Neutro'
+                    };
+
+                    document.getElementById('mood').textContent = moodTexts[currentAnimal.mood] || 'Neutro';
+                    document.getElementById('energy').textContent = Math.round(currentAnimal.energy) + '%';
+
+                    // Atividade baseada no comportamento
+                    if (config.interactionMode === 'follow') {
+                        const distance = currentAnimal.distanceTo ? currentAnimal.distanceTo(mouse) :
+                                        Math.sqrt((currentAnimal.x - mouse.x) ** 2 + (currentAnimal.y - mouse.y) ** 2);
+                        document.getElementById('activity').textContent = distance < 50 ? 'Seguindo' : 'Explorando';
+                    } else {
+                        document.getElementById('activity').textContent = 'Autônomo';
+                    }
+                }
+
+                // Status do ecossistema
+                const totalPopulation = fish.length + ants.length + fireflies.length + ladybugs.length + aphids.length;
+                let ecosystemStatus = '';
+
+                if (totalPopulation < 20) {
+                    ecosystemStatus = '📉 População baixa - ecossistema estável';
+                } else if (totalPopulation < 50) {
+                    ecosystemStatus = '⚖️ Ecossistema equilibrado';
+                } else if (totalPopulation < 80) {
+                    ecosystemStatus = '📈 População alta - muita atividade';
+                } else {
+                    ecosystemStatus = '🔥 Ecossistema muito ativo - superpopulação';
+                }
+
+                // Adicionar informações específicas
+                if (aphids.length > ladybugs.length * 5) {
+                    ecosystemStatus += ' | 🐛 Infestação de pulgões';
+                }
+
+                if (isNightTime() && fireflies.filter(f => f.isVisible).length > 10) {
+                    ecosystemStatus += ' | ✨ Noite mágica de vagalumes';
+                }
+
+                if (isPartyMode) {
+                    ecosystemStatus = '🎉 MODO FESTA ATIVO! Todos os seres estão dançando!';
+                }
+
+                document.getElementById('ecosystemStatus').textContent = ecosystemStatus;
+            }
+
+            animationId = requestAnimationFrame(animate);
+        }
+
+        // Atalhos de teclado
+        document.addEventListener('keydown', (e) => {
+            switch (e.key.toLowerCase()) {
+                case ' ':
+                    e.preventDefault();
+                    pauseAnimation();
+                    break;
+                case 'f':
+                    feedAnimal();
+                    break;
+                case 'p':
+                    startPartyMode();
+                    break;
+                case '1':
+                    document.getElementById('animalType').value = 'lizard';
+                    document.getElementById('animalType').dispatchEvent(new Event('change'));
+                    break;
+                case '2':
+                    document.getElementById('animalType').value = 'crab';
+                    document.getElementById('animalType').dispatchEvent(new Event('change'));
+                    break;
+                case '3':
+                    document.getElementById('animalType').value = 'butterfly';
+                    document.getElementById('animalType').dispatchEvent(new Event('change'));
+                    break;
+                case '4':
+                    document.getElementById('animalType').value = 'owl';
+                    document.getElementById('animalType').dispatchEvent(new Event('change'));
+                    break;
+                case 'r':
+                    resetEcosystem();
+                    break;
+                case 'l':
+                    addLeafPile();
+                    break;
+                case 'e':
+                    triggerEvent();
+                    break;
+            }
+        });
+
+        // Inicialização
+        initializeEcosystem();
+        updateEnvironment();
+        checkSpecialEvents();
+
+        // Timers periódicos
+        setInterval(updateEnvironment, 60000); // Atualizar ambiente a cada minuto
+        setInterval(checkSpecialEvents, 300000); // Verificar eventos especiais a cada 5 minutos
+
+        // Iniciar animação
+        animate(0);
+
+        console.log('🌿 Bioma Vivo inicializado com sucesso!');
+        console.log('Atalhos disponíveis:');
+        console.log('- Espaço: Pausar/Retomar');
+        console.log('- F: Alimentar');
+        console.log('- P: Modo Festa');
+        console.log('- 1-4: Trocar animal');
+        console.log('- R: Reset ecossistema');
+        console.log('- L: Adicionar folhas');
+        console.log('- E: Evento aleatório');
+        console.log('- Clique triplo: Evento especial');
+    </script>
+</body>
+</html> <script>Aphid(this.x + Math.random() * 20 - 10, this.y + Math.random() * 20 - 10));
+                            }
+                        }
+                        break;
+                }
+
+                this.moveTowards(this.targetX, this.targetY, this.speed);
+
+                // Salvar caminho
+                this.pathMemory.push({ x: this.x, y: this.y });
+                if (this.pathMemory.length > 20) {
+                    this.pathMemory.shift();
+                }
+            }
+
+            draw() {
+                // Trilha de feromônio
+                if (this.pathMemory.length > 1) {
+                    ctx.strokeStyle = 'rgba(139, 69, 19, 0.1)';
+                    ctx.lineWidth = 1;
+                    ctx.beginPath();
+                    ctx.moveTo(this.pathMemory[0].x, this.pathMemory[0].y);
+                    for (let i = 1; i < this.pathMemory.length; i++) {
+                        ctx.lineTo(this.pathMemory[i].x, this.pathMemory[i].y);
+                    }
+                    ctx.stroke();
+                }
+
+                // Corpo da formiga
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y - 2, 2, 0, Math.PI * 2); // Cabeça
+                ctx.arc(this.x, this.y, 2.5, 0, Math.PI * 2);   // Tórax
+                ctx.arc(this.x, this.y + 3, 2, 0, Math.PI * 2); // Abdômen
+                ctx.fill();
+
+                // Folha carregada
+                if (this.carryingLeaf) {
+                    ctx.fillStyle = '#90EE90';
+                    ctx.save();
+                    ctx.translate(this.x, this.y - 8);
+                    ctx.rotate(Math.sin(this.age * 0.1) * 0.2);
+                    ctx.fillRect(-3, -2, 6, 4);
+                    ctx.restore();
+                }
+
+                // Antenas
+                ctx.strokeStyle = this.color;
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(this.x - 1, this.y - 3);
+                ctx.lineTo(this.x - 2, this.y - 5);
+                ctx.moveTo(this.x + 1, this.y - 3);
+                ctx.lineTo(this.x + 2, this.y - 5);
+                ctx.stroke();
+            }
+        }
+
+        // Vagalume noturno
+        class Firefly extends LivingBeing {
+            constructor(x, y) {
+                super(x, y, 'firefly');
+                this.color = '#ffff44';
+                this.size = 2;
+                this.lightPhase = Math.random() * Math.PI * 2;
+                this.lightIntensity = 0;
+                this.isVisible = false;
+                this.flightPattern = Math.random() * Math.PI * 2;
+            }
+
+            update() {
+                super.update();
+
+                this.isVisible = isNightTime();
+                if (!this.isVisible) return;
+
+                this.lightPhase += 0.1;
+                this.flightPattern += 0.05;
+
+                // Padrão de voo errático
+                this.targetX = this.initialX + Math.sin(this.flightPattern) * 100;
+                this.targetY = this.initialY + Math.cos(this.flightPattern * 0.7) * 50;
+
+                this.moveTowards(this.targetX, this.targetY, this.speed * 0.5);
+
+                // Piscar sincronizado ocasionalmente
+                if (isPartyMode && Math.sin(partyModeTimer * 0.1) > 0.8) {
+                    this.lightIntensity = 1;
+                } else {
+                    this.lightIntensity = (Math.sin(this.lightPhase) + 1) * 0.5;
+                }
+
+                // Reagir a cliques próximos
+                if (mouse.clicked && this.distanceTo(mouse) < 50) {
+                    this.lightIntensity = 1;
+                    this.targetX = mouse.x + (Math.random() - 0.5) * 100;
+                    this.targetY = mouse.y + (Math.random() - 0.5) * 100;
+                }
+            }
+
+            draw() {
+                if (!this.isVisible) return;
+
+                // Brilho do vagalume
+                ctx.save();
+                ctx.globalAlpha = this.lightIntensity;
+                ctx.shadowColor = this.color;
+                ctx.shadowBlur = 20;
+
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size + this.lightIntensity * 3, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Corpo escuro
+                ctx.globalAlpha = 0.8;
+                ctx.shadowBlur = 0;
+                ctx.fillStyle = '#333';
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.restore();
+            }
+        }
+
+        // Joaninha colorida
+        class Ladybug extends LivingBeing {
+            constructor(x, y) {
+                super(x, y, 'ladybug');
+                this.colors = ['#ff0000', '#ff4500', '#ff6347', '#dc143c'];
+                this.currentColor = Math.floor(Math.random() * this.colors.length);
+                this.size = 6;
+                this.spots = [];
+                this.huntingTarget = null;
+
+                // Gerar pontos aleatórios
+                for (let i = 0; i < 3; i++) {
+                    this.spots.push({
+                        x: (Math.random() - 0.5) * 8,
+                        y: (Math.random() - 0.5) * 8
+                    });
+                }
+            }
+
+            update() {
+                super.update();
+
+                // Caçar afídeos
+                this.huntingTarget = null;
+                let closestDistance = Infinity;
+
+                aphids.forEach(aphid => {
+                    const distance = this.distanceTo(aphid);
+                    if (distance < closestDistance && distance < 100) {
+                        closestDistance = distance;
+                        this.huntingTarget = aphid;
+                    }
+                });
+
+                if (this.huntingTarget) {
+                    this.moveTowards(this.huntingTarget.x, this.huntingTarget.y, this.speed * 1.5);
+
+                    // Comer afídeo
+                    if (this.distanceTo(this.huntingTarget) < 5) {
+                        const index = aphids.indexOf(this.huntingTarget);
+                        if (index > -1) {
+                            aphids.splice(index, 1);
+                            this.energy = Math.min(100, this.energy + 10);
+                            this.mood = 'happy';
+                        }
+                    }
+                } else {
+                    // Comportamento exploratório
+                    if (this.behaviorTimer % 90 === 0) {
+                        this.targetX = Math.random() * canvas.width;
+                        this.targetY = Math.random() * canvas.height;
+                    }
+                    this.moveTowards(this.targetX, this.targetY, this.speed * 0.5);
+                }
+            }
+
+            draw() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+
+                // Corpo da joaninha
+                ctx.fillStyle = this.colors[this.currentColor];
+                ctx.beginPath();
+                ctx.arc(0, 0, this.size, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Linha central
+                ctx.strokeStyle = 'black';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(0, -this.size);
+                ctx.lineTo(0, this.size);
+                ctx.stroke();
+
+                // Pontos pretos
+                ctx.fillStyle = 'black';
+                this.spots.forEach(spot => {
+                    ctx.beginPath();
+                    ctx.arc(spot.x, spot.y, 1, 0, Math.PI * 2);
+                    ctx.fill();
+                });
+
+                // Cabeça
+                ctx.fillStyle = 'black';
+                ctx.beginPath();
+                ctx.arc(0, -this.size - 2, 3, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Antenas
+                ctx.strokeStyle = 'black';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(-2, -this.size - 4);
+                ctx.lineTo(-1, -this.size - 6);
+                ctx.moveTo(2, -this.size - 4);
+                ctx.lineTo(1, -this.size - 6);
+                ctx.stroke();
+
+                ctx.restore();
+            }
+        }
+
+        // Afídeo (pulgão)
+        class Aphid extends LivingBeing {
+            constructor(x, y) {
+                super(x, y, 'aphid');
+                this.color = '#90EE90';
+                this.size = 2;
+                this.protectedByAnts = Math.random() < 0.7;
+                this.protectorAnt = null;
+            }
+
+            update() {
+                super.update();
+
+                // Movimento lento e limitado
+                if (this.behaviorTimer % 180 === 0) {
+                    this.targetX = this.x + (Math.random() - 0.5) * 50;
+                    this.targetY = this.y + (Math.random() - 0.5) * 50;
+                }
+
+                this.moveTowards(this.targetX, this.targetY, this.speed * 0.2);
+
+                // Procurar proteção de formigas
+                if (this.protectedByAnts && !this.protectorAnt) {
+                    ants.forEach(ant => {
+                        if (this.distanceTo(ant) < 20 && !ant.carryingLeaf) {
+                            this.protectorAnt = ant;
+                        }
+                    });
+                }
+
+                // Reprodução ocasional
+                if (this.energy > 70 && Math.random() < 0.001) {
+                    aphids.push(new Aphid(this.x + Math.random() * 20 - 10, this.y + Math.random() * 20 - 10));
+                    this.energy -= 30;
+                }
+            }
+
+            draw() {
+                // Corpo do afídeo
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Indicador de proteção
+                if (this.protectedByAnts) {
+                    ctx.strokeStyle = 'rgba(139, 69, 19, 0.3)';
+                    ctx.lineWidth = 1;
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size + 3, 0, Math.PI * 2);
+                    ctx.stroke();
+                }
+            }
+        }
+
+        // Sistema de partículas melhorado
+        class Particle {
+            constructor(x, y, type, properties = {}) {
+                this.x = x;
+                this.y = y;
+                this.type = type;
+                this.vx = properties.vx || (Math.random() - 0.5) * 2;
+                this.vy = properties.vy || (Math.random() - 0.5) * 2;
+                this.life = properties.life || 1;
+                this.decay = properties.decay || 0.01;
+                this.color = properties.color || '#87ceeb';
+                this.size = properties.size || 2;
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                this.life -= this.decay;
+
+                switch (this.type) {
+                    case 'rain':
+                        this.vy += 0.1; // Gravidade
+                        break;
+                    case 'bubble':
+                        this.vy -= 0.05; // Flutuação
+                        this.vx += (Math.random() - 0.5) * 0.1;
+                        break;
+                    case 'leaf':
+                        this.vy += 0.02;
+                        this.vx += Math.sin(this.y * 0.01) * 0.1;
+                        break;
+                }
+            }
+
+            draw() {
+                ctx.globalAlpha = this.life;
+
+                switch (this.type) {
+                    case 'rain':
+                        ctx.strokeStyle = this.color;
+                        ctx.lineWidth = this.size;
+                        ctx.beginPath();
+                        ctx.moveTo(this.x, this.y);
+                        ctx.lineTo(this.x + this.vx * 5, this.y + this.vy * 5);
+                        ctx.stroke();
+                        break;
+
+                    case 'bubble':
+                        ctx.strokeStyle = 'rgba(173, 216, 230, 0.5)';
+                        ctx.lineWidth = 1;
+                        ctx.beginPath();
+                        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                        ctx.stroke();
+                        break;
+
+                    case 'leaf':
+                        ctx.fillStyle = this.color;
+                        ctx.save();
+                        ctx.translate(this.x, this.y);
+                        ctx.rotate(this.vx * 0.1);
+                        ctx.fillRect(-this.size, -this.size/2, this.size * 2, this.size);
+                        ctx.restore();
+                        break;
+
+                    default:
+                        ctx.fillStyle = this.color;
+                        ctx.beginPath();
+                        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                        ctx.fill();
+                }
+
+                ctx.globalAlpha = 1;
+            }
+        }
+
+        // Arrays de entidades
+        let currentAnimal = new Lizard(window.innerWidth / 2, window.innerHeight / 2);
+        let fish = [];
+        let ants = [];
+        let fireflies = [];
+        let ladybugs = [];
+        let aphids = [];
+        let particles = [];
+        let leafPiles = [];
+        let dragObjects = [];
+
+        // Pilha de folhas
+        class LeafPile {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.leaves = Math.floor(Math.random() * 10) + 5;
+                this.maxLeaves = 20;
+                this.isDraggable = true;
+                this.beingDragged = false;
+            }
+
+            draw() {
+                const leafColors = ['#90EE90', '#8FBC8F', '#228B22', '#32CD32'];
+
+                for (let i = 0; i < Math.min(this.leaves, 15); i++) {
+                    ctx.fillStyle = leafColors[i % leafColors.length];
+                    const offsetX = (Math.random() - 0.5) * 20;
+                    const offsetY = (Math.random() - 0.5) * 20;
+
+                    ctx.save();
+                    ctx.translate(this.x + offsetX, this.y + offsetY);
+                    ctx.rotate(Math.random() * Math.PI * 2);
+                    ctx.fillRect(-3, -2, 6, 4);
+                    ctx.restore();
+                }
+
+                // Indicador de quantidade
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+                ctx.font = '12px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(this.leaves.toString(), this.x, this.y - 15);
+            }
+
+            addLeaf() {
+                if (this.leaves < this.maxLeaves) {
+                    this.leaves++;
+                    return true;
+                }
+                return false;
+            }
+        }
+
+        // Ondulação no lago
+        class Ripple {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.radius = 0;
+                this.maxRadius = 50;
+                this.life = 1;
+            }
+
+            update() {
+                this.radius += 2;
+                this.life = 1 - (this.radius / this.maxRadius);
+            }
+
+            draw() {
+                ctx.globalAlpha = this.life;
+                ctx.strokeStyle = 'rgba(173, 216, 230, 0.8)';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.stroke();
+                ctx.globalAlpha = 1;
+            }
+        }
+
+        // Inicializar ecossistema
+        function initializeEcosystem() {
+            // Criar peixes
+            fish = [];
+            for (let i = 0; i < config.fishCount; i++) {
+                fish.push(new Fish(
+                    lake.x + (Math.random() - 0.5) * lake.width,
+                    lake.y + (Math.random() - 0.5) * lake.height
+                ));
+            }
+
+            // Criar formigas
+            ants = [];
+            for (let i = 0; i < config.antCount; i++) {
+                ants.push(new Ant(
+                    Math.random() * canvas.width,
+                    Math.random() * canvas.height
+                ));
+            }
+
+            // Criar vagalumes
+            fireflies = [];
+            for (let i = 0; i < config.fireflyCount; i++) {
+                fireflies.push(new Firefly(
+                    Math.random() * canvas.width,
+                    Math.random() * canvas.height
+                ));
+            }
+
+            // Criar joaninhas
+            ladybugs = [];
+            for (let i = 0; i < config.ladybugCount; i++) {
+                ladybugs.push(new Ladybug(
+                    Math.random() * canvas.width,
+                    Math.random() * canvas.height
+                ));
+            }
+
+            // Criar algumas pilhas de folhas iniciais
+            leafPiles = [];
+            for (let i = 0; i < 3; i++) {
+                leafPiles.push(new LeafPile(
+                    Math.random() * canvas.width,
+                    Math.random() * canvas.height
+                ));
+            }
+
+            // Alguns afídeos iniciais
+            aphids = [];
+            for (let i = 0; i < 5; i++) {
+                aphids.push(new Aphid(
+                    Math.random() * canvas.width,
+                    Math.random() * canvas.height
+                ));
+            }
+        }
+
+        // Funções utilitárias
+        function isNightTime() {
+            if (config.timeMode === 'night') return true;
+            if (config.timeMode === 'day') return false;
+            if (config.timeMode === 'dusk' || config.timeMode === 'dawn') return true;
+
+            const hour = new Date().getHours();
+            return hour < 6 || hour > 20;
+        }
+
+        function getCurrentSeason() {
+            const month = new Date().getMonth();
+            if (month >= 2 && month <= 4) return 'Primavera';
+            if (month >= 5 && month <= 7) return 'Verão';
+            if (month >= 8 && month <= 10) return 'Outono';
+            return 'Inverno';
+        }
+
+        function checkSpecialEvents() {
+            const today = new Date();
+            const dateStr = String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
+
+            const event = calendar.specialDates.find(e => e.date === dateStr);
+            if (event && calendar.activeEvent !== event.event) {
+                calendar.activeEvent = event.event;
+                showNotification(event.message);
+
+                // Efeitos especiais baseados no evento
+                switch (event.event) {
+                    case 'natal':
+                        particles.push(...Array(20).fill().map(() => new Particle(
+                            Math.random() * canvas.width,
+                            -10,
+                            'snow',
+                            { color: 'white', decay: 0.005, vy: Math.random() * 2 + 1 }
+                        )));
+                        break;
+
+                    case 'halloween':
+                        // Mais vagalumes e cores especiais
+                        config.fireflyCount = Math.min(config.fireflyCount * 2, 25);
+                        break;
+                }
+            }
+        }
+
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.textContent = message;
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                document.body.removeChild(notification);
+            }, 3000);
+        }
+
+        // Event Listeners melhorados
+        canvas.addEventListener('mousemove', (e) => {
+            mouse.x = e.clientX;
+            mouse.y = e.clientY;
+
+            if (mouse.dragging && mouse.dragTarget) {
+                mouse.dragTarget.x = mouse.x;
+                mouse.dragTarget.y = mouse.y;
+                mouse.dragTarget.beingDragged = true;
+                document.body.classList.add('dragging');
+            }
+        });
+
+        canvas.addEventListener('mousedown', (e) => {
+            mouse.clicked = true;
+
+            // Verificar clique triplo
+            const currentTime = Date.now();
+            if (currentTime - mouse.lastClickTime < 500) {
+                mouse.clickCount++;
+            } else {
+                mouse.clickCount = 1;
+            }
+            mouse.lastClickTime = currentTime;
+
+            if (mouse.clickCount >= 3) {
+                triggerEvent();
+                mouse.clickCount = 0;
+            }
+
+            // Verificar se clicou em objeto arrastável
+            if (config.interactionMode === 'drag') {
+                leafPiles.forEach(pile => {
+                    if (Math.sqrt((pile.x - mouse.x) ** 2 + (pile.y - mouse.y) ** 2) < 20) {
+                        mouse.dragTarget = pile;
+                        mouse.dragging = true;
+                    }
+                });
+            }
+
+            // Criar ondulação no lago
+            if (mouse.x >= lake.x - lake.width/2 && mouse.x <= lake.x + lake.width/2 &&
+                mouse.y >= lake.y - lake.height/2 && mouse.y <= lake.y + lake.height/2) {
+                lake.ripples.push(new Ripple(mouse.x, mouse.y));
+
+                // Criar bolhas
+                for (let i = 0; i < 5; i++) {
+                    particles.push(new Particle(
+                        mouse.x + (Math.random() - 0.5) * 20,
+                        mouse.y + (Math.random() - 0.5) * 20,
+                        'bubble',
+                        { life: 2, decay: 0.005, size: Math.random() * 5 + 2 }
+                    ));
+                }
+            }
+
+            setTimeout(() => {
+                mouse.clicked = false;
+            }, 100);
+        });
+
+        canvas.addEventListener('mouseup', (e) => {
+            if (mouse.dragging) {
+                mouse.dragging = false;
+                mouse.dragTarget = null;
+                document.body.classList.remove('dragging');
+            }
+        });
+
+        // Controles da interface
+        document.getElementById('speedSlider').addEventListener('input', (e) => {
+            config.speed = parseInt(e.target.value);
+            document.getElementById('speedValue').textContent = config.speed;
+            if (currentAnimal) currentAnimal.speed = config.speed;
+        });
+
+        document.getElementById('animalType').addEventListener('change', (e) => {
+            config.animalType = e.target.value;
+            const x = currentAnimal ? currentAnimal.x : canvas.width / 2;
+            const y = currentAnimal ? currentAnimal.y : canvas.height / 2;
+
+            switch (config.animalType) {
+                case 'lizard':
+                    currentAnimal = new Lizard(x, y);
+                    break;
+                case 'crab':
+                    currentAnimal = new Crab(x, y);
+                    break;
+                case 'butterfly':
+                    currentAnimal = new Butterfly(x, y);
+                    break;
+                case 'owl':
+                    currentAnimal = new Owl(x, y);
+                    break;
+            }
+        });
+
+        // Controles das populações
+        ['fishCount', 'antCount', 'ladybugCount', 'fireflyCount'].forEach(id => {
+            document.getElementById(id).addEventListener('input', (e) => {
+                const value = parseInt(e.target.value);
+                config[id.replace('Count', 'Count')] = value;
+                document.getElementById(id + 'Value').textContent = value;
+                initializeEcosystem(); // Reinicializar com nova população
+            });
+        });
+
+        document.getElementById('weather').addEventListener('change', (e) => {
+            config.weather = e.target.value;
+        });
+
+        document.getElementById('timeMode').addEventListener('change', (e) => {
+            config.timeMode = e.target.value;
+            updateEnvironment();
+        });
+
+        document.getElementById('interactionMode').addEventListener('change', (e) => {
+            config.interactionMode = e.target.value;
+
+            switch (config.interactionMode) {
+                case 'follow':
+                    canvas.style.cursor = 'crosshair';
+                    break;
+                case 'drag':
+                    canvas.style.cursor = 'grab';
+                    break;
+                case 'feed':
+                    canvas.style.cursor = 'pointer';
+                    break;
+                case 'observe':
+                    canvas.style.cursor = 'default';
+                    break;
+            }
+        });
+
+        // Funções de controle
+        function pauseAnimation() {
+            isPaused = !isPaused;
+            const button = document.querySelector('button');
+            button.textContent = isPaused ? '▶️ Retomar' : '⏸️ Pausar';
+        }
+
+        function feedAnimal() {
+            if (currentAnimal) {
+                currentAnimal.energy = Math.min(100, currentAnimal.energy + 20);
+                currentAnimal.mood = 'happy';
+                setTimeout(() => {
+                    if (currentAnimal && currentAnimal.mood === 'happy') {
+                        currentAnimal.mood = 'neutral';
+                    }
+                }, 3000);
+            }
+
+            // Alimentar peixes também
+            fish.forEach(f => {
+                if (f.distanceTo(mouse) < 100) {
+                    f.energy = Math.min(100, f.energy + 10);
+                }
+            });
+        }
+
+        function startPartyMode() {
+            if (isPartyMode) return;
+
+            isPartyMode = true;
+            partyModeTimer = 0;
+            document.body.classList.add('celebration');
+
+            showNotification('🎉 MODO FESTA ATIVADO! 🎉');
+
+            // Sincronizar todos os vagalumes
+            fireflies.forEach(firefly => {
+                firefly.lightPhase = 0;
+            });
+
+            setTimeout(() => {
+                isPartyMode = false;
+                document.body.classList.remove('celebration');
+                showNotification('Festa finalizada! ✨');
+            }, 15000);
+        }
+
+        function resetEcosystem() {
+            particles = [];
+            lake.ripples = [];
+            aphids = [];
+            initializeEcosystem();
+            showNotification('🔄 Ecossistema reiniciado!');
+        }
+
+        function addLeafPile() {
+            leafPiles.push(new LeafPile(
+                Math.random() * canvas.width,
+                Math.random() * canvas.height
+            ));
+        }
+
+        function triggerEvent() {
+            const events = [
+                () => {
+                    showNotification('🌪️ Vendaval! As folhas estão voando!');
+                    for (let i = 0; i < 30; i++) {
+                        particles.push(new Particle(
+                            Math.random() * canvas.width,
+                            canvas.height + 10,
+                            'leaf',
+                            {
+                                color: ['#90EE90', '#8FBC8F', '#228B22'][Math.floor(Math.random() * 3)],
+                                vy: -Math.random() * 3 - 2,
+                                vx: (Math.random() - 0.5) * 4
+                            }
+                        ));
+                    }
+                },
+                () => {
+                    showNotification('🐛 Explosão populacional de afídeos!');
+                    for (let i = 0; i < 10; i++) {
+                        aphids.push(new)
+};</script>

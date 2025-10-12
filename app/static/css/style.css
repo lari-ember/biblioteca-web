@@ -1,60 +1,35 @@
-import url('https://fonts.googleapis.com/css?family=Poppins:100,200,300,400,500,600,700,800,900');
+@import url('https://fonts.googleapis.com/css?family=Poppins:100,200,300,400,500,600,700,800,900');
 
-header {
-    font-family: 'Poppins', sans-serif;
-}
-
-body {
-    padding: 20px;
-    justify-content: center;
-    align-items: center;
-    min-width: 100vh;
-    background: #351235;
-}
-
-label {
-  margin-top: 10px;
-}
-
-table {
-  box-shadow: 2px 2px 12px rgba(255, 255, 255, 0.5);
-}
-
-select {
-  background-color: black;
-  color: aliceblue;
-}
-
+/* Estilos movidos do base.html para melhor organização */
 .product-device {
-      position: absolute;
-      right: 10%;
-      bottom: -30%;
-      width: 300px;
-      height: 540px;
-      background-color: #351235;
-      border-radius: 21px;
-      transform: rotate(30deg);
-    }
+    position: absolute;
+    right: 10%;
+    bottom: -30%;
+    width: 300px;
+    height: 540px;
+    background-color: #351235;
+    border-radius: 21px;
+    transform: rotate(30deg);
+}
 
 .product-device::before {
-      position: absolute;
-      top: 10%;
-      right: 10px;
-      bottom: 10%;
-      left: 10px;
-      content: "";
-      background-color: #351235;
-      border-radius: 5px;
-    }
-
-.product-device-2 {
-  top: -25%;
-  right: auto;
-  bottom: 0;
-  left: 5%;
-  background-color: #351235;
+    position: absolute;
+    top: 10%;
+    right: 10px;
+    bottom: 10%;
+    left: 10px;
+    content: "";
+    background-color: #351235;
+    border-radius: 5px;
 }
 
+.product-device-2 {
+    top: -25%;
+    right: auto;
+    bottom: 0;
+    left: 5%;
+    background-color: #351235;
+}
 
 /*
      * Extra utilities
@@ -129,7 +104,7 @@ div.bg0 {
 }
 
 .cronicas {
-  background-image: url('images/jornais.jpg');
+  background: linear-gradient(to bottom, #251630 0%, #500E50 75%, #9D009D 100%);
   background-repeat: no-repeat;
   background-size: cover;
 }
@@ -424,3 +399,36 @@ time {
 .bg-dark { background: #1a1a1a !important; }
 .text-warning { color: #ffd700 !important; }
 .alert { border-radius: 12px; }
+
+/* Estilos específicos para GIFs e imagens animadas */
+.gif-container {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    overflow: visible !important;
+    background-color: transparent !important;
+}
+
+.gif-container img {
+    display: block !important;
+    max-width: 100% !important;
+    height: auto !important;
+    object-fit: contain !important;
+    border: none !important;
+}
+
+/* Fix para imagens que não carregam */
+img[src*=".gif"] {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+/* Debug para imagens com problemas */
+img:not([src]),
+img[src=""],
+img[src*="undefined"] {
+    background-color: #ff0000 !important;
+    min-height: 50px !important;
+    min-width: 50px !important;
+}

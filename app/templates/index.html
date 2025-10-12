@@ -1,195 +1,177 @@
 {% extends "base.html" %}
 
+{% set title = "Amber Archivily - Sua Biblioteca Digital Inteligente" %}
+{% set description = "Sistema moderno de gerenciamento de biblioteca pessoal com recursos avançados de catalogação, pesquisa e organização de acervos físicos e digitais." %}
+
+{# Importação dos componentes modulares #}
+{% from "components/features_section.html" import features_header, features_grid, developer_section, welcome_dashboard, featured_books_section %}
+{% include "components/features_config.html" %}
+
 {% block content %}
 
 {% if not current_user.is_authenticated %}
-<div class="container-fluid position-relative overflow-hidden p-3 p-md-5 m-md-3 text-center olar">
-  <div class="col-md-5 p-lg-5 mx-auto my-5">
-    <h1 class="text-white text">amber archively</h1>
-    <p class="lead fw-normal text-white">A digital spellbook for bookworms: an enchanted library, intuitive and interactive.</p>
-    <a class="btn btn-outline-light" href="#about">more about</a>
-  </div>
-  <img src="{{ url_for('static', filename='images/DALL_E_2023-05-19_13.49.52-removebg-preview.png') }}"
-    class="img-fluid d-none d-md-block d-lg-block d-xl-block">
-</div>
-<div class="d-md-flex flex-md-equal w-100 my-md-3 ps-md-3">
-  <div class=" about-bg me-md-3 pt-3 px-3 pt-md-5 px-md-5  text-white overflow-hidden">
-    <div class="me-md-3 mb-md-3 pt-3 px-3 pt-md-5 px-md-5 text-white overflow-hidden d-flex justify-content-center align-items-center">
-      <img class="" src="../static/images/quadro_elevador_lacerda.jpg" alt="">
-  </div>
-  
-    <div class="my-3 py-3 align-content-center">
-      <h2 id="about" class="text-lg-left font-weight-bold display-1">about</h2>
-      <h3 class="text">have your juice while walking through amber archivily ;)
-      </h3>
-      <p class="lead">Introducing Amber Archively - the program that will bring your personal library to life! Whether
-        you're a bookworm, manga lover, or anime enthusiast, Amber Archively is the perfect platform to keep track of
-        your personal collection. With features like user registration and personal library creation, you can easily organize your
-        books and keep them at your fingertips. Add books with unique codes based on the CDU, and input details like
-        title, author, publisher, year of publication, number of pages, and format (physical, PDF, or e-book). Want to find a specific book in your collection? No problem! Amber Archively allows you to search
-        by any of the previously mentioned details, as well as by genre, reading status (currently reading, read, or to
-        be read), and loan status (borrowed or owned). </p>
-
-      <p class="lead">But that's not all - with Amber Archively's filtering and classification system, you can easily
-        sort your collection by author, publisher, year of publication, number of pages, and more. Keep track of which
-        books you've read and mark your progress on those you're currently reading. And for all the statistics lovers out there, Amber Archively generates insightful information
-        about your library, including the number of books per genre and your most-read author. So, go ahead and take a
-        sip of your juice box while you peruse your personal library, and let Amber Archively do the rest!!</p>
+<!-- Hero Section para usuários não autenticados -->
+<section class="hero-section" aria-label="Apresentação principal">
+  <div class="hero-grid">
+    <div class="hero-content">
+      <h1 class="hero-title">Amber Archivily</h1>
+      <p class="hero-subtitle">
+        Um grimório digital encantado onde cada página sussurra histórias eternas. Desperte o que há em você e transforme sua coleção em um santuário literário, onde cada livro encontra seu lugar sagrado nas prateleiras do tempo.
+      </p>
+      <a href="#about" class="hero-cta" aria-describedby="hero-description">
+        Adentrar o Reino dos Livros
+      </a>
+      <span id="hero-description" class="sr-only">
+        Saiba mais sobre as funcionalidades mágicas do seu sistema de biblioteca pessoal
+      </span>
+    </div>
+    <div class="hero-media">
+      <img src="{{ url_for('static', filename='images/hero_banner.png') }}"
+           class="hero-image d-none d-lg-block"
+           alt=""
+           aria-hidden="true">
     </div>
   </div>
-</div>
-{% else %}
-<div
-  class="d-flex d-none d-md-block d-lg-block d-xl-block about-bg me-md-3 pt-3 px-3 pt-md-5 px-md-5  text-white overflow-hidden align-content-center justify-content-center">
-  <div class="d-flex my-3 py-3 align-content-center justify-content-center">
-    <div class="d-flex moldura-um align-content-center justify-content-center">
-      <div class="d-flex moldura-dois my-3 py-3 align-content-center justify-content-center text-center">
-        <div class="d-flex my-3 py-3 align-content-center justify-content-center text-center img1d" id="about">
-        </div>
+</section>
+
+<!-- About Section -->
+<section class="about-section" id="about" aria-label="Sobre o projeto">
+  <div class="container">
+    <div class="about-container">
+      <div class="about-image-wrapper">
+        <img src="{{ url_for('static', filename='images/elevator_painting.jpg') }}"
+             class="about-image"
+             alt="Portal místico para uma biblioteca encantada onde livros flutuam em harmonia"
+             loading="lazy">
+      </div>
+
+      <div class="about-content">
+        <h2>A Crônica do Amber Archivily</h2>
+        <h3>Sorva sua poção favorita enquanto desbrava os corredores infinitos do conhecimento ✨</h3>
+
+        <p>
+          <strong>Era uma vez...</strong> um reino onde os livros viviam em harmonia perfeita! Bem-vindos ao <em>Amber Archivily</em> - não apenas um programa, mas um portal mágico que desperta a vida adormecida em sua biblioteca pessoal. Seja você um colecionador de pergaminhos antigos, um caçador de mangás raros, ou um guardião de light novels épicas, este é o seu destino literário.
+        </p>
+
+        <p>
+          Como um verdadeiro <strong>Mestre dos Arquivos</strong>, você criará seu próprio reino bibliográfico com poderes dignos de um bibliotecário de Alexandria. Cada tome receberá sua marca única - códigos místicos baseados na ancestral <em>Classificação Decimal Universal</em>, onde título, escriba, editora, ano de nascimento e essência (física, digital ou etérea) serão catalogados com precisão alquímica.
+        </p>
+
+        <p>
+          <em>"Procura-se um livro perdido no labirinto das prateleiras?"</em> Não tema! Nosso sistema de busca é mais eficiente que o próprio Sherlock Holmes em <strong>A Aventura da Biblioteca Perdida</strong>. Encontre qualquer volume por gênero, estado de leitura (em progresso, conquistado, ou aguardando na fila do destino) e até mesmo por status de empréstimo - porque sabemos que emprestar livros é quase como enviar filhos para o mundo.
+        </p>
+
+        <p>
+          Mas os encantamentos não param por aí! Como um verdadeiro <strong>Arquivista Supremo</strong>, você comandará filtros e organizações que fariam inveja à própria <em>Biblioteca de Babel</em> de Borges. Ordene por escriba, casa editorial, ano de criação, extensão narrativa e muito mais. Acompanhe suas jornadas literárias e marque os progressos épicos como um mapa do tesouro pessoal.
+        </p>
+
+        <p>
+          E para os <strong>Sábios dos Números</strong> - aqueles que encontram magia nas estatísticas! - o Amber Archivily conjura relatórios místicos sobre seu reino literário: quantos volumes habitam cada gênero, qual escriba reina absoluto em seus domínios, e segredos numerológicos que só os verdadeiros bibliófilos compreendem.
+        </p>
+
+        <p>
+          <em>Então, pegue sua bebida encantada, vista seu manto de leitor e adentrem...</em> Deixe que o Amber Archivily seja o guardião eterno de seus tesouros literários, enquanto você se perde nas infinitas possibilidades que só uma biblioteca bem organizada pode oferecer! 📚✨
+        </p>
       </div>
     </div>
   </div>
-</div>
-{% endif %}
-{% if current_user.is_authenticated %}
-<div class="d-md-flex flex-md-equal w-100 my-md-3 ps-md-3">
-  <div class="bg0 me-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden text-white">
-    <div class="my-3 p-3">
-      <h2 class="display-5">register new book</h2>
-      <p class="lead">Unlock the magical realm of the 'Register New Book' tab, where bibliophiles embark on an enchanted
-        quest to give their beloved books an official identity card – because every book deserves its own novel
-        identification number, just like we bibliophiles cherish our library cards</p>
-    </div>
-    <div class="bg-dark shadow-sm mx-auto" style="width: 80%; height: 300px; border-radius: 21px 21px 0 0;">
-      <a class="btn btn-secondary bt1" href="/register_new_book">three, two...</a>
-    </div>
-  </div>
-  <div class="bg0 me-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center text-white overflow-hidden">
-    <div class="my-3 py-3">
-      <h2 class="display-5">your collection</h2>
-      <p class="lead">Discover the Pandora's Box of literary treasures in Your Collection, where bookworms unleash the
-        enchantment of their personal library, revealing a trove of captivating tales and literary wonders. in there are
-        your precious books of palladins world...</p>
-    </div>
-    <div class="bg-dark shadow-sm mx-auto cronicas" style="width: 80%; height: 330px; border-radius: 21px 21px 0 0;">
-      <a class="btn btn-secondary bt1" href="/your_collection">gooo!!!</a>
-    </div>
-  </div>
-</div>
+</section>
 
-<div class="d-md-flex flex-md-equal w-100 my-md-3 ps-md-3">
-  <div class="bg0 me-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden text-white align-content-center">
-    <div class="my-3 py-3">
-      <h2 class="display-5">search</h2>
-      <p class="lead">"the game is afoot!"</p>
-    </div>
-    <div class="bg-dark shadow-sm mx-auto cronicas" style="width: 50%; height: 130px; border-radius: 21px 21px 0 0;">
-      <br>
-      <a class="btn btn-secondary" href="/login">ima sherlock homes ;)</a>
-    </div>
-  </div>
+<!-- Features Section MODULAR com novo sistema de cards -->
+<main id="main" role="main">
+  <section class="features-section" aria-label="Funcionalidades do sistema">
+    <div class="container">
+      {{ features_header(
+        title="Os Quatro Pilares da Sabedoria",
+        subtitle="Desvende os poderes ancestrais que aguardam em sua biblioteca pessoal"
+      ) }}
 
-</div>
+      {{ features_grid(unauthenticated_features) }}
 
-
-</div>
-<div class="d-md-flex flex-md-equal w-100 my-md-3 ps-md-3">
-  <div class="bg0 me-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden text-white">
-    <div class="my-3 p-3">
-      <h2 class="display-5">about your library</h2>
-      <p class="lead">Step into the ethereal realm of knowledge, where the Library of Babel whispers its secrets.
-        Explore the 'About Your Library' page.</p>
+      {{ developer_section() }}
     </div>
-    <div class="bg-dark shadow-sm mx-auto cronicas" style="width: 80%; height: 310px; border-radius: 21px 21px 0 0;">
-      <a class="btn btn-secondary bt1" href="/about_your_library">a new realm of literature</a>
-    </div>
-  </div>
-  <div class="bg0 me-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden text-white align-content-center">
-    <div class="my-3 py-3">
-      <h2 class="display-5">who is larissa?</h2>
-      <p class="lead">lady lari mi consagras, listenning to the fella lil max x.</p>
-      <a class="btn btn-outline-light" href="/profile">social midia</a>
-    </div>
-    <div class="shadow-sm mx-auto"
-      style="width: 100%; height: 300px; border-radius: 21px 21px 0 0; align-content: center;">
-      <a href="https://www.pinterest.cl/pin/579768152016330995/?amp_client_id=CLIENT_ID%28_%29&mweb_unauth_id=%7B%7Bdefault.session%7D%7D&simplified=true"
-        target="external"><img src="{{ url_for('static', filename='images/fofri.gif') }}"
-          alt="Gif da Larissa com frio, assoprando as mãos (clique no link para seguir até o autor do gif...)"></a>
-    </div>
+  </section>
 
-  </div>
+  <!-- Seção de Livros em Destaque (Placeholder para implementação futura) -->
+  {# {{ featured_books_section([]) }} #}
+</main>
 
-
-</div>
 {% else %}
-<div class="d-md-flex flex-md-equal w-100 my-md-3 ps-md-3">
-  <div class="bg0 me-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden text-white">
-    <div class="my-3 p-3">
-      <h2 class="display-5">register new book</h2>
-      <p class="lead">Unlock the magical realm of the 'Register New Book' tab, where bibliophiles embark on an enchanted
-        quest to give their beloved books an official identity card – because every book deserves its own novel
-        identification number, just like we bibliophiles cherish our library cards</p>
-    </div>
-    <div class="bg-dark shadow-sm mx-auto" style="width: 80%; height: 300px; border-radius: 21px 21px 0 0;">
-      <a class="btn btn-secondary bt1" href="/login">three, two...</a>
-    </div>
-  </div>
-  <div class="bg0 me-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center text-white overflow-hidden">
-    <div class="my-3 py-3">
-      <h2 class="display-5">your collection</h2>
-      <p class="lead">Discover the Pandora's Box of literary treasures in Your Collection, where bookworms unleash the
-        enchantment of their personal library, revealing a trove of captivating tales and literary wonders. in there are
-        your precious books of palladins world...</p>
-    </div>
-    <div class="bg-dark shadow-sm mx-auto cronicas" style="width: 80%; height: 330px; border-radius: 21px 21px 0 0;">
-      <a class="btn btn-secondary bt1" href="/login">gooo!!!</a>
-    </div>
-  </div>
-</div>
+<!-- Dashboard para usuários autenticados MODULAR -->
+<main id="main" role="main">
+  {{ welcome_dashboard(current_user) }}
 
-<div class="d-md-flex flex-md-equal w-100 my-md-3 ps-md-3">
-  <div class="bg0 me-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden text-white align-content-center">
-    <div class="my-3 py-3">
-      <h2 class="display-5">search</h2>
-      <p class="lead">"the game is afoot!"</p>
-    </div>
-    <div class="bg-dark shadow-sm mx-auto cronicas" style="width: 50%; height: 130px; border-radius: 21px 21px 0 0;">
-      <br>
-      <a class="btn btn-secondary" href="/login">ima sherlock homes ;)</a>
-    </div>
-  </div>
+  <!-- Features Grid para usuários autenticados -->
+  <section class="features-section" aria-label="Portais de acesso aos poderes bibliográficos">
+    <div class="container">
+      {% set authenticated_features = [
+        {
+          'id': 'auth-card-title-1',
+          'eyebrow': '📜 Ação Imediata',
+          'title': 'Novo Manuscrito',
+          'description': 'Invoque o Ritual de Catalogação e conceda vida digital aos novos tesouros literários que adentrarem teu santuário pessoal.',
+          'meta': 'Última adição: Há 2 dias',
+          'cta_text': 'Iniciar Ritual ✨',
+          'cta_url': '/register_new_book',
+          'cta_label': 'Invocar ritual de catalogação',
+          'image': 'images/novo-manuscrito.jpg',
+          'image_alt': 'Pergaminho sendo escrito com pena dourada',
+          'featured': false
+        },
+        {
+          'id': 'auth-card-title-2',
+          'eyebrow': '🏛️ Seu Reino',
+          'title': 'Salão dos Tesouros',
+          'description': 'Contemple teu império de ' ~ (current_user.books|length) ~ ' tomos sagrados e ' ~ current_user.sum_pages ~ ' páginas de sabedoria conquistada.',
+          'meta': (current_user.books|length) ~ ' livros • ' ~ current_user.sum_pages ~ ' páginas',
+          'cta_text': 'Abrir o Cofre 📚',
+          'cta_url': '/your_collection',
+          'cta_label': 'Adentrar o salão dos tesouros',
+          'image': 'images/colecao-pessoal.jpg',
+          'image_alt': 'Biblioteca pessoal com ' ~ (current_user.books|length) ~ ' livros organizados',
+          'featured': true
+        },
+        {
+          'id': 'auth-card-title-3',
+          'eyebrow': '🔍 Ferramenta Ativa',
+          'title': 'Busca Mística',
+          'description': 'Desperte teu Sherlock Holmes interior e encontre qualquer volume perdido nos labirintos de tua coleção com precisão supernatural.',
+          'meta': 'Última busca: Romance Épico',
+          'cta_text': 'Elementary! 🕵️',
+          'cta_url': '/search',
+          'cta_label': 'Iniciar busca mística',
+          'image': 'images/busca-ativa.jpg',
+          'image_alt': 'Lupa mágica brilhando sobre uma biblioteca',
+          'featured': false
+        },
+        {
+          'id': 'auth-card-title-4',
+          'eyebrow': '📊 Insights Pessoais',
+          'title': 'Oráculo Pessoal',
+          'description': 'Consulta as Tábuas da Sabedoria e desvenda os padrões ocultos de tua jornada literária através de visões estatísticas ancestrais.',
+          'meta': 'Gênero favorito: ' ~ (current_user.favorite_genre or 'Fantasia'),
+          'cta_text': 'Revelar Segredos 🔮',
+          'cta_url': '/about_your_library',
+          'cta_label': 'Consultar o oráculo pessoal',
+          'image': 'images/estatisticas-pessoais.jpg',
+          'image_alt': 'Gráficos místicos mostrando padrões de leitura',
+          'featured': false
+        }
+      ] %}
 
-</div>
+      {{ features_grid(authenticated_features) }}
 
-
-</div>
-<div class="d-md-flex flex-md-equal w-100 my-md-3 ps-md-3">
-  <div class="bg0 me-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden text-white">
-    <div class="my-3 p-3">
-      <h2 class="display-5">about your library</h2>
-      <p class="lead">Step into the ethereal realm of knowledge, where the Library of Babel whispers its secrets.
-        Explore the 'About Your Library' page.</p>
+      {{ developer_section() }}
     </div>
-    <div class="bg-dark shadow-sm mx-auto cronicas" style="width: 80%; height: 310px; border-radius: 21px 21px 0 0;">
-      <a class="btn btn-secondary bt1" href="/login">a new realm of literature</a>
-    </div>
-  </div>
-  <div class="bg0 me-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden text-white align-content-center">
-    <div class="my-3 py-3">
-      <h2 class="display-5">who is larissa?</h2>
-      <p class="lead">lady lari mi consagras, listenning to the fella lil max x.</p>
-      <a class="btn btn-outline-light" href="/profile">social midia</a>
-    </div>
-    <div class="shadow-sm mx-auto"
-      style="width: 100%; height: 300px; border-radius: 21px 21px 0 0; align-content: center;">
-      <a href="https://www.pinterest.cl/pin/579768152016330995/?amp_client_id=CLIENT_ID%28_%29&mweb_unauth_id=%7B%7Bdefault.session%7D%7D&simplified=true"
-        target="external"><img src="../static/images/fofri.gif"
-          alt="Gif da Larissa com frio, assoprando as mãos (clique no link para seguir até o autor do gif...)"></a>
-    </div>
+  </section>
 
-  </div>
-
-
-</div>
+  <!-- Seção de Livros em Destaque (Implementação futura com dados reais) -->
+  {#
+  {% if featured_books %}
+    {{ featured_books_section(featured_books) }}
+  {% endif %}
+  #}
+</main>
 {% endif %}
+
 {% endblock %}

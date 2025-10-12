@@ -1,0 +1,61 @@
+{#
+  Configuração de Features
+  Define os dados das funcionalidades para usuários autenticados e não autenticados
+#}
+
+{# Features para usuários NÃO AUTENTICADOS #}
+{% set unauthenticated_features = [
+  {
+    'id': 'card-title-1',
+    'eyebrow': '📜 Ritual Místico',
+    'title': 'O Ritual de Catalogação',
+    'description': 'Abra o Tomo dos Registros Sagrados, onde cada nova aquisição literária recebe sua identidade mística. Como um escriba medieval, você concederá a cada livro seu próprio pergaminho de identidade.',
+    'meta': 'Duração: 5min • Nível: Iniciante',
+    'cta_text': 'Começar o Ritual ✨',
+    'cta_url': '/login',
+    'cta_label': 'Iniciar jornada de catalogação mística',
+    'image': 'images/ritual-catalogacao.jpg',
+    'image_alt': 'Ilustração mística do ritual de catalogação de livros',
+    'featured': false
+  },
+  {
+    'id': 'card-title-2',
+    'eyebrow': '🏛️ Santuário Principal',
+    'title': 'O Salão dos Tesouros Literários',
+    'description': 'Adentre sua própria Biblioteca de Alexandria pessoal! Aqui jazem os segredos de mil mundos: desde as Crônicas Perdidas até os Anais Proibidos.',
+    'meta': 'Acesso: Imediato • Capacidade: Ilimitada',
+    'cta_text': 'Abrir o Cofre Literário 📚',
+    'cta_url': '/login',
+    'cta_label': 'Explorar os tesouros da biblioteca pessoal',
+    'image': 'images/salao-tesouros.jpg',
+    'image_alt': 'Salão majestoso repleto de tesouros literários',
+    'featured': true
+  },
+  {
+    'id': 'card-title-3',
+    'eyebrow': '🔍 Poder Dedutivo',
+    'title': 'A Lupa de Sherlock dos Livros',
+    'description': '"Elementary, my dear reader!" Nosso sistema de busca mystical é mais preciso que a dedução do próprio detetive da Baker Street.',
+    'meta': 'Precisão: 99.9% • Velocidade: Instantânea',
+    'cta_text': 'O Jogo Começou! 🕵️',
+    'cta_url': '/login',
+    'cta_label': 'Iniciar busca com poderes dedutivos',
+    'image': 'images/sherlock-busca.jpg',
+    'image_alt': 'Lupa de detetive sobre livros antigos',
+    'featured': false
+  },
+  {
+    'id': 'card-title-4',
+    'eyebrow': '📊 Visão Ancestral',
+    'title': 'O Oráculo dos Números Sagrados',
+    'description': 'Consulte o Oráculo Bibliográfico e desvende os mistérios numerológicos de sua biblioteca! Como os antigos astrólogos liam as estrelas.',
+    'meta': 'Insights: Profundos • Atualização: Tempo Real',
+    'cta_text': 'Revelar os Segredos 🔮',
+    'cta_url': '/login',
+    'cta_label': 'Consultar o oráculo da biblioteca',
+    'image': 'images/oraculo-numeros.jpg',
+    'image_alt': 'Cristal mágico revelando estatísticas em runas antigas',
+    'featured': false
+  }
+] %}
+

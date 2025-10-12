@@ -1,19 +1,40 @@
-/*algum outro estilo deve vir para cá?
-alguma alteração para acessibilidade, UX/UI,
-SEO ou responsividade em diversos dispositivos,
-que converse com o bootstrap 5.3.3?*\
+/**
+ * Layout Styles
+ * Estilos de layout responsivo e componentes estruturais
+ * Compatível com Bootstrap 5.3.3 e acessibilidade
+ */
 
-/* Estilos de Layout */
+/* Skip Link para acessibilidade */
+.skip-link {
+    position: absolute;
+    top: -40px;
+    left: 6px;
+    background: var(--color-dark);
+    color: var(--color-text);
+    padding: 8px 16px;
+    text-decoration: none;
+    border-radius: var(--border-radius);
+    z-index: 9999;
+    font-weight: 600;
+    transition: top 0.3s ease;
+}
+
+.skip-link:focus {
+    top: 6px;
+    color: var(--color-text);
+    text-decoration: none;
+}
 
 /* Classes para distribuição igualitária de elementos */
 .flex-equal > * {
     flex: 1;
-    margin: 0 10px; /* Espaçamento lateral */
+    margin: 0 10px;
 }
 
 @media (max-width: 768px) {
     .flex-equal > * {
-        margin: 5px 0; /* Espaçamento vertical em telas pequenas */
+        margin: 5px 0;
+        flex-direction: column;
     }
 }
 
@@ -23,41 +44,481 @@ que converse com o bootstrap 5.3.3?*\
     }
 }
 
-/* Gradiente de fundo personalizado com fallback */
+/* Gradientes de fundo personalizados com fallback */
 .olar {
-    background: #251630; /* Fallback */
-    background: linear-gradient(to right, #251630 0%, #500E50 70%, #DD00DD 100%);
+    background: #251630;
+    background: var(--gradient-primary, linear-gradient(to right, #251630 0%, #500E50 70%, #DD00DD 100%));
 }
 
-/* Gradiente de fundo vertical com fallback */
-div.bg0 {
-    background: #251630; /* Fallback */
-    background: linear-gradient(to bottom, #251630 0%, #500E50 75%, #9D009D 100%);
+.about-bg {
+    background: #251630;
+    background: var(--gradient-secondary, linear-gradient(to bottom, #251630 0%, #500E50 75%, #9D009D 100%));
+    min-height: 400px;
+    position: relative;
 }
 
-/* Configurações gerais de responsividade para containers */
-.container {
+.bg0 {
+    background: var(--gradient-secondary);
+}
+
+.cronicas {
+    background: var(--gradient-secondary);
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+/* Layout para seções principais */
+.hero-section {
+    min-height: 80vh;
     display: flex;
-    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.content-section {
+    padding: 4rem 0;
+}
+
+/* Desktop Wrapper */
+.desktop-wrapper {
+    position: relative;
+    z-index: 100;
+}
+
+/* User Dashboard Styles */
+.user-dashboard {
+    background: var(--color-dark) !important;
+    border-radius: 0 0 var(--border-radius-large) var(--border-radius-large);
+    box-shadow: var(--box-shadow);
+}
+
+.user-stats .stat-item {
+    text-align: center;
+}
+
+.user-stats .stat-number {
+    display: block;
+    font-size: 1.5rem;
+    color: var(--color-secondary);
+}
+
+.user-stats .stat-label {
+    display: block;
+    font-size: 0.875rem;
+    opacity: 0.8;
+}
+
+/* Navigation Styles - CORRIGIDOS para nova estrutura */
+.main-navigation {
+    margin-top: 2rem;
+    position: relative;
+    display: flex;
     justify-content: center;
     align-items: center;
 }
 
-@media (max-width: 576px) {
-    .container {
+.navigation {
+    width: 625px;
+    height: 115px;
+    background: var(--gradient-navigation);
+    border: 2px ridge var(--color-secondary);
+    box-shadow: var(--box-shadow-navigation);
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: var(--border-radius-large);
+}
+
+.navigation ul {
+    display: flex;
+    width: 700px;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    position: relative;
+}
+
+.navigation ul li {
+    position: relative;
+    list-style: none;
+    width: 70px;
+    height: 70px;
+    z-index: 1;
+}
+
+.navigation ul li a {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    width: 100%;
+    text-align: center;
+    font-weight: 500;
+    text-decoration: none;
+    color: var(--color-primary);
+    transition: all 0.3s ease;
+    border-radius: var(--border-radius);
+}
+
+.navigation ul li a .icon {
+    position: relative;
+    display: block;
+    line-height: 70px;
+    font-size: 1.5em;
+    text-align: center;
+    transition: 0.5s;
+    color: var(--color-primary);
+}
+
+/* Estados ativos baseados em aria-current="page" */
+.navigation ul li a[aria-current="page"] .icon {
+    transform: translateY(-50px);
+    color: var(--color-text);
+}
+
+.navigation ul li a .text {
+    position: absolute;
+    color: var(--color-primary);
+    font-weight: 400;
+    font-size: 0.75em;
+    letter-spacing: 0.05em;
+    transition: 0.5s;
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+.navigation ul li a[aria-current="page"] .text {
+    opacity: 1;
+    transform: translateY(20px);
+    color: var(--color-text);
+}
+
+/* Estados de hover e focus */
+.navigation ul li a:hover .icon,
+.navigation ul li a:focus-visible .icon {
+    transform: translateY(-50px);
+    color: var(--color-text);
+}
+
+.navigation ul li a:hover .text,
+.navigation ul li a:focus-visible .text {
+    opacity: 1;
+    transform: translateY(20px);
+    color: var(--color-text);
+}
+
+/* Navigation Indicator - agora posicionado corretamente */
+.indicator {
+    position: absolute;
+    top: -35%;
+    width: 68px;
+    height: 68px;
+    background: var(--color-secondary);
+    border-radius: 50%;
+    border: 6px solid var(--color-primary);
+    transition: 0.5s;
+    left: 5px; /* posição inicial */
+}
+
+.indicator::before {
+    content: '';
+    position: absolute;
+    top: 46%;
+    left: -22px;
+    width: 20px;
+    height: 20px;
+    background: transparent;
+    border-top-right-radius: 20px;
+    box-shadow: -1px -10px 0 0 var(--color-primary);
+}
+
+.indicator::after {
+    content: '';
+    position: absolute;
+    top: 46%;
+    right: -22px;
+    width: 20px;
+    height: 20px;
+    background: transparent;
+    border-top-left-radius: 20px;
+    box-shadow: -1px -10px 0 0 var(--color-primary);
+}
+
+/* Navigation Active States - baseado em posição dos li */
+.navigation ul li:nth-child(1) a[aria-current="page"] ~ .indicator,
+.navigation ul li:nth-child(1):hover ~ .indicator {
+    transform: translateX(calc(70px * 0));
+}
+
+.navigation ul li:nth-child(2) a[aria-current="page"] ~ .indicator,
+.navigation ul li:nth-child(2):hover ~ .indicator {
+    transform: translateX(calc(70px * 1));
+}
+
+.navigation ul li:nth-child(3) a[aria-current="page"] ~ .indicator,
+.navigation ul li:nth-child(3):hover ~ .indicator {
+    transform: translateX(calc(70px * 2));
+}
+
+.navigation ul li:nth-child(4) a[aria-current="page"] ~ .indicator,
+.navigation ul li:nth-child(4):hover ~ .indicator {
+    transform: translateX(calc(70px * 3));
+}
+
+.navigation ul li:nth-child(5) a[aria-current="page"] ~ .indicator,
+.navigation ul li:nth-child(5):hover ~ .indicator {
+    transform: translateX(calc(70px * 4));
+}
+
+.navigation ul li:nth-child(6) a[aria-current="page"] ~ .indicator,
+.navigation ul li:nth-child(6):hover ~ .indicator {
+    transform: translateX(calc(70px * 5));
+}
+
+.navigation ul li:nth-child(7) a[aria-current="page"] ~ .indicator,
+.navigation ul li:nth-child(7):hover ~ .indicator {
+    transform: translateX(calc(70px * 6));
+}
+
+.navigation ul li:nth-child(8) a[aria-current="page"] ~ .indicator,
+.navigation ul li:nth-child(8):hover ~ .indicator {
+    transform: translateX(calc(70px * 7));
+}
+
+/* Flash Messages */
+.flash-messages {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1050;
+    max-width: 400px;
+}
+
+.flash-messages .alert {
+    margin-bottom: 10px;
+    box-shadow: var(--box-shadow);
+}
+
+/* Footer Styles */
+.site-footer {
+    background: var(--color-dark);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    margin-top: 5rem;
+}
+
+.site-footer .link-secondary {
+    color: rgba(255, 255, 255, 0.6);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.site-footer .link-secondary:hover {
+    color: var(--color-secondary);
+}
+
+/* Mobile Navigation - CORRIGIDA */
+@media (max-width: 767px) {
+    .desktop-wrapper {
+        display: none !important;
+    }
+
+    /* Mobile Navigation Bar */
+    .mobile-nav {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: var(--gradient-navigation);
+        border-top: 2px solid var(--color-secondary);
+        padding: 10px 0;
+        z-index: 1000;
+    }
+
+    .mobile-nav ul {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .mobile-nav li {
+        flex: 1;
+        text-align: center;
+    }
+
+    .mobile-nav a {
+        display: flex;
         flex-direction: column;
-        padding: 10px; /* Adicionar espaçamento interno em telas menores */
+        align-items: center;
+        color: var(--color-text);
+        text-decoration: none;
+        padding: 5px;
+        font-size: 0.75rem;
+        transition: all 0.3s ease;
+        border-radius: var(--border-radius);
+    }
+
+    .mobile-nav a .icon {
+        font-size: 1.5rem;
+        margin-bottom: 2px;
+    }
+
+    .mobile-nav a:hover,
+    .mobile-nav a:focus-visible,
+    .mobile-nav a[aria-current="page"] {
+        color: var(--color-secondary);
+        transform: scale(1.1);
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+    /* Adjust main content for mobile nav */
+    main {
+        padding-bottom: 80px;
+    }
+
+    /* Mobile Header */
+    .mobile-header {
+        position: sticky;
+        top: 0;
+        background: var(--color-dark);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 1rem;
+        z-index: 100;
+    }
+
+    .mobile-header .navbar-brand {
+        font-size: 1.25rem;
+        color: var(--color-text);
+        text-decoration: none;
+        font-weight: bold;
     }
 }
 
-@media (min-width: 1200px) {
-    .container {
-        max-width: 1400px; /* Limitar largura máxima para telas maiores */
+/* Tablet Adjustments */
+@media (min-width: 768px) and (max-width: 991px) {
+    .navigation {
+        width: 500px;
+        height: 100px;
+    }
+
+    .navigation ul {
+        width: 560px;
+    }
+
+    .navigation ul li {
+        width: 60px;
+        height: 60px;
+    }
+
+    .navigation ul li a .icon {
+        font-size: 1.25em;
+        line-height: 60px;
+    }
+
+    .navigation ul li.active a .icon {
+        transform: translateY(-40px);
+    }
+
+    .navigation ul li:nth-child(2).active ~ .indicator {
+        transform: translateX(calc(60px * 1));
+    }
+
+    .navigation ul li:nth-child(3).active ~ .indicator {
+        transform: translateX(calc(60px * 2));
+    }
+
+    .navigation ul li:nth-child(4).active ~ .indicator {
+        transform: translateX(calc(60px * 3));
+    }
+
+    .navigation ul li:nth-child(5).active ~ .indicator {
+        transform: translateX(calc(60px * 4));
+    }
+
+    .navigation ul li:nth-child(6).active ~ .indicator {
+        transform: translateX(calc(60px * 5));
+    }
+
+    .navigation ul li:nth-child(7).active ~ .indicator {
+        transform: translateX(calc(60px * 6));
+    }
+
+    .navigation ul li:nth-child(8).active ~ .indicator {
+        transform: translateX(calc(60px * 7));
     }
 }
 
-/* Foco visível para elementos interativos dentro de containers */
-.container a:focus, .container button:focus {
-    outline: 2px solid #DD00DD;
+/* Container Responsivo */
+.container-responsive {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+@media (min-width: 576px) {
+    .container-responsive {
+        padding: 0 1.5rem;
+    }
+}
+
+@media (min-width: 768px) {
+    .container-responsive {
+        padding: 0 2rem;
+    }
+}
+
+/* Utilities para acessibilidade */
+.sr-only {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+}
+
+.sr-only-focusable:focus {
+    position: static !important;
+    width: auto !important;
+    height: auto !important;
+    padding: inherit !important;
+    margin: inherit !important;
+    overflow: visible !important;
+    clip: auto !important;
+    white-space: normal !important;
+}
+
+/* Focus states melhorados */
+*:focus {
+    outline: 2px solid var(--color-secondary);
     outline-offset: 2px;
+}
+
+a:focus,
+button:focus,
+[tabindex]:focus {
+    outline: 2px solid var(--color-secondary);
+    outline-offset: 2px;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
 }

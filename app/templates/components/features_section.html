@@ -17,26 +17,39 @@
 <div class="cards-grid cards-grid--equal-height">
   {% for feature in features_list %}
   <article
-    class="card {% if feature.featured %}card--featured{% endif %}"
+    class="card {% if feature.featured %}card--featured{% endif %} fade-in-view"
     role="article"
     aria-labelledby="{{ feature.id }}"
     tabindex="0"
     {% if feature.cta_url %}data-href="{{ feature.cta_url }}"{% endif %}
+    aria-label="{{ feature.eyebrow }}: {{ feature.title }} - Pressione Enter para ativar"
   >
     {% if feature.image %}
     <div class="card-media">
+      {% if feature.placeholder_class %}
+      {# Usar placeholder com gradiente CSS quando imagem não existir #}
+      <div class="card-media-placeholder {{ feature.placeholder_class }}"
+           data-emoji="{{ feature.placeholder_emoji }}"
+           role="img"
+           aria-label="{{ feature.image_alt }}">
+        <span aria-hidden="true">{{ feature.placeholder_emoji }}</span>
+      </div>
+      {% else %}
+      {# Tentar carregar imagem real #}
       <img
         src="{{ url_for('static', filename=feature.image) }}"
         alt="{{ feature.image_alt }}"
         loading="lazy"
+        onerror="this.parentElement.innerHTML='<div class=\'card-media-placeholder\' style=\'background: var(--color-dark); display: flex; align-items: center; justify-content: center; font-size: 3rem;\'>{{ feature.placeholder_emoji or '📚' }}</div>';"
       >
+      {% endif %}
     </div>
     {% endif %}
 
     <div class="card-body">
       <span class="card-eyebrow">{{ feature.eyebrow }}</span>
       <h3 id="{{ feature.id }}" class="card-title">{{ feature.title }}</h3>
-      <p class="card-desc">{{ feature.description }}</p>
+      <p class="card-desc">{{ feature.description|safe }}</p>
     </div>
 
     <div class="card-footer">

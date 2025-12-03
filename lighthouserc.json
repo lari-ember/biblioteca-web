@@ -1,0 +1,87 @@
+{
+  "ci": {
+    "collect": {
+      "url": [
+        "http://localhost:5000/",
+        "http://localhost:5000/login",
+        "http://localhost:5000/register"
+      ],
+      "numberOfRuns": 3,
+      "settings": {
+        "preset": "desktop",
+        "throttling": {
+          "rttMs": 40,
+          "throughputKbps": 10240,
+          "cpuSlowdownMultiplier": 1
+        },
+        "screenEmulation": {
+          "mobile": false,
+          "width": 1350,
+          "height": 940,
+          "deviceScaleFactor": 1,
+          "disabled": false
+        },
+        "formFactor": "desktop",
+        "onlyCategories": [
+          "accessibility",
+          "performance",
+          "best-practices",
+          "seo"
+        ]
+      }
+    },
+    "assert": {
+      "preset": "lighthouse:recommended",
+      "assertions": {
+        "categories:accessibility": ["error", {"minScore": 0.90}],
+        "categories:performance": ["warn", {"minScore": 0.85}],
+        "categories:best-practices": ["warn", {"minScore": 0.90}],
+        "categories:seo": ["warn", {"minScore": 0.90}],
+
+        "color-contrast": ["error", {"minScore": 1}],
+        "document-title": ["error", {"minScore": 1}],
+        "html-has-lang": ["error", {"minScore": 1}],
+        "meta-description": ["error", {"minScore": 1}],
+        "meta-viewport": ["error", {"minScore": 1}],
+        "aria-allowed-attr": ["error", {"minScore": 1}],
+        "aria-required-attr": ["error", {"minScore": 1}],
+        "aria-required-children": ["error", {"minScore": 1}],
+        "aria-required-parent": ["error", {"minScore": 1}],
+        "aria-roles": ["error", {"minScore": 1}],
+        "aria-valid-attr": ["error", {"minScore": 1}],
+        "aria-valid-attr-value": ["error", {"minScore": 1}],
+        "button-name": ["error", {"minScore": 1}],
+        "bypass": ["error", {"minScore": 1}],
+        "image-alt": ["error", {"minScore": 1}],
+        "label": ["error", {"minScore": 1}],
+        "link-name": ["error", {"minScore": 1}],
+
+        "canonical": ["warn", {"minScore": 1}],
+        "is-crawlable": ["warn", {"minScore": 1}],
+        "robots-txt": "off",
+        "tap-targets": ["warn", {"minScore": 0.9}],
+
+        "first-contentful-paint": ["warn", {"maxNumericValue": 2000}],
+        "largest-contentful-paint": ["warn", {"maxNumericValue": 2500}],
+        "cumulative-layout-shift": ["warn", {"maxNumericValue": 0.1}],
+        "total-blocking-time": ["warn", {"maxNumericValue": 300}],
+
+        "uses-responsive-images": "off",
+        "offscreen-images": "off",
+        "unminified-css": "off",
+        "unminified-javascript": "off",
+        "unused-css-rules": "off",
+        "uses-long-cache-ttl": "off",
+        "uses-optimized-images": "off",
+        "uses-text-compression": "off",
+        "uses-rel-preconnect": "off",
+        "font-display": "off"
+      }
+    },
+    "upload": {
+      "target": "temporary-public-storage",
+      "reportFilenamePattern": "%%PATHNAME%%-%%DATETIME%%-report.%%EXTENSION%%"
+    }
+  }
+}
+

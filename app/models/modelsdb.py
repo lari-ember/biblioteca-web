@@ -1,7 +1,8 @@
 # models.py
 from datetime import datetime
+from functools import cached_property
 
-from sqlalchemy import CheckConstraint
+from sqlalchemy import CheckConstraint, func, event
 from sqlalchemy.orm import validates
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -57,6 +58,58 @@ class User(db.Model):
         if not 4 <= len(username) <= 50:
             raise ValueError("Username must be between 4-50 characters")
         return username.lower()
+
+    # Custom properties for template compatibility and performance
+    @property
+    def books(self):
+        """
+        Retorna lista de objetos Book associados ao usuário.
+        Mantém compatibilidade com templates existentes que usam current_user.books
+        """
+        return [ub.book for ub in self.user_books]
+
+    @cached_property
+    def favorite_genre(self):
+        """
+        Calcula o gênero favorito do usuário baseado na quantidade de livros.
+        Retorna tupla (genre_name, count) ou None se não houver livros.
+        Cache é invalidado automaticamente via SQLAlchemy events.
+
+        TODO: Phase 2 - Migrate to Redis cache when user base > 1000
+        """
+        from app.models.modelsdb import Book, UserBooks
+
+        result = db.session.query(
+            Book.genre,
+            func.count(Book.id).label('count')
+        ).join(
+            UserBooks, Book.id == UserBooks.book_id
+        ).filter(
+            UserBooks.user_id == self.id
+        ).group_by(
+            Book.genre
+        ).order_by(
+            func.count(Book.id).desc()
+        ).first()
+
+        return result if result else None
+
+    @cached_property
+    def last_book_added(self):
+        """
+        Retorna o último livro adicionado à biblioteca do usuário.
+        Útil para exibir "Última adição: Há X dias" na interface.
+
+        Returns:
+            UserBooks instance ou None
+        """
+        from app.models.modelsdb import UserBooks
+
+        return UserBooks.query.filter_by(
+            user_id=self.id
+        ).order_by(
+            UserBooks.acquisition_date.desc()
+        ).first()
 
 
 class Book(db.Model):
@@ -200,3 +253,31 @@ class Loan(db.Model):
         if existing_loan:
             raise ValueError("This book is already on loan")
         return user_book_id
+
+
+# ============================================================================
+# SQLAlchemy Event Listeners - Cache Invalidation
+# ============================================================================
+
+@event.listens_for(UserBooks, 'after_insert')
+def invalidate_user_cache_on_insert(mapper, connection, target):
+    """
+    Invalida cached_property do User quando um novo livro é adicionado.
+    Garante que favorite_genre e last_book_added sejam recalculados.
+    """
+    if hasattr(target.user, 'favorite_genre'):
+        del target.user.__dict__['favorite_genre']
+    if hasattr(target.user, 'last_book_added'):
+        del target.user.__dict__['last_book_added']
+
+
+@event.listens_for(UserBooks, 'after_delete')
+def invalidate_user_cache_on_delete(mapper, connection, target):
+    """
+    Invalida cached_property do User quando um livro é removido.
+    Evita dados desatualizados na interface.
+    """
+    if hasattr(target.user, 'favorite_genre'):
+        del target.user.__dict__['favorite_genre']
+    if hasattr(target.user, 'last_book_added'):
+        del target.user.__dict__['last_book_added']

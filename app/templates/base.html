@@ -8,11 +8,19 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
     <!-- Meta Tags para SEO -->
+    {% if current_user.is_authenticated %}
+    <meta name="description" content="{{ current_user.username }} gerencia {{ current_user.books|length }} livros no Amber Archivily - Sistema inteligente de biblioteca pessoal com catalogação avançada.">
+    {% else %}
     <meta name="description" content="{{ description | default('Gerencie sua biblioteca pessoal, descubra livros e acesse informações detalhadas com o Amber Archivily - sua biblioteca digital inteligente.') }}">
+    {% endif %}
     <meta name="keywords" content="{{ keywords | default('biblioteca digital, gerenciamento de livros, acervo pessoal, catalogação de livros, ISBN, código de barras, QR code, Open Library API, sistema de biblioteca, organização de livros, leitura digital') }}">
     <meta name="author" content="Larissa Ember">
     <meta name="robots" content="index, follow">
     <meta name="language" content="pt-BR">
+    <meta name="application-name" content="Amber Archivily">
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="{{ request.url }}">
 
     <!-- Tags de Acessibilidade e Performance -->
     <meta name="theme-color" content="#220d35">
@@ -20,17 +28,28 @@
     <meta name="color-scheme" content="dark light">
 
     <!-- Redes Sociais (Open Graph e Twitter Cards) -->
+    {% if current_user.is_authenticated %}
+    <meta property="og:title" content="{{ current_user.username }}'s Biblioteca Pessoal | Amber Archivily">
+    <meta property="og:description" content="Biblioteca pessoal de {{ current_user.username }} com {{ current_user.books|length }} livros catalogados e {{ current_user.sum_pages }} páginas lidas.">
+    {% else %}
     <meta property="og:title" content="{{ title | default('Amber Archivily - Sua Biblioteca Digital') }}">
     <meta property="og:description" content="{{ description | default('Sistema inteligente de gerenciamento de biblioteca pessoal com recursos modernos de catalogação e organização.') }}">
+    {% endif %}
     <meta property="og:image" content="{{ url_for('static', filename='images/og_image.png', _external=True) }}">
     <meta property="og:url" content="{{ request.url }}">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="Amber Archivily">
     <meta property="og:locale" content="pt_BR">
 
+    {% if current_user.is_authenticated %}
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ current_user.username }}'s Biblioteca | Amber Archivily">
+    <meta name="twitter:description" content="{{ current_user.books|length }} livros • {{ current_user.sum_pages }} páginas lidas">
+    {% else %}
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="{{ title | default('Amber Archivily') }}">
     <meta name="twitter:description" content="{{ description | default('Sistema inteligente de gerenciamento de biblioteca pessoal.') }}">
+    {% endif %}
     <meta name="twitter:image" content="{{ url_for('static', filename='images/twitter_image.png', _external=True) }}">
 
     <!-- Structured Data para SEO -->
@@ -46,16 +65,32 @@
         "author": {
             "@type": "Person",
             "name": "Larissa Ember"
+        }{% if current_user.is_authenticated %},
+        "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "5",
+            "reviewCount": "{{ current_user.books|length }}"
         }
+        {% endif %}
     }
     </script>
 
     <!-- Título da Página -->
+    {% if current_user.is_authenticated %}
+    <title>{{ current_user.username }}'s Biblioteca | Amber Archivily</title>
+    {% else %}
     <title>{{ title | default('Amber Archivily - Sua Biblioteca Digital Inteligente') }}</title>
+    {% endif %}
+
+    <!-- Preconnect para CDNs (Performance) -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
     <!-- Preload de recursos críticos -->
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=Nunito:wght@200;300;400;600;700;800;900&family=Courier+Prime:wght@400;700&display=swap" as="style">
     <link rel="preload" href="{{ url_for('static', filename='css/base.css') }}" as="style">
+    <link rel="preload" href="{{ url_for('static', filename='css/components/cards.css') }}" as="style">
 
     <!-- Favicon e ícones -->
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/favicon.ico') }}">

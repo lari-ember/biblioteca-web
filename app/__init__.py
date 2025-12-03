@@ -90,6 +90,135 @@ def register_blueprints(app):
     app.register_blueprint(books_bp)
     app.register_blueprint(core_bp)
 
+def register_template_filters(app):
+    """
+    Registra filtros Jinja2 customizados para uso nos templates.
+
+    TODO: i18n Phase 2 - Integrate Flask-Babel for multi-language support
+    Currently supports pt-BR static strings, document for future migration
+    """
+    @app.template_filter('timeago')
+    def timeago_filter(date_value):
+        """
+        Converte datetime para string humanizada no formato "Há X tempo".
+
+        Args:
+            date_value: datetime object ou None
+
+        Returns:
+            str: String humanizada em pt-BR (e.g., "Há 2 dias", "Há 3 horas")
+
+        Examples:
+            {{ user.last_login|timeago }}  # "Há 5 minutos"
+            {{ book.created_at|timeago }}  # "Há 2 dias"
+
+        TODO: Phase 2 - Extract to babel catalog for i18n
+        """
+        if date_value is None:
+            return "Nunca"
+
+        # Garantir que estamos trabalhando com timezone aware datetimes
+        now = datetime.utcnow()
+
+        # Se date_value for no futuro, retornar mensagem apropriada
+        if date_value > now:
+            return "No futuro"
+
+        # Calcular diferença
+        delta = now - date_value
+
+        # Segundos totais
+        seconds = delta.total_seconds()
+
+        # Minutos
+        if seconds < 60:
+            return "Há poucos segundos"
+
+        minutes = int(seconds / 60)
+        if minutes < 60:
+            if minutes == 1:
+                return "Há 1 minuto"
+            return f"Há {minutes} minutos"
+
+        # Horas
+        hours = int(minutes / 60)
+        if hours < 24:
+            if hours == 1:
+                return "Há 1 hora"
+            return f"Há {hours} horas"
+
+        # Dias
+        days = int(hours / 24)
+        if days < 7:
+            if days == 1:
+                return "Há 1 dia"
+            return f"Há {days} dias"
+
+        # Semanas
+        weeks = int(days / 7)
+        if weeks < 4:
+            if weeks == 1:
+                return "Há 1 semana"
+            return f"Há {weeks} semanas"
+
+        # Meses (aproximação: 30 dias)
+        months = int(days / 30)
+        if months < 12:
+            if months == 1:
+                return "Há 1 mês"
+            return f"Há {months} meses"
+
+        # Anos
+        years = int(days / 365)
+        if years == 1:
+            return "Há 1 ano"
+        return f"Há {years} anos"
+
+    @app.template_filter('datetime_iso')
+    def datetime_iso_filter(date_value):
+        """
+        Converte datetime para formato ISO 8601 para atributo datetime de <time>.
+
+        Args:
+            date_value: datetime object ou None
+
+        Returns:
+            str: Data em formato ISO (e.g., "2025-01-15T10:30:00")
+        """
+        if date_value is None:
+            return ""
+        return date_value.strftime('%Y-%m-%dT%H:%M:%S')
+
+    @app.template_filter('datetime_br')
+    def datetime_br_filter(date_value):
+        """
+        Formata datetime para formato brasileiro completo.
+
+        Args:
+            date_value: datetime object ou None
+
+        Returns:
+            str: Data formatada (e.g., "15 de janeiro de 2025 às 10h30")
+        """
+        if date_value is None:
+            return "Data desconhecida"
+
+        # Mapeamento de meses em português
+        meses = {
+            1: 'janeiro', 2: 'fevereiro', 3: 'março', 4: 'abril',
+            5: 'maio', 6: 'junho', 7: 'julho', 8: 'agosto',
+            9: 'setembro', 10: 'outubro', 11: 'novembro', 12: 'dezembro'
+        }
+
+        dia = date_value.day
+        mes = meses[date_value.month]
+        ano = date_value.year
+        hora = date_value.hour
+        minuto = date_value.minute
+
+        return f"{dia} de {mes} de {ano} às {hora}h{minuto:02d}"
+
+
 def create_app():
     """Factory function para criação da aplicação Flask."""
     app = Flask(__name__, static_folder='static', static_url_path='/static')
@@ -146,6 +275,9 @@ def create_app():
 
     # Registrar blueprints
     register_blueprints(app)
+
+    # Registrar filtros Jinja2 customizados
+    register_template_filters(app)
 
     # Aplica security headers após request
     app.after_request(security_headers)

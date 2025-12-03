@@ -72,6 +72,7 @@
 .card:focus-visible {
     transform: translateY(-4px);
     box-shadow: var(--card-shadow-hover);
+    will-change: transform, box-shadow; /* Performance optimization */
 }
 
 .card:focus-visible {
@@ -129,6 +130,75 @@
     opacity: 0.4;
 }
 
+/* === CARD MEDIA PLACEHOLDERS === */
+/* Placeholders com gradientes CSS + SVG inline (zero HTTP requests) */
+
+.card-media-placeholder {
+    width: 100%;
+    height: 100%;
+    min-height: 140px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    color: var(--color-text);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Novo Manuscrito - Pergaminho dourado com gradiente roxo profundo */
+.card-media-placeholder--manuscript {
+    background: linear-gradient(135deg, #220d35 0%, #9a0078 100%);
+    background-image:
+        linear-gradient(135deg, #220d35 0%, #9a0078 100%),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cpath d='M20 30 Q 50 20, 80 30 L 80 70 Q 50 80, 20 70 Z' fill='%23ffdd44' opacity='0.15'/%3E%3Cpath d='M30 40 L 70 40 M30 50 L 70 50 M30 60 L 70 60' stroke='%23ffdd44' stroke-width='1' opacity='0.2'/%3E%3C/svg%3E");
+    background-blend-mode: overlay;
+    background-size: cover, 120px;
+    background-position: center, center;
+}
+
+/* Coleção Pessoal - Estante mística com livros */
+.card-media-placeholder--collection {
+    background: linear-gradient(135deg, #351235 0%, #6e3777 100%);
+    background-image:
+        linear-gradient(135deg, #351235 0%, #6e3777 100%),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Crect x='10' y='20' width='15' height='60' fill='%23ff00d4' opacity='0.2'/%3E%3Crect x='28' y='20' width='12' height='60' fill='%23ff00d4' opacity='0.15'/%3E%3Crect x='43' y='20' width='18' height='60' fill='%23ff00d4' opacity='0.18'/%3E%3Crect x='64' y='20' width='14' height='60' fill='%23ff00d4' opacity='0.16'/%3E%3Crect x='81' y='20' width='11' height='60' fill='%23ff00d4' opacity='0.2'/%3E%3C/svg%3E");
+    background-blend-mode: overlay;
+    background-size: cover, 100px;
+    background-position: center, center;
+}
+
+/* Busca Ativa - Lupa brilhante investigativa */
+.card-media-placeholder--search {
+    background: linear-gradient(135deg, #500e50 0%, #ff00d4 100%);
+    background-image:
+        linear-gradient(135deg, #500e50 0%, #ff00d4 100%),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Ccircle cx='40' cy='40' r='20' fill='none' stroke='%23ffffff' stroke-width='3' opacity='0.3'/%3E%3Cline x1='55' y1='55' x2='75' y2='75' stroke='%23ffffff' stroke-width='4' opacity='0.3'/%3E%3Ccircle cx='40' cy='40' r='15' fill='%23ffffff' opacity='0.05'/%3E%3C/svg%3E");
+    background-blend-mode: overlay;
+    background-size: cover, 90px;
+    background-position: center, center;
+}
+
+/* Estatísticas Pessoais - Gráficos arcanos místicos */
+.card-media-placeholder--stats {
+    background: linear-gradient(135deg, #220d35 0%, #500e50 100%);
+    background-image:
+        linear-gradient(135deg, #220d35 0%, #500e50 100%),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Crect x='15' y='60' width='12' height='25' fill='%23ff00d4' opacity='0.25'/%3E%3Crect x='35' y='40' width='12' height='45' fill='%23ff00d4' opacity='0.3'/%3E%3Crect x='55' y='50' width='12' height='35' fill='%23ff00d4' opacity='0.28'/%3E%3Crect x='75' y='30' width='12' height='55' fill='%23ff00d4' opacity='0.32'/%3E%3Cpolyline points='21,65 41,45 61,52 81,35' fill='none' stroke='%23ffffff' stroke-width='2' opacity='0.2'/%3E%3C/svg%3E");
+    background-blend-mode: overlay;
+    background-size: cover, 110px;
+    background-position: center, center;
+}
+
+/* Emoji fallback dentro do placeholder */
+.card-media-placeholder::before {
+    content: attr(data-emoji);
+    position: absolute;
+    font-size: 3rem;
+    opacity: 0.8;
+    z-index: 1;
+}
+
 /* Card Body */
 .card-body {
     padding: var(--card-padding);
@@ -136,6 +206,7 @@
     display: flex;
     flex-direction: column;
     gap: var(--space-card-sm);
+    min-height: 0; /* Fix para flex children overflow */
 }
 
 /* Card Eyebrow (categoria/tag) */
@@ -175,10 +246,18 @@
     /* Controle de leitura */
     max-width: var(--reading-max);
     
+    /* Word wrapping para textos longos */
+    overflow-wrap: break-word;
+    word-break: break-word;
+    hyphens: auto;
+    -webkit-hyphens: auto;
+    -moz-hyphens: auto;
+
     /* Limitar a 3 linhas em desktop, 4 em mobile */
     display: -webkit-box;
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
+    overflow: hidden;
     overflow: hidden;
 }
 
@@ -195,6 +274,7 @@
     flex-direction: column;
     gap: var(--space-card-sm);
     margin-top: auto;
+    flex-shrink: 0; /* Previne compressão do footer */
 }
 
 /* Card Meta */
@@ -299,9 +379,10 @@
 /* === CARD GRID SYSTEM === */
 .cards-grid {
     display: grid;
-    gap: var(--space-card-xl);
+    gap: 2rem;
     width: 100%;
-    
+    align-items: stretch; /* Garante que cards tenham mesma altura */
+
     /* Grid responsivo */
     grid-template-columns: 1fr;
 }
@@ -309,17 +390,23 @@
 @media (min-width: 768px) {
     .cards-grid {
         grid-template-columns: repeat(2, 1fr);
-        gap: var(--space-card-xl) var(--space-card-lg);
+        gap: 2rem 1.5rem;
     }
 }
 
 @media (min-width: 1200px) {
     .cards-grid {
         grid-template-columns: repeat(3, 1fr);
+        gap: 2rem;
     }
 }
 
 /* Grid com altura uniforme */
+.cards-grid--equal-height .card {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
 .cards-grid--equal-height .card {
     height: 100%;
 }

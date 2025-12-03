@@ -1,7 +1,13 @@
 {% extends "base.html" %}
 
-{% set title = "Amber Archivily - Sua Biblioteca Digital Inteligente" %}
-{% set description = "Sistema moderno de gerenciamento de biblioteca pessoal com recursos avançados de catalogação, pesquisa e organização de acervos físicos e digitais." %}
+{#
+  i18n TODO: Phase 2 - Extract all user-facing strings to Flask-Babel catalog
+  Current implementation uses static pt-BR/en bilingual approach
+  See docs/I18N_PREPARATION.md for migration guide
+#}
+
+{% set title = title or "Amber Archivily - Sua Biblioteca Digital Inteligente" %}
+{% set description = description or "Sistema moderno de gerenciamento de biblioteca pessoal com recursos avançados de catalogação, pesquisa e organização de acervos físicos e digitais." %}
 
 {# Importação dos componentes modulares #}
 {% from "components/features_section.html" import features_header, features_grid, developer_section, welcome_dashboard, featured_books_section %}
@@ -98,11 +104,11 @@
 
 {% else %}
 <!-- Dashboard para usuários autenticados MODULAR -->
-<main id="main" role="main">
+<main id="main-content" role="main">
   {{ welcome_dashboard(current_user) }}
 
   <!-- Features Grid para usuários autenticados -->
-  <section class="features-section" aria-label="Portais de acesso aos poderes bibliográficos">
+  <section class="features-section" aria-label="Portais de acesso aos poderes bibliográficos" aria-live="polite">
     <div class="container">
       {% set authenticated_features = [
         {
@@ -110,13 +116,15 @@
           'eyebrow': '📜 Ação Imediata',
           'title': 'Novo Manuscrito',
           'description': 'Invoque o Ritual de Catalogação e conceda vida digital aos novos tesouros literários que adentrarem teu santuário pessoal.',
-          'meta': 'Última adição: Há 2 dias',
+          'meta': 'Última adição: ' ~ (current_user.last_book_added.acquisition_date|timeago if current_user.last_book_added else 'Nenhum livro ainda'),
           'cta_text': 'Iniciar Ritual ✨',
           'cta_url': '/register_new_book',
           'cta_label': 'Invocar ritual de catalogação',
           'image': 'images/novo-manuscrito.jpg',
           'image_alt': 'Pergaminho sendo escrito com pena dourada',
-          'featured': false
+          'featured': false,
+          'placeholder_class': 'card-media-placeholder--manuscript',
+          'placeholder_emoji': '📜'
         },
         {
           'id': 'auth-card-title-2',
@@ -129,39 +137,45 @@
           'cta_label': 'Adentrar o salão dos tesouros',
           'image': 'images/colecao-pessoal.jpg',
           'image_alt': 'Biblioteca pessoal com ' ~ (current_user.books|length) ~ ' livros organizados',
-          'featured': true
+          'featured': true,
+          'placeholder_class': 'card-media-placeholder--collection',
+          'placeholder_emoji': '📚'
         },
         {
           'id': 'auth-card-title-3',
           'eyebrow': '🔍 Ferramenta Ativa',
           'title': 'Busca Mística',
-          'description': 'Desperte teu Sherlock Holmes interior e encontre qualquer volume perdido nos labirintos de tua coleção com precisão supernatural.',
-          'meta': 'Última busca: Romance Épico',
+          'description': 'Desperte teu <span lang="en">Sherlock Holmes</span> interior e encontre qualquer volume perdido nos labirintos de tua coleção com precisão supernatural.',
+          'meta': 'Última busca: ' ~ (session.get('last_search_term', 'Nenhuma ainda')),
           'cta_text': 'Elementary! 🕵️',
           'cta_url': '/search',
           'cta_label': 'Iniciar busca mística',
           'image': 'images/busca-ativa.jpg',
           'image_alt': 'Lupa mágica brilhando sobre uma biblioteca',
-          'featured': false
+          'featured': false,
+          'placeholder_class': 'card-media-placeholder--search',
+          'placeholder_emoji': '🔍'
         },
         {
           'id': 'auth-card-title-4',
           'eyebrow': '📊 Insights Pessoais',
           'title': 'Oráculo Pessoal',
           'description': 'Consulta as Tábuas da Sabedoria e desvenda os padrões ocultos de tua jornada literária através de visões estatísticas ancestrais.',
-          'meta': 'Gênero favorito: ' ~ (current_user.favorite_genre or 'Fantasia'),
+          'meta': 'Gênero favorito: ' ~ (current_user.favorite_genre[0] if current_user.favorite_genre else 'Ainda descobrindo'),
           'cta_text': 'Revelar Segredos 🔮',
           'cta_url': '/about_your_library',
           'cta_label': 'Consultar o oráculo pessoal',
           'image': 'images/estatisticas-pessoais.jpg',
           'image_alt': 'Gráficos místicos mostrando padrões de leitura',
-          'featured': false
+          'featured': false,
+          'placeholder_class': 'card-media-placeholder--stats',
+          'placeholder_emoji': '📊'
         }
       ] %}
 
       {{ features_grid(authenticated_features) }}
 
-      {{ developer_section() }}
+      {# Developer card removed from authenticated view - shown only for unauthenticated users #}
     </div>
   </section>
 

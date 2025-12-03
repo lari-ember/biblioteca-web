@@ -1,0 +1,398 @@
+<!-- components/add_book_modal.html -->
+<!--
+    Accessible modal for adding books to user's collection with quantity management.
+
+    Features:
+    - WCAG 2.1 AA compliant
+    - Keyboard navigation (Tab, Esc)
+    - ARIA labels and roles
+    - Screen reader announcements
+-->
+
+<div id="addBookModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="addBookModalLabel" aria-describedby="addBookModalDesc" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h5 class="modal-title" id="addBookModalLabel">Add Book to Your Collection</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close modal">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="modal-body">
+                <!-- Hidden description for screen readers -->
+                <p id="addBookModalDesc" class="sr-only">
+                    Form to add a book to your personal collection with options for quantity, format, and acquisition notes
+                </p>
+
+                <!-- Book Info Display -->
+                <div id="bookInfoSection" class="mb-4 p-3 bg-light border-left border-primary">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <img id="modalBookCover" src="" alt="" class="img-fluid rounded">
+                        </div>
+                        <div class="col-md-9">
+                            <h6 id="modalBookTitle" class="font-weight-bold"></h6>
+                            <p id="modalBookAuthor" class="text-muted mb-1"></p>
+                            <p id="modalBookGenre" class="small mb-0"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ownership Warning (shown if user already owns the book) -->
+                <div id="ownershipWarning" class="alert alert-warning d-none" role="alert" aria-live="polite">
+                    <i class="fas fa-exclamation-triangle" aria-hidden="true"></i>
+                    <strong>You already own this book!</strong>
+                    <p class="mb-0">Current quantity: <span id="currentQuantity">0</span></p>
+                    <p class="mb-0 small">Adding will increase your total copies.</p>
+                </div>
+
+                <!-- Add Book Form -->
+                <form id="addBookForm" method="POST">
+                    <input type="hidden" id="bookIdInput" name="book_id" value="">
+
+                    <!-- Quantity Field -->
+                    <div class="form-group">
+                        <label for="quantityInput" class="font-weight-bold">
+                            Quantity <span class="text-danger" aria-label="required">*</span>
+                        </label>
+                        <input
+                            type="number"
+                            class="form-control"
+                            id="quantityInput"
+                            name="quantity"
+                            min="1"
+                            max="99"
+                            value="1"
+                            required
+                            aria-required="true"
+                            aria-describedby="quantityHelp"
+                        >
+                        <small id="quantityHelp" class="form-text text-muted">
+                            Number of copies to add (1-99)
+                        </small>
+                    </div>
+
+                    <!-- Format Field -->
+                    <div class="form-group">
+                        <label for="formatSelect" class="font-weight-bold">
+                            Format <span class="text-danger" aria-label="required">*</span>
+                        </label>
+                        <select
+                            class="form-control"
+                            id="formatSelect"
+                            name="format"
+                            required
+                            aria-required="true"
+                        >
+                            <option value="physical">Physical Book</option>
+                            <option value="ebook">E-Book</option>
+                            <option value="pdf">PDF</option>
+                            <option value="audiobook">Audiobook</option>
+                        </select>
+                    </div>
+
+                    <!-- Status Field -->
+                    <div class="form-group">
+                        <label for="statusSelect" class="font-weight-bold">
+                            Status <span class="text-danger" aria-label="required">*</span>
+                        </label>
+                        <select
+                            class="form-control"
+                            id="statusSelect"
+                            name="status"
+                            required
+                            aria-required="true"
+                        >
+                            <option value="available">Available</option>
+                            <option value="borrowed">Borrowed</option>
+                            <option value="ex-libris">Ex-Libris</option>
+                        </select>
+                    </div>
+
+                    <!-- Acquisition Date Field -->
+                    <div class="form-group">
+                        <label for="acquisitionDateInput" class="font-weight-bold">
+                            Acquisition Date
+                        </label>
+                        <input
+                            type="date"
+                            class="form-control"
+                            id="acquisitionDateInput"
+                            name="acquisition_date"
+                            aria-describedby="dateHelp"
+                        >
+                        <small id="dateHelp" class="form-text text-muted">
+                            When did you acquire this book? (Optional)
+                        </small>
+                    </div>
+
+                    <!-- Acquisition Notes Field -->
+                    <div class="form-group">
+                        <label for="acquisitionNotesInput" class="font-weight-bold">
+                            Acquisition Notes
+                        </label>
+                        <textarea
+                            class="form-control"
+                            id="acquisitionNotesInput"
+                            name="acquisition_notes"
+                            rows="3"
+                            maxlength="500"
+                            placeholder="E.g., Gift from friend, bought at book fair..."
+                            aria-describedby="notesHelp"
+                        ></textarea>
+                        <small id="notesHelp" class="form-text text-muted">
+                            Optional notes about how you acquired this book (max 500 characters)
+                        </small>
+                        <div class="text-right small text-muted">
+                            <span id="notesCounter">0</span>/500 characters
+                        </div>
+                    </div>
+                </form>
+
+                <!-- Live region for screen reader announcements -->
+                <div id="modalAnnouncements" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                    <i class="fas fa-times" aria-hidden="true"></i> Cancel
+                </button>
+                <button type="button" class="btn btn-primary" id="confirmAddBook">
+                    <i class="fas fa-plus" aria-hidden="true"></i> Add to Collection
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal JavaScript -->
+<script>
+(function() {
+    'use strict';
+
+    const modal = document.getElementById('addBookModal');
+    const form = document.getElementById('addBookForm');
+    const confirmBtn = document.getElementById('confirmAddBook');
+    const notesInput = document.getElementById('acquisitionNotesInput');
+    const notesCounter = document.getElementById('notesCounter');
+    const announcements = document.getElementById('modalAnnouncements');
+
+    // Initialize modal
+    let currentBookData = null;
+
+    // Character counter for notes
+    if (notesInput && notesCounter) {
+        notesInput.addEventListener('input', function() {
+            const length = this.value.length;
+            notesCounter.textContent = length;
+
+            if (length > 450) {
+                notesCounter.classList.add('text-warning');
+            }
+            if (length > 480) {
+                notesCounter.classList.add('text-danger');
+                notesCounter.classList.remove('text-warning');
+            }
+            if (length <= 450) {
+                notesCounter.classList.remove('text-warning', 'text-danger');
+            }
+        });
+    }
+
+    // Function to open modal with book data
+    window.openAddBookModal = function(bookData) {
+        currentBookData = bookData;
+
+        // Populate book info
+        document.getElementById('modalBookTitle').textContent = bookData.title || '';
+        document.getElementById('modalBookAuthor').textContent = bookData.author || '';
+        document.getElementById('modalBookGenre').textContent = bookData.genre || '';
+        document.getElementById('modalBookCover').src = bookData.cover_url || '/static/images/default_cover.jpg';
+        document.getElementById('modalBookCover').alt = `Cover of ${bookData.title}`;
+        document.getElementById('bookIdInput').value = bookData.id || '';
+
+        // Show/hide ownership warning
+        const warningDiv = document.getElementById('ownershipWarning');
+        if (bookData.owned && bookData.current_quantity) {
+            warningDiv.classList.remove('d-none');
+            document.getElementById('currentQuantity').textContent = bookData.current_quantity;
+            announce(`You already own ${bookData.current_quantity} copy or copies of this book`);
+        } else {
+            warningDiv.classList.add('d-none');
+        }
+
+        // Set today's date as default
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('acquisitionDateInput').value = today;
+
+        // Reset form
+        form.reset();
+        document.getElementById('quantityInput').value = '1';
+
+        // Open modal
+        $(modal).modal('show');
+
+        // Focus first input
+        setTimeout(() => {
+            document.getElementById('quantityInput').focus();
+        }, 500);
+    };
+
+    // Function to announce to screen readers
+    function announce(message) {
+        if (announcements) {
+            announcements.textContent = message;
+        }
+    }
+
+    // Confirm add to collection
+    if (confirmBtn) {
+        confirmBtn.addEventListener('click', function() {
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+
+            const formData = new FormData(form);
+            formData.set('book_id', currentBookData.id);
+
+            // Show loading state
+            confirmBtn.disabled = true;
+            confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Adding...';
+            announce('Adding book to your collection');
+
+            // Submit via AJAX
+            fetch(`/add_to_collection/${currentBookData.id}`, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    announce(`Success! ${data.message}`);
+
+                    // Show success message
+                    const successDiv = document.createElement('div');
+                    successDiv.className = 'alert alert-success alert-dismissible fade show';
+                    successDiv.role = 'alert';
+                    successDiv.innerHTML = `
+                        <i class="fas fa-check-circle"></i> ${data.message}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    `;
+
+                    // Close modal
+                    $(modal).modal('hide');
+
+                    // Show success message on page
+                    const container = document.querySelector('.container');
+                    if (container) {
+                        container.insertBefore(successDiv, container.firstChild);
+                    }
+
+                    // Reload page after delay to show updated collection
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1500);
+                } else {
+                    throw new Error(data.error || 'Failed to add book');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                announce(`Error: ${error.message}`);
+                alert(`Error adding book: ${error.message}`);
+            })
+            .finally(() => {
+                confirmBtn.disabled = false;
+                confirmBtn.innerHTML = '<i class="fas fa-plus"></i> Add to Collection';
+            });
+        });
+    }
+
+    // Keyboard navigation
+    modal.addEventListener('keydown', function(e) {
+        // Escape key
+        if (e.key === 'Escape') {
+            $(modal).modal('hide');
+        }
+
+        // Trap focus within modal
+        if (e.key === 'Tab') {
+            const focusableElements = modal.querySelectorAll(
+                'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+            );
+            const firstElement = focusableElements[0];
+            const lastElement = focusableElements[focusableElements.length - 1];
+
+            if (e.shiftKey && document.activeElement === firstElement) {
+                e.preventDefault();
+                lastElement.focus();
+            } else if (!e.shiftKey && document.activeElement === lastElement) {
+                e.preventDefault();
+                firstElement.focus();
+            }
+        }
+    });
+
+    // Clean up on modal close
+    $(modal).on('hidden.bs.modal', function() {
+        form.reset();
+        currentBookData = null;
+        announce('Modal closed');
+    });
+})();
+</script>
+
+<style>
+/* Screen reader only class */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0,0,0,0);
+    white-space: nowrap;
+    border-width: 0;
+}
+
+/* Modal accessibility enhancements */
+#addBookModal .modal-content {
+    border-radius: 8px;
+}
+
+#addBookModal .border-left {
+    border-left-width: 4px !important;
+}
+
+#addBookModal input:focus,
+#addBookModal select:focus,
+#addBookModal textarea:focus {
+    outline: 2px solid #007bff;
+    outline-offset: 2px;
+}
+
+#addBookModal .form-control:invalid {
+    border-color: #dc3545;
+}
+
+#addBookModal .form-control:valid {
+    border-color: #28a745;
+}
+
+/* Improve button visibility */
+#confirmAddBook:focus {
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.5);
+}
+</style>
+

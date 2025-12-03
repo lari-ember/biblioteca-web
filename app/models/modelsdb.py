@@ -23,6 +23,7 @@ class User(db.Model):
     user_books = db.relationship('UserBooks', back_populates='user', cascade='all, delete-orphan')
     readings = db.relationship('UserReadings', back_populates='user', cascade='all, delete-orphan')
     loans = db.relationship('Loan', foreign_keys='Loan.borrower_id', back_populates='borrower')
+    preferences = db.relationship('UserPreferences', back_populates='user', uselist=False, cascade='all, delete-orphan')
 
     # Flask-Login required methods
     @property
@@ -115,7 +116,7 @@ class User(db.Model):
 class Book(db.Model):
     __tablename__ = 'books'
     id = db.Column(db.Integer, primary_key=True)
-    code = db.Column(db.String(13), unique=True, nullable=False) # código de localização na prateleira fisica
+    code = db.Column(db.String(13), unique=True, nullable=False)  # código de localização na prateleira fisica
     isbn = db.Column(db.String(17), nullable=True, unique=False)  # ISBN-13 format
     title = db.Column(db.String(200), nullable=False)
     author = db.Column(db.String(100), nullable=False)
@@ -123,8 +124,8 @@ class Book(db.Model):
     publication_year = db.Column(db.Integer, nullable=False)
     pages = db.Column(db.Integer, nullable=False)
     cover_url = db.Column(db.String(200))
-    format = db.Column(db.String(20), nullable=False)  # physical, ebook, pdf
     genre = db.Column(db.String(50), nullable=False)
+    description = db.Column(db.Text)  # Book summary for SEO
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     # Relationships
@@ -176,19 +177,35 @@ class Book(db.Model):
         raise ValueError("ISBN deve ser ISBN-10 (10 chars, último pode ser X) ou ISBN-13 (13 dígitos).")
 
 
-
 class UserBooks(db.Model):
     __tablename__ = 'user_books'
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     book_id = db.Column(db.Integer, db.ForeignKey('books.id'), nullable=False)
-    status = db.Column(db.String(20), nullable=False, default='available')  # available/borrowed
+    
+    # User-specific attributes (moved from Book model)
+    status = db.Column(db.String(20), nullable=False, default='available')  # available/borrowed/ex-libris
+    read_status = db.Column(db.String(20), nullable=False, default='unread')  # read/unread/reading
+    format = db.Column(db.String(20), nullable=False, default='physical')  # physical/ebook/pdf
+    quantity = db.Column(db.Integer, nullable=False, default=1)
+    acquisition_notes = db.Column(db.Text)
     acquisition_date = db.Column(db.DateTime, default=datetime.utcnow)
 
     # Relationships
     user = db.relationship('User', back_populates='user_books')
     book = db.relationship('Book', back_populates='user_books')
     loans = db.relationship('Loan', back_populates='user_book', cascade='all, delete-orphan')
+    
+    # Constraints
+    __table_args__ = (
+        CheckConstraint('quantity >= 1', name='valid_quantity'),
+    )
+    
+    @validates('quantity')
+    def validate_quantity(self, key, quantity):
+        if quantity < 1:
+            raise ValueError("Quantity must be at least 1")
+        return quantity
 
 
 class UserReadings(db.Model):
@@ -255,6 +272,30 @@ class Loan(db.Model):
         return user_book_id
 
 
+class UserPreferences(db.Model):
+    """
+    User preferences for book collection management behavior.
+    
+    Allows users to configure automatic behaviors when adding books
+    to their collection, including quantity management defaults.
+    """
+    __tablename__ = 'user_preferences'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, unique=True)
+    
+    # Book addition preferences
+    auto_add_on_search = db.Column(db.Boolean, default=True, nullable=False)
+    show_quantity_modal = db.Column(db.Boolean, default=True, nullable=False)
+    default_book_status = db.Column(db.String(20), default='available', nullable=False)
+    default_format = db.Column(db.String(20), default='physical', nullable=False)
+    
+    # Relationship
+    user = db.relationship('User', back_populates='preferences')
+    
+    def __repr__(self):
+        return f'<UserPreferences user_id={self.user_id}>'
+
+
 # ============================================================================
 # SQLAlchemy Event Listeners - Cache Invalidation
 # ============================================================================
@@ -281,3 +322,4 @@ def invalidate_user_cache_on_delete(mapper, connection, target):
         del target.user.__dict__['favorite_genre']
     if hasattr(target.user, 'last_book_added'):
         del target.user.__dict__['last_book_added']
+

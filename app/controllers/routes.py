@@ -129,7 +129,34 @@ def generate_seo_metadata():
         "og_image": url_for('static', filename='images/og_custom.jpg', _external=True)
     }
 
+
+@core_bp.route('/search', methods=['GET', 'POST'])
+def search():
+    """
+    Rota de pesquisa de livros na coleção do usuário.
+
+    Features:
+    - Requer autenticação
+    - Retorna template de busca
+
+    TODO: Implementar SearchForm e lógica de busca completa
+    """
+    from flask import flash, redirect, url_for, request
+
+    # Verificar autenticação
+    if not current_user.is_authenticated:
+        flash('Por favor, faça login para acessar a busca.', 'warning')
+        return redirect(url_for('auth.login', next=request.url))
+
+    # TODO: Implementar SearchForm completo com filtros avançados
+    # Por enquanto, renderizar template básico
+    return render_template('search.html', books=[])
+
+
 '''
+# ==============================================================================
+# CÓDIGO ANTIGO COMENTADO - MIGRAR PARA BLUEPRINTS APROPRIADOS
+# ==============================================================================
 @app.route('/autocomplete', methods=['GET'])
 def autocomplete():
     query = request.args.get('query', '').strip()
@@ -203,48 +230,23 @@ field_mapping = {
 
 @app.route('/search', methods=['GET', 'POST'])
 def search():
-        # Verifique se o usuário está logado
-    user = get_logged_in_user()
-    if not user:
-        # Redirecione para a página de login ou tome qualquer outra ação que você desejar para lidar com usuários não logados
-        return redirect('/login')
-    form = SearchForm()
-
-    if form.validate_on_submit():
-        search_field = form.search_field.data
-        search_term = form.search_term.data
-
-        # Obtém o usuário logado
-        user = get_logged_in_user()
-
-        if user:
-            # Realize a pesquisa com base nos dados fornecidos
-            if search_field and search_field in field_mapping:
-                field = field_mapping[search_field]
-                if search_field == 'pages' or search_field == 'year':
-                    # Realize a pesquisa com base em um valor numérico
-                    try:
-                        search_term = int(search_term)
-                        books = Book.query.filter(
-                            (field == search_term) &
-                            (Book.user_id == user.id)
-                        ).all()
-                    except ValueError:
-                        books = []
-                else:
-                    # Realize a pesquisa com base em uma string
-                    books = Book.query.filter(
-                        (field.ilike(f'%{search_term}%')) &
-                        (Book.user_id == user.id)
-                    ).all()
-            else:
-                books = []
-        else:
-            books = []
-
-        return render_template('search.html', form=form, books=books)
-
-    return render_template('search.html', form=form, books=[])
+    """
+    Rota de pesquisa de livros na coleção do usuário.
+    
+    TODO: Implementar SearchForm e lógica de busca completa
+    Temporariamente retorna template vazio para evitar 404
+    """
+    from flask_login import login_required, current_user
+    from flask import flash, redirect, url_for
+    
+    # Verificar autenticação
+    if not current_user.is_authenticated:
+        flash('Por favor, faça login para acessar a busca.', 'warning')
+        return redirect(url_for('auth.login', next=request.url))
+    
+    # TODO: Implementar SearchForm completo
+    # Por enquanto, renderizar template básico
+    return render_template('search.html', books=[])
 
 
 @app.route('/edit_book/<int:book_id>', methods=['GET', 'POST'])
@@ -460,5 +462,4 @@ def change_status(book_id):
 
 @app.route('/profile/')
 def profile():
-    return render_template('profile.html')
-'''
+    return render_template('profile.html')'''

@@ -26,10 +26,24 @@ class BookForm(FlaskForm):
     year = IntegerField('Year', validators=[DataRequired()])
     isbn = StringField('ISBN', validators=[Optional(), Length(max=17)])
     pages = IntegerField('Pages', validators=[DataRequired()])
-    read = SelectField('Read', choices=[('read', 'Read'), ('unread', 'Unread')], validators=[DataRequired()])
+    read = SelectField('Reading Status', choices=[
+        ('unread', 'Unread — Not started yet'),
+        ('reading', 'Reading — Currently in progress'),
+        ('read', 'Read — Finished reading'),
+    ], default='unread', validators=[DataRequired()])
     genre = StringField('Genre', validators=[DataRequired()])
-    status = SelectField('Status', choices=[('available', 'Available'), ('borrowed', 'Borrowed'), ('ex-libris', 'Ex-Libris')], validators=[DataRequired()])
-    format = SelectField('Format', choices=[('physical', 'Physical'), ('e-book', 'E-book'), ('pdf', 'PDF')], validators=[DataRequired()])
+    status = SelectField('Availability', choices=[
+        ('available', 'Available — In your shelf'),
+        ('borrowed', 'Borrowed — Lent to someone'),
+        ('wishlist', 'Wishlist — Want to acquire'),
+        ('ex-libris', 'Ex-Libris — No longer owned'),
+    ], default='available', validators=[DataRequired()])
+    format = SelectField('Format', choices=[
+        ('physical', 'Physical — Printed book'),
+        ('ebook', 'E-book — Digital reader'),
+        ('pdf', 'PDF — Digital document'),
+        ('audiobook', 'Audiobook — Audio format'),
+    ], default='physical', validators=[DataRequired()])
     cover_url = HiddenField()
     openlibrary_key = HiddenField()
 

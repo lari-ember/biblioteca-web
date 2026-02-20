@@ -61,7 +61,7 @@
         <td>{{ book.publisher }}</td>
         <td>
           <!-- Botão de edição -->
-          <a href="{{ url_for('edit_book', book_id=book.id) }}" class="btn btn-outline-warning">Edit</a>
+          <a href="{{ url_for('books.edit_book', book_id=book.id) }}" class="btn btn-outline-warning">Edit</a>
           <!-- Botão de exclusão -->
           <button class="btn btn-outline-danger" data-book-id="{{ book.id }}" data-book-status="{{ book.status }}" onclick="confirmDeleteHandler(event)">Delete</button>
           {% if book.status not in ['borrowed', 'voluit'] %}

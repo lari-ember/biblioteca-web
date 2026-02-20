@@ -3,6 +3,8 @@
 Books controller - temporarily using old implementation while migration is prepared.
 This ensures the app can start without errors.
 """
+import json
+import os
 import time
 
 from flask import Blueprint, render_template, redirect, url_for, flash, request, current_app, jsonify
@@ -11,6 +13,7 @@ from app import db, cache, limiter
 from app.models.modelsdb import Book, UserBooks
 from app.models.forms import BookForm
 from app.services.openlibrary_service import get_openlibrary_service
+from app.models.code_book import generate_book_code
 from datetime import datetime
 
 # Blueprint creation
@@ -20,19 +23,72 @@ books_bp = Blueprint('books', __name__, url_prefix='')
 @books_bp.route('/register_new_book', methods=['GET', 'POST'])
 @login_required
 def register_new_book():
-    """Temporary implementation - to be replaced with full CRUD version."""
+    """Register a new book and add it to the current user's collection."""
     form = BookForm()
 
     if form.validate_on_submit():
         try:
-            # Simple book creation without duplicate detection (temporary)
-            # TODO: Replace with create_or_get_book() after migration
-            flash('Book registration temporarily disabled during migration. Please try again later.', 'warning')
+            # Generate shelf code from genre + author + title
+            genre_title = form.genre.data.strip().title() if form.genre.data else 'General'
+            code = generate_book_code(
+                genre_title,
+                form.author.data.strip(),
+                form.title.data.strip()
+            )
+
+            if code is None:
+                # Genre not in code_book dictionary — use fallback "000"
+                author_initial = form.author.data.strip().split()[-1][0].upper()
+                title_initial = form.title.data.strip()[0].lower()
+                code = f'{author_initial}000{title_initial}'
+
+            # Create the Book record
+            book = Book(
+                code=code,
+                title=form.title.data.strip(),
+                author=form.author.data.strip(),
+                publisher=form.publisher.data.strip(),
+                publication_year=form.year.data,
+                pages=form.pages.data,
+                genre=genre_title,
+                isbn=form.isbn.data.strip() if form.isbn.data else None,
+                cover_url=form.cover_url.data if form.cover_url.data else None,
+            )
+
+            db.session.add(book)
+            db.session.flush()  # Get book.id
+
+            # Create UserBooks link
+            user_book = UserBooks(
+                user_id=current_user.id,
+                book_id=book.id,
+                status=form.status.data or 'available',
+                read_status=form.read.data or 'unread',
+                format=form.format.data or 'physical',
+                acquisition_date=datetime.utcnow()
+            )
+            db.session.add(user_book)
+            db.session.commit()
+
+            # Invalidate collection cache so new book appears immediately
+            cache.clear()
+
+            flash(f'"{book.title}" by {book.author} added to your collection! (Code: {book.code})', 'success')
+            current_app.logger.info(
+                f"Book {book.id} ('{book.title}') registered by user {current_user.id}, code={book.code}"
+            )
             return redirect(url_for('books.your_collection'))
+
         except Exception as e:
-            current_app.logger.error(f"Error: {str(e)}")
-            flash('An error occurred. Please try again.', 'danger')
             db.session.rollback()
+            current_app.logger.error(f"Error registering book: {str(e)}")
+            flash(f'Error registering book: {str(e)}', 'danger')
+
+    elif request.method == 'POST':
+        # Form validation failed
+        for field, errors in form.errors.items():
+            for error in errors:
+                flash(f'{getattr(form, field).label.text}: {error}', 'warning')
 
     return render_template('books/register_new_book.html', form=form)
 
@@ -215,6 +271,51 @@ def autocomplete():
                 'error': str(e),
                 'response_time_ms': (time.time() - start_time) * 1000
             }
+        }), 500
+
+
+@books_bp.route('/api/genres', methods=['GET'])
+@login_required
+@cache.cached(timeout=600)
+def api_genres():
+    """
+    Return all available genres with their shelf codes (000–999),
+    sorted numerically by code. Also returns custom user genres.
+    """
+    try:
+        from app.models.code_book import book_genres
+
+        # Build list sorted by code (numerically), skip empty names
+        genre_list = [
+            {'code': code, 'name': name}
+            for code, name in sorted(book_genres.items(), key=lambda x: x[0])
+            if name.strip()
+        ]
+
+        # Get custom genres from user's books that aren't in the master list
+        master_names = {item['name'] for item in genre_list}
+        user_genres = db.session.query(db.distinct(Book.genre)).join(
+            UserBooks
+        ).filter(
+            UserBooks.user_id == current_user.id,
+            Book.genre.isnot(None)
+        ).all()
+        user_genre_set = {g[0] for g in user_genres if g[0]}
+        custom_genres = sorted(user_genre_set - master_names)
+
+        return jsonify({
+            'genres': genre_list,
+            'custom': custom_genres,
+            'default': 'General',
+            'default_code': '000'
+        })
+    except Exception as e:
+        current_app.logger.error(f"Genres API error: {e}")
+        return jsonify({
+            'genres': [{'code': '000', 'name': 'General'}],
+            'custom': [],
+            'default': 'General',
+            'default_code': '000'
         }), 500
 
 

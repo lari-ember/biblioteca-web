@@ -13,164 +13,201 @@
                 <div class="register-card-inner">
                     <h2 class="text-center mb-4">
                         <ion-icon name="book-outline" aria-hidden="true" class="me-2"></ion-icon>
-                        Registrar Novo Livro
+                        Register New Book
                     </h2>
 
                     <form action="{{ url_for('books.register_new_book') }}" method="POST"
                           id="register-form" novalidate>
                         {{ form.csrf_token }}
 
-                        <!-- ══════ Search Autocomplete ══════ -->
+                        {# ══════ Search Autocomplete ══════ #}
                         <div class="search-wrapper mb-4">
                             <label for="search" class="form-label">
                                 <ion-icon name="search-outline" aria-hidden="true" class="me-1"></ion-icon>
-                                Buscar livro
+                                Search book
                             </label>
 
-                            <div class="input-group" role="search">
+                            <div class="search-input-group" role="search">
                                 <div class="input-icon" aria-hidden="true">
                                     <ion-icon name="search-outline"></ion-icon>
                                 </div>
                                 <input id="search"
                                        type="text"
                                        class="input-field"
-                                       placeholder="Digite título, autor ou ISBN…"
+                                       placeholder="Type a title, author or ISBN…"
                                        autocomplete="off"
                                        role="combobox"
-                                       aria-label="Buscar livros no acervo e na OpenLibrary"
+                                       aria-label="Search books in your collection and OpenLibrary"
                                        aria-expanded="false"
                                        aria-controls="autocomplete-results"
                                        aria-autocomplete="list"
                                        aria-activedescendant="">
                                 <div id="search-spinner" class="search-spinner d-none"
-                                     role="status" aria-label="Carregando resultados">
+                                     role="status" aria-label="Loading results">
                                 </div>
                             </div>
 
-                            <!-- Search results container -->
-                            <div class="search-results-container">
+                            {# Search results — hidden by default, JS controls visibility #}
+                            <div class="search-results-container" id="results-container" style="display:none">
                                 <ul id="autocomplete-results"
-                                    class="items"
+                                    class="results-list"
                                     role="listbox"
-                                    aria-label="Resultados da busca"
-                                    style="display:none">
+                                    aria-label="Search results">
                                 </ul>
 
                                 <button type="button"
                                         id="load-more"
-                                        aria-label="Carregar mais resultados">
-                                    <ion-icon name="chevron-down-outline" aria-hidden="true" class="me-1"></ion-icon>
-                                    Carregar mais
+                                        class="load-more-btn"
+                                        aria-label="Load more results"
+                                        style="display:none">
+                                    <ion-icon name="chevron-down-outline" aria-hidden="true"></ion-icon>
+                                    Load more results
                                 </button>
-
-                                <p id="no_results" aria-live="polite" role="status">
-                                    <ion-icon name="book-outline" aria-hidden="true"></ion-icon>
-                                    Nenhum resultado encontrado. Preencha manualmente abaixo.
-                                </p>
-
-                                <div id="search-status" class="search-status" aria-live="polite"></div>
                             </div>
+
+                            <p id="no_results" class="no-results-msg" style="display:none" aria-live="polite" role="status">
+                                <ion-icon name="book-outline" aria-hidden="true"></ion-icon>
+                                No results found. Fill in the fields manually below.
+                            </p>
+
+                            <div id="search-status" class="search-status" aria-live="polite"></div>
                         </div>
 
-                        <!-- ══════ Book Form Fields ══════ -->
-                        <fieldset>
-                            <legend class="sr-only">Informações do Livro</legend>
+                        {# ══════ Book Details ══════ #}
+                        <fieldset class="book-fields">
+                            <legend class="sr-only">Book Information</legend>
 
                             <div class="mb-3">
-                                <label for="title" class="form-label">Título *</label>
+                                <label for="title" class="form-label">Title <span class="required-mark">*</span></label>
                                 {{ form.title(class="form-control", id="title",
-                                   placeholder="Título do livro",
+                                   placeholder="Book title",
                                    aria_required="true") }}
                             </div>
 
                             <div class="mb-3">
-                                <label for="author" class="form-label">Autor(a) *</label>
+                                <label for="author" class="form-label">Author <span class="required-mark">*</span></label>
                                 {{ form.author(class="form-control", id="author",
-                                   placeholder="Nome do autor",
+                                   placeholder="Author name",
                                    aria_required="true") }}
                             </div>
 
                             <div class="row mb-3">
                                 <div class="col-md-6">
-                                    <label for="publisher" class="form-label">Editora *</label>
+                                    <label for="publisher" class="form-label">Publisher <span class="required-mark">*</span></label>
                                     {{ form.publisher(class="form-control", id="publisher",
-                                       placeholder="Editora",
+                                       placeholder="Publisher name",
                                        aria_required="true") }}
                                 </div>
                                 <div class="col-md-6">
-                                    <label for="year" class="form-label">Ano *</label>
+                                    <label for="year" class="form-label">Year <span class="required-mark">*</span></label>
                                     {{ form.year(class="form-control", id="year",
-                                       placeholder="Ano de publicação",
+                                       placeholder="Publication year",
+                                       min="1800",
                                        aria_required="true") }}
                                 </div>
                             </div>
 
                             <div class="row mb-3">
                                 <div class="col-md-6">
-                                    <label for="isbn" class="form-label">ISBN</label>
-                                    {{ form.isbn(class="form-control", id="isbn",
-                                       placeholder="ISBN (opcional)") }}
+                                    <label for="isbn" class="form-label">
+                                        ISBN
+                                        <span class="field-hint">(optional)</span>
+                                    </label>
+                                    <div class="isbn-input-wrapper">
+                                        {{ form.isbn(class="form-control", id="isbn",
+                                           placeholder="e.g. 978-3-16-148410-0",
+                                           maxlength="17",
+                                           pattern="[0-9Xx\\-\\s]{10,17}",
+                                           inputmode="numeric") }}
+                                        <span id="isbn-status" class="isbn-status" aria-live="polite"></span>
+                                    </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <label for="pages" class="form-label">Páginas *</label>
-                                    {{ form.pages(class="form-control", id="pages",
-                                       placeholder="Nº de páginas",
-                                       aria_required="true") }}
+                                    <label for="pages" class="form-label">Pages <span class="required-mark">*</span></label>
+                                    <div class="pages-input-wrapper">
+                                        <button type="button" class="pages-btn pages-minus" aria-label="Decrease pages" tabindex="-1">
+                                            <ion-icon name="remove-outline" aria-hidden="true"></ion-icon>
+                                        </button>
+                                        {{ form.pages(class="form-control pages-field", id="pages",
+                                           placeholder="0",
+                                           min="1",
+                                           max="99999",
+                                           inputmode="numeric",
+                                           aria_required="true") }}
+                                        <button type="button" class="pages-btn pages-plus" aria-label="Increase pages" tabindex="-1">
+                                            <ion-icon name="add-outline" aria-hidden="true"></ion-icon>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
 
+                            {# ── Genre (filterable dropdown) ── #}
+                            <div class="mb-3">
+                                <label for="genre" class="form-label">Genre <span class="required-mark">*</span></label>
+                                <div class="genre-dropdown-wrapper">
+                                    <input type="text"
+                                           id="genre-search"
+                                           class="form-control"
+                                           placeholder="Type to filter or add a new genre…"
+                                           autocomplete="off"
+                                           aria-label="Search or add a genre"
+                                           aria-expanded="false"
+                                           aria-controls="genre-list"
+                                           role="combobox">
+                                    {# The actual form field (hidden, synced by JS) #}
+                                    {{ form.genre(id="genre", style="display:none") }}
+                                    <ul id="genre-list" class="genre-options" role="listbox" style="display:none"></ul>
+                                    <div id="genre-new-hint" class="genre-new-hint" style="display:none">
+                                        <ion-icon name="add-circle-outline" aria-hidden="true"></ion-icon>
+                                        <span>New genre: "<strong id="genre-new-name"></strong>" will be created</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {# ── Reading Status / Availability / Format ── #}
                             <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label for="genre" class="form-label">Gênero *</label>
-                                    {{ form.genre(class="form-control", id="genre",
-                                       placeholder="Gênero literário",
-                                       aria_required="true") }}
+                                <div class="col-md-4">
+                                    <label for="read" class="form-label">Reading Status</label>
+                                    {{ form.read(class="form-control form-select", id="read") }}
                                 </div>
-                                <div class="col-md-6">
-                                    <label for="read" class="form-label">Leitura</label>
-                                    {{ form.read(class="form-control", id="read") }}
+                                <div class="col-md-4">
+                                    <label for="status" class="form-label">Availability</label>
+                                    {{ form.status(class="form-control form-select", id="status") }}
                                 </div>
-                            </div>
-
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label for="status" class="form-label">Status</label>
-                                    {{ form.status(class="form-control", id="status") }}
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="format" class="form-label">Formato</label>
-                                    {{ form.format(class="form-control", id="format") }}
+                                <div class="col-md-4">
+                                    <label for="format" class="form-label">Format</label>
+                                    {{ form.format(class="form-control form-select", id="format") }}
                                 </div>
                             </div>
 
-                            <!-- Hidden fields for autocomplete metadata -->
+                            {# Hidden fields #}
                             {{ form.cover_url(id="cover_url") }}
                             {{ form.openlibrary_key(id="openlibrary_key") }}
                         </fieldset>
 
-                        <!-- Existing book warning -->
+                        {# ── Existing book warning ── #}
                         {% if existing_book %}
                         <div class="existing-book-warning mb-3" role="alert">
                             <h4>
                                 <ion-icon name="alert-circle-outline" aria-hidden="true" class="me-1"></ion-icon>
-                                Um livro similar já existe:
+                                A similar book already exists:
                             </h4>
                             <table class="table table-bordered table-sm mt-2">
                                 <tr>
-                                    <th scope="row">Título</th>
+                                    <th scope="row">Title</th>
                                     <td>{{ existing_book.title }}</td>
                                 </tr>
                                 <tr>
-                                    <th scope="row">Autor</th>
+                                    <th scope="row">Author</th>
                                     <td>{{ existing_book.author }}</td>
                                 </tr>
                             </table>
-                            <p class="text-warning mb-2">Deseja adicionar um novo registro mesmo assim?</p>
+                            <p class="text-warning mb-2">Do you still want to add a new record?</p>
                             <button type="button"
                                     onclick="confirmNewBook({{ existing_book.id }})"
                                     class="btn btn-outline-danger btn-sm">
                                 <ion-icon name="checkmark-outline" aria-hidden="true" class="me-1"></ion-icon>
-                                Sim, registrar novo
+                                Yes, register new
                             </button>
                         </div>
                         {% endif %}
@@ -178,7 +215,7 @@
                         <div class="text-center mt-4">
                             <button type="submit" class="btn-register">
                                 <ion-icon name="add-outline" aria-hidden="true" class="me-1"></ion-icon>
-                                Registrar Novo Livro
+                                Register New Book
                             </button>
                         </div>
                     </form>
@@ -194,37 +231,49 @@ function confirmNewBook(bookId) {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-    /* ── DOM References ─────────────────────────────────── */
-    const searchInput   = document.getElementById('search');
-    const resultsList   = document.getElementById('autocomplete-results');
-    const noResults     = document.getElementById('no_results');
-    const loadMoreBtn   = document.getElementById('load-more');
-    const spinner       = document.getElementById('search-spinner');
-    const statusEl      = document.getElementById('search-status');
+
+    /* ================================================================
+       DOM References
+       ================================================================ */
+    const searchInput      = document.getElementById('search');
+    const resultsList      = document.getElementById('autocomplete-results');
+    const resultsContainer = document.getElementById('results-container');
+    const noResults        = document.getElementById('no_results');
+    const loadMoreBtn      = document.getElementById('load-more');
+    const spinner          = document.getElementById('search-spinner');
+    const statusEl         = document.getElementById('search-status');
 
     // Form fields
-    const fields = {
-        title:     document.getElementById('title'),
-        author:    document.getElementById('author'),
-        year:      document.getElementById('year'),
-        publisher: document.getElementById('publisher'),
-        pages:     document.getElementById('pages'),
-        genre:     document.getElementById('genre'),
-        isbn:      document.getElementById('isbn'),
-        cover_url: document.getElementById('cover_url'),
+    const F = {
+        title:           document.getElementById('title'),
+        author:          document.getElementById('author'),
+        year:            document.getElementById('year'),
+        publisher:       document.getElementById('publisher'),
+        pages:           document.getElementById('pages'),
+        genre:           document.getElementById('genre'),
+        genreSearch:     document.getElementById('genre-search'),
+        isbn:            document.getElementById('isbn'),
+        cover_url:       document.getElementById('cover_url'),
         openlibrary_key: document.getElementById('openlibrary_key')
     };
 
-    /* ── State ──────────────────────────────────────────── */
+    /* ================================================================
+       State
+       ================================================================ */
     let debounceTimeout = null;
     let abortController = null;
     let selectedIndex   = -1;
-    let allVisibleItems = [];     // items currently displayed
+    let allVisibleItems = [];
     let currentQuery    = '';
     let currentOffset   = 0;
     const PAGE_SIZE     = 3;
 
-    /* ── Helpers ────────────────────────────────────────── */
+    /* ================================================================
+       Helpers
+       ================================================================ */
+    function show(el)  { if (el) el.style.display = ''; }
+    function hide(el)  { if (el) el.style.display = 'none'; }
+    function showFlex(el) { if (el) el.style.display = 'flex'; }
     function showSpinner()  { spinner.classList.remove('d-none'); }
     function hideSpinner()  { spinner.classList.add('d-none'); }
 
@@ -232,85 +281,117 @@ document.addEventListener('DOMContentLoaded', function () {
         searchInput.setAttribute('aria-expanded', expanded ? 'true' : 'false');
     }
 
-    function setStatus(text) {
-        statusEl.textContent = text;
-    }
+    function setStatus(text) { statusEl.textContent = text; }
 
     function escapeHtml(str) {
-        const div = document.createElement('div');
-        div.textContent = str || '';
-        return div.innerHTML;
+        const d = document.createElement('div');
+        d.textContent = str || '';
+        return d.innerHTML;
     }
 
-    /* ── Populate form with selected item ───────────────── */
+    /* ================================================================
+       Populate form from selected autocomplete item
+       ================================================================ */
     function populateForm(item) {
-        if (fields.title)     fields.title.value     = item.title || '';
-        if (fields.author)    fields.author.value    = item.author || '';
-        if (fields.year)      fields.year.value      = item.year || '';
-        if (fields.publisher) fields.publisher.value  = item.publisher || '';
-        if (fields.pages && item.pages) fields.pages.value = item.pages;
-        if (fields.genre)     fields.genre.value     = item.genre || '';
-        if (fields.isbn && item.isbn)  fields.isbn.value = item.isbn;
-        if (fields.cover_url && item.cover_url) fields.cover_url.value = item.cover_url;
-        if (fields.openlibrary_key && item.openlibrary_key) {
-            fields.openlibrary_key.value = item.openlibrary_key;
+        if (F.title)     F.title.value     = item.title || '';
+        if (F.author)    F.author.value    = item.author || '';
+        if (F.year)      F.year.value      = item.year || '';
+        if (F.publisher) F.publisher.value  = item.publisher || '';
+
+        // Pages — always set even if 0 (user can fix)
+        if (F.pages) F.pages.value = item.pages || '';
+
+        // ISBN
+        if (F.isbn) {
+            F.isbn.value = item.isbn || '';
+            validateIsbn();
+        }
+
+        // Genre — sync both the visible search and hidden field
+        if (item.genre) {
+            if (F.genre) F.genre.value = item.genre;
+            if (F.genreSearch) F.genreSearch.value = item.genre;
+        }
+
+        if (F.cover_url && item.cover_url) F.cover_url.value = item.cover_url;
+        if (F.openlibrary_key && item.openlibrary_key) {
+            F.openlibrary_key.value = item.openlibrary_key;
         }
 
         // Close search
         searchInput.value = '';
-        resultsList.style.display = 'none';
-        loadMoreBtn.style.display = 'none';
-        noResults.style.display   = 'none';
+        hide(resultsContainer);
+        hide(noResults);
         setExpanded(false);
         selectedIndex = -1;
         setStatus('');
 
-        // Focus first field
-        if (fields.title) fields.title.focus();
+        // Flash filled fields briefly
+        document.querySelectorAll('.book-fields .form-control').forEach(el => {
+            if (el.value) {
+                el.classList.add('field-flash');
+                setTimeout(() => el.classList.remove('field-flash'), 800);
+            }
+        });
+
+        if (F.title) F.title.focus();
     }
 
-    /* ── Create a single book result item ───────────────── */
+    /* ================================================================
+       Create a single book result card
+       ================================================================ */
     function createBookItem(item, source) {
         const li = document.createElement('li');
         const idx = allVisibleItems.length;
-        li.classList.add('item');
+        li.classList.add('result-item');
         li.setAttribute('role', 'option');
         li.setAttribute('id', 'result-' + idx);
         li.setAttribute('tabindex', '-1');
         li.setAttribute('aria-selected', 'false');
         allVisibleItems.push(item);
 
-        // Badge
-        const badgeClass = source === 'local' ? 'badge-local' : 'badge-openlibrary';
-        const badgeText  = source === 'local' ? 'Acervo' : 'OpenLibrary';
-        const badge = `<span class="badge ${badgeClass}">${badgeText}</span>`;
+        const isLocal = source === 'local';
+        const badgeClass = isLocal ? 'badge-local' : 'badge-openlibrary';
+        const badgeText  = isLocal ? 'Your Collection' : 'OpenLibrary';
+        const badgeIcon  = isLocal ? 'library-outline' : 'globe-outline';
 
-        // Cover image
-        const imgSrc = item.cover_url || '/static/images/book-placeholder.png';
+        const imgSrc  = item.cover_url || '/static/images/book-placeholder.png';
         const fallbacks = item.fallback_urls || [];
-        const fallback = fallbacks.length > 0 ? fallbacks[0] : '/static/images/book-placeholder.png';
+        const fallback  = fallbacks[0] || '/static/images/book-placeholder.png';
+
+        // Extra metadata chips
+        const chips = [];
+        if (item.pages && item.pages > 0)  chips.push(`${item.pages} pg`);
+        if (item.isbn)                      chips.push(`ISBN`);
 
         li.innerHTML = `
-            <div class="item-image">
+            <div class="result-cover">
                 <img src="${escapeHtml(imgSrc)}"
-                     alt="Capa de ${escapeHtml(item.title)}"
+                     alt="Cover of ${escapeHtml(item.title)}"
                      loading="lazy"
                      onerror="this.onerror=null; this.src='${escapeHtml(fallback)}'">
             </div>
-            <div class="item-content">
-                <h3 class="item-title">${escapeHtml(item.title)} ${badge}</h3>
-                <p class="item-subtitle">
+            <div class="result-body">
+                <div class="result-header">
+                    <h3 class="result-title">${escapeHtml(item.title)}</h3>
+                    <span class="badge ${badgeClass}">
+                        <ion-icon name="${badgeIcon}" aria-hidden="true"></ion-icon>
+                        ${badgeText}
+                    </span>
+                </div>
+                <p class="result-author">
                     <ion-icon name="person-outline" aria-hidden="true"></ion-icon>
                     ${escapeHtml(item.author)}
                 </p>
-                <p class="item-description">
-                    <ion-icon name="pricetag-outline" aria-hidden="true"></ion-icon> ${escapeHtml(item.genre)}
-                    <span aria-hidden="true">·</span>
-                    <ion-icon name="calendar-outline" aria-hidden="true"></ion-icon> ${item.year || '—'}
-                    ${item.publisher
-                        ? `<span aria-hidden="true">·</span> <ion-icon name="business-outline" aria-hidden="true"></ion-icon> ${escapeHtml(item.publisher)}`
-                        : ''}
-                </p>
+                <div class="result-meta">
+                    ${item.genre ? `<span class="meta-chip"><ion-icon name="pricetag-outline" aria-hidden="true"></ion-icon>${escapeHtml(item.genre)}</span>` : ''}
+                    ${item.year ? `<span class="meta-chip"><ion-icon name="calendar-outline" aria-hidden="true"></ion-icon>${item.year}</span>` : ''}
+                    ${item.publisher ? `<span class="meta-chip"><ion-icon name="business-outline" aria-hidden="true"></ion-icon>${escapeHtml(item.publisher)}</span>` : ''}
+                    ${chips.map(c => `<span class="meta-chip meta-chip-subtle">${c}</span>`).join('')}
+                </div>
+            </div>
+            <div class="result-action" aria-hidden="true">
+                <ion-icon name="arrow-forward-outline"></ion-icon>
             </div>
         `;
 
@@ -318,9 +399,11 @@ document.addEventListener('DOMContentLoaded', function () {
         return li;
     }
 
-    /* ── Highlight item for keyboard navigation ─────────── */
+    /* ================================================================
+       Keyboard highlight
+       ================================================================ */
     function highlightItem(index) {
-        const items = resultsList.querySelectorAll('.item');
+        const items = resultsList.querySelectorAll('.result-item');
         items.forEach((el, i) => {
             if (i === index) {
                 el.classList.add('active');
@@ -334,7 +417,9 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    /* ── Render results from API response ───────────────── */
+    /* ================================================================
+       Render results
+       ================================================================ */
     function renderResults(data, append) {
         if (!append) {
             resultsList.innerHTML = '';
@@ -342,23 +427,21 @@ document.addEventListener('DOMContentLoaded', function () {
             selectedIndex = -1;
         }
 
-        const hasLocal = data.local && data.local.length > 0;
+        const hasLocal      = data.local && data.local.length > 0;
         const hasSuggestions = data.suggestions && data.suggestions.length > 0;
-        const hasResults = hasLocal || hasSuggestions;
+        const hasResults     = hasLocal || hasSuggestions;
 
         if (hasResults) {
-            resultsList.style.display = 'flex';
-            noResults.style.display   = 'none';
+            show(resultsContainer);
+            hide(noResults);
             setExpanded(true);
 
-            // If appending, we may need section labels only for new sections
             if (hasLocal) {
-                // Only add local label if it doesn't already exist or not appending
                 if (!append || !resultsList.querySelector('.section-label-local')) {
                     const label = document.createElement('li');
                     label.className = 'section-label section-label-local';
                     label.setAttribute('role', 'presentation');
-                    label.innerHTML = '<ion-icon name="library-outline" aria-hidden="true" class="me-1"></ion-icon> Seu Acervo';
+                    label.innerHTML = '<ion-icon name="library-outline" aria-hidden="true"></ion-icon> Your Collection';
                     resultsList.appendChild(label);
                 }
                 data.local.forEach(item => {
@@ -370,15 +453,14 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (hasLocal && !append) {
                     const hr = document.createElement('li');
                     hr.setAttribute('role', 'presentation');
-                    hr.innerHTML = '<hr class="divider">';
+                    hr.className = 'section-divider';
                     resultsList.appendChild(hr);
                 }
-
                 if (!append || !resultsList.querySelector('.section-label-api')) {
                     const label = document.createElement('li');
                     label.className = 'section-label section-label-api';
                     label.setAttribute('role', 'presentation');
-                    label.innerHTML = '<ion-icon name="globe-outline" aria-hidden="true" class="me-1"></ion-icon> OpenLibrary';
+                    label.innerHTML = '<ion-icon name="globe-outline" aria-hidden="true"></ion-icon> OpenLibrary';
                     resultsList.appendChild(label);
                 }
                 data.suggestions.forEach(item => {
@@ -386,80 +468,68 @@ document.addEventListener('DOMContentLoaded', function () {
                 });
             }
 
-            // Update status
             const meta = data.metadata || {};
-            setStatus(`Mostrando ${allVisibleItems.length} de ${meta.total || '?'} resultados`);
+            setStatus(`Showing ${allVisibleItems.length} of ${meta.total || '?'} results`);
         } else if (!append) {
-            resultsList.style.display = 'none';
-            noResults.style.display   = 'block';
+            hide(resultsContainer);
+            noResults.style.display = 'block';
             setExpanded(false);
             setStatus('');
         }
 
-        // Load More button
+        // Load More
         const meta = data.metadata || {};
         if (meta.has_more) {
-            loadMoreBtn.style.display = 'flex';
+            showFlex(loadMoreBtn);
         } else {
-            loadMoreBtn.style.display = 'none';
+            hide(loadMoreBtn);
         }
     }
 
-    /* ── Fetch results from API ─────────────────────────── */
+    /* ================================================================
+       Fetch autocomplete results
+       ================================================================ */
     function fetchResults(query, offset, append) {
         if (abortController) abortController.abort();
         abortController = new AbortController();
 
         showSpinner();
-        if (!append) loadMoreBtn.style.display = 'none';
+        if (!append) hide(loadMoreBtn);
 
         const url = `/autocomplete?query=${encodeURIComponent(query)}&offset=${offset}&page_size=${PAGE_SIZE}`;
 
         fetch(url, { signal: abortController.signal })
-            .then(res => res.json())
+            .then(r => r.json())
             .then(data => {
                 hideSpinner();
                 renderResults(data, append);
                 currentOffset = offset + PAGE_SIZE;
-
-                // Debug
-                if (data.metadata) {
-                    console.log(
-                        `Autocomplete: ${data.metadata.total} results, ` +
-                        `offset=${offset}, has_more=${data.metadata.has_more}, ` +
-                        `${data.metadata.response_time_ms}ms`
-                    );
-                }
             })
             .catch(err => {
                 if (err.name !== 'AbortError') {
-                    console.error('Erro na busca:', err);
+                    console.error('Search error:', err);
                     hideSpinner();
                     if (!append) {
                         noResults.style.display = 'block';
-                        resultsList.style.display = 'none';
+                        hide(resultsContainer);
                     }
                 }
             });
     }
 
-    /* ── Search Input Handler ───────────────────────────── */
+    /* ================================================================
+       Search input
+       ================================================================ */
     searchInput.addEventListener('input', function () {
-        const query = searchInput.value.trim();
-
-        if (query.length >= 2) {
+        const q = searchInput.value.trim();
+        if (q.length >= 2) {
             clearTimeout(debounceTimeout);
-            currentQuery  = query;
+            currentQuery  = q;
             currentOffset = 0;
-
-            debounceTimeout = setTimeout(() => {
-                fetchResults(query, 0, false);
-            }, 350);
+            debounceTimeout = setTimeout(() => fetchResults(q, 0, false), 350);
         } else {
-            // Clear everything
-            resultsList.style.display = 'none';
-            noResults.style.display   = 'none';
-            loadMoreBtn.style.display = 'none';
+            hide(resultsContainer);
+            hide(noResults);
             hideSpinner();
             allVisibleItems = [];
             selectedIndex = -1;
@@ -468,16 +538,15 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    /* ── Load More Handler ──────────────────────────────── */
     loadMoreBtn.addEventListener('click', function () {
-        if (currentQuery) {
-            fetchResults(currentQuery, currentOffset, true);
-        }
+        if (currentQuery) fetchResults(currentQuery, currentOffset, true);
     });
 
-    /* ── Keyboard Navigation ────────────────────────────── */
+    /* ================================================================
+       Keyboard navigation
+       ================================================================ */
     searchInput.addEventListener('keydown', function (e) {
-        const items = resultsList.querySelectorAll('.item');
+        const items = resultsList.querySelectorAll('.result-item');
         if (items.length === 0) return;
 
         switch (e.key) {
@@ -486,42 +555,275 @@ document.addEventListener('DOMContentLoaded', function () {
                 selectedIndex = Math.min(selectedIndex + 1, items.length - 1);
                 highlightItem(selectedIndex);
                 break;
-
             case 'ArrowUp':
                 e.preventDefault();
                 selectedIndex = Math.max(selectedIndex - 1, 0);
                 highlightItem(selectedIndex);
                 break;
-
             case 'Enter':
                 e.preventDefault();
                 if (selectedIndex >= 0 && selectedIndex < allVisibleItems.length) {
                     populateForm(allVisibleItems[selectedIndex]);
                 }
                 break;
-
             case 'Escape':
                 e.preventDefault();
-                resultsList.style.display = 'none';
-                loadMoreBtn.style.display = 'none';
+                hide(resultsContainer);
                 selectedIndex = -1;
                 setExpanded(false);
                 break;
         }
     });
 
-    /* ── Close on outside click ─────────────────────────── */
     document.addEventListener('click', function (e) {
-        if (!resultsList.contains(e.target)
-            && e.target !== searchInput
-            && e.target !== loadMoreBtn
-            && !loadMoreBtn.contains(e.target)) {
-            resultsList.style.display = 'none';
-            loadMoreBtn.style.display = 'none';
+        if (!resultsContainer.contains(e.target)
+            && e.target !== searchInput) {
+            hide(resultsContainer);
             selectedIndex = -1;
             setExpanded(false);
         }
     });
+
+    /* ================================================================
+       ISBN Validation
+       ================================================================ */
+    const isbnField  = F.isbn;
+    const isbnStatus = document.getElementById('isbn-status');
+
+    function validateIsbn() {
+        const raw = (isbnField.value || '').replace(/[-\s]/g, '').toUpperCase();
+        if (!raw) { isbnStatus.textContent = ''; isbnField.classList.remove('is-valid','is-invalid'); return; }
+
+        let valid = false;
+        if (raw.length === 10) {
+            // ISBN-10 check
+            let sum = 0;
+            for (let i = 0; i < 10; i++) {
+                const c = raw[i];
+                const v = (c === 'X' && i === 9) ? 10 : parseInt(c);
+                if (isNaN(v)) { valid = false; break; }
+                sum += (10 - i) * v;
+            }
+            valid = sum % 11 === 0;
+        } else if (raw.length === 13 && /^\d{13}$/.test(raw)) {
+            let sum = 0;
+            for (let i = 0; i < 12; i++) sum += parseInt(raw[i]) * (i % 2 === 0 ? 1 : 3);
+            valid = (10 - (sum % 10)) % 10 === parseInt(raw[12]);
+        }
+
+        if (raw.length < 10) {
+            isbnStatus.textContent = '';
+            isbnField.classList.remove('is-valid','is-invalid');
+        } else if (valid) {
+            isbnStatus.innerHTML = '<ion-icon name="checkmark-circle-outline"></ion-icon> Valid';
+            isbnStatus.className = 'isbn-status isbn-valid';
+            isbnField.classList.add('is-valid');
+            isbnField.classList.remove('is-invalid');
+        } else {
+            isbnStatus.innerHTML = '<ion-icon name="close-circle-outline"></ion-icon> Invalid ISBN';
+            isbnStatus.className = 'isbn-status isbn-invalid';
+            isbnField.classList.add('is-invalid');
+            isbnField.classList.remove('is-valid');
+        }
+    }
+
+    if (isbnField) {
+        // Auto-format ISBN as user types
+        isbnField.addEventListener('input', function () {
+            let v = isbnField.value.replace(/[^0-9Xx]/g, '');
+            if (v.length > 3) {
+                // Format ISBN-13: 978-X-XX-XXXXXX-X
+                if (v.length <= 13 && v.startsWith('978') || v.startsWith('979')) {
+                    // just keep digits, don't force grouping (varies by publisher)
+                }
+            }
+            validateIsbn();
+        });
+    }
+
+    /* ================================================================
+       Pages stepper (+/- buttons)
+       ================================================================ */
+    const pagesField = F.pages;
+    const minusBtn = document.querySelector('.pages-minus');
+    const plusBtn  = document.querySelector('.pages-plus');
+
+    function stepPages(delta) {
+        const cur = parseInt(pagesField.value) || 0;
+        const next = Math.max(1, Math.min(99999, cur + delta));
+        pagesField.value = next;
+    }
+
+    if (minusBtn) minusBtn.addEventListener('click', () => stepPages(-10));
+    if (plusBtn)  plusBtn.addEventListener('click',  () => stepPages(10));
+
+    // Also allow mouse wheel on pages field
+    if (pagesField) {
+        pagesField.addEventListener('wheel', function (e) {
+            if (document.activeElement === pagesField) {
+                e.preventDefault();
+                stepPages(e.deltaY < 0 ? 10 : -10);
+            }
+        });
+    }
+
+    /* ================================================================
+       Genre filterable dropdown
+       ================================================================ */
+    const genreSearch   = F.genreSearch;
+    const genreHidden   = F.genre;
+    const genreList     = document.getElementById('genre-list');
+    const genreNewHint  = document.getElementById('genre-new-hint');
+    const genreNewName  = document.getElementById('genre-new-name');
+    let allGenres       = [];   // [{code:'000', name:'General'}, ...]
+    let genreCustom     = [];   // ['CustomGenre', ...] — no code
+    let genreDefault    = 'General';
+    let genreSelIndex   = -1;
+
+    // Load genres from API
+    fetch('/api/genres')
+        .then(r => r.json())
+        .then(data => {
+            allGenres    = data.genres || [];   // already sorted by code from backend
+            genreCustom  = data.custom || [];
+            genreDefault = data.default || 'General';
+            // Set default if empty
+            if (!genreHidden.value) {
+                genreHidden.value = genreDefault;
+                genreSearch.value = genreDefault;
+            }
+        })
+        .catch(() => { allGenres = [{code: '000', name: 'General'}]; });
+
+    function renderGenreOptions(filter) {
+        genreList.innerHTML = '';
+        genreSelIndex = -1;
+        const f = (filter || '').toLowerCase();
+
+        // Filter master genres (have code + name)
+        const filteredMaster = f
+            ? allGenres.filter(g => g.name.toLowerCase().includes(f) || g.code.includes(f))
+            : allGenres;
+
+        // Filter custom genres (string only, no code)
+        const filteredCustom = f
+            ? genreCustom.filter(g => g.toLowerCase().includes(f))
+            : genreCustom;
+
+        const totalResults = filteredMaster.length + filteredCustom.length;
+
+        if (totalResults === 0) {
+            hide(genreList);
+            if (f) {
+                genreNewName.textContent = filter;
+                show(genreNewHint);
+            }
+            return;
+        }
+
+        hide(genreNewHint);
+
+        // Check exact match
+        const exactMatch = filteredMaster.some(g => g.name.toLowerCase() === f)
+                        || filteredCustom.some(g => g.toLowerCase() === f);
+
+        // Render master genres (with code badge)
+        filteredMaster.slice(0, 20).forEach((g, i) => {
+            const li = document.createElement('li');
+            li.className = 'genre-option';
+            li.setAttribute('role', 'option');
+            li.setAttribute('id', 'genre-opt-' + i);
+            li.innerHTML = `<span class="genre-code">${g.code}</span> ${escapeHtml(g.name)}`;
+            li.addEventListener('click', () => selectGenre(g.name));
+            genreList.appendChild(li);
+        });
+
+        // Render custom genres (with "custom" tag, no code)
+        filteredCustom.slice(0, 5).forEach((g, i) => {
+            const li = document.createElement('li');
+            li.className = 'genre-option';
+            li.setAttribute('role', 'option');
+            li.setAttribute('id', 'genre-opt-custom-' + i);
+            li.innerHTML = `<span class="genre-code genre-code-custom">—</span> ${escapeHtml(g)} <span class="genre-custom-tag">custom</span>`;
+            li.addEventListener('click', () => selectGenre(g));
+            genreList.appendChild(li);
+        });
+
+        show(genreList);
+
+        // If user typed something that doesn't exactly match, show "new genre" hint
+        if (f && !exactMatch) {
+            genreNewName.textContent = filter;
+            show(genreNewHint);
+        } else {
+            hide(genreNewHint);
+        }
+    }
+
+    function selectGenre(g) {
+        genreHidden.value = g;
+        genreSearch.value = g;
+        hide(genreList);
+        hide(genreNewHint);
+        genreSearch.setAttribute('aria-expanded', 'false');
+    }
+
+    if (genreSearch) {
+        genreSearch.addEventListener('focus', function () {
+            renderGenreOptions(genreSearch.value);
+            genreSearch.setAttribute('aria-expanded', 'true');
+        });
+
+        genreSearch.addEventListener('input', function () {
+            renderGenreOptions(genreSearch.value);
+            // Sync hidden field with whatever user types
+            genreHidden.value = genreSearch.value || genreDefault;
+        });
+
+        genreSearch.addEventListener('blur', function () {
+            // Delay to allow click on option
+            setTimeout(() => {
+                hide(genreList);
+                hide(genreNewHint);
+                genreSearch.setAttribute('aria-expanded', 'false');
+                // If empty, reset to default
+                if (!genreSearch.value.trim()) {
+                    genreSearch.value = genreDefault;
+                    genreHidden.value = genreDefault;
+                } else {
+                    genreHidden.value = genreSearch.value;
+                }
+            }, 200);
+        });
+
+        genreSearch.addEventListener('keydown', function (e) {
+            const opts = genreList.querySelectorAll('.genre-option');
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                genreSelIndex = Math.min(genreSelIndex + 1, opts.length - 1);
+                opts.forEach((o, i) => o.classList.toggle('active', i === genreSelIndex));
+                if (opts[genreSelIndex]) opts[genreSelIndex].scrollIntoView({ block: 'nearest' });
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                genreSelIndex = Math.max(genreSelIndex - 1, 0);
+                opts.forEach((o, i) => o.classList.toggle('active', i === genreSelIndex));
+            } else if (e.key === 'Enter') {
+                e.preventDefault();
+                if (genreSelIndex >= 0 && opts[genreSelIndex]) {
+                    // Extract genre name: textContent has "CODE Name" or "— Name custom"
+                    const opt = opts[genreSelIndex];
+                    const nameText = opt.textContent.replace(/^\s*[\d—]+\s*/, '').replace(/\s*custom\s*$/, '').trim();
+                    selectGenre(nameText);
+                } else if (genreSearch.value.trim()) {
+                    selectGenre(genreSearch.value.trim());
+                }
+            } else if (e.key === 'Escape') {
+                hide(genreList);
+                hide(genreNewHint);
+            }
+        });
+    }
+
 });
 </script>
 {% endblock %}

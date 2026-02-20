@@ -198,7 +198,7 @@ def delete_book(book_id):
         flash('Book deleted successfully!', 'success')
     else:
         flash('Book not found.', 'error')
-    return redirect(url_for('your_collection'))
+    return redirect(url_for('books.your_collection'))
 
 
 def is_admin_user():
@@ -285,7 +285,7 @@ def edit_book(book_id):
 
         db.session.commit()
         flash('Book updated successfully!', 'success')
-        return redirect(url_for('your_collection'))
+        return redirect(url_for('books.your_collection'))
 
     return render_template('edit_book.html', form=form, book=book)
 

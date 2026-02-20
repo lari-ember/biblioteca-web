@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField, IntegerField, SelectField
-from wtforms.validators import DataRequired, EqualTo
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, IntegerField, SelectField, HiddenField
+from wtforms.validators import DataRequired, EqualTo, Optional, Length
 from wtforms import StringField, PasswordField, BooleanField, SubmitField
 from wtforms.validators import DataRequired, Length
 
@@ -24,11 +24,14 @@ class BookForm(FlaskForm):
     author = StringField('Author', validators=[DataRequired()])
     publisher = StringField('Publisher', validators=[DataRequired()])
     year = IntegerField('Year', validators=[DataRequired()])
+    isbn = StringField('ISBN', validators=[Optional(), Length(max=17)])
     pages = IntegerField('Pages', validators=[DataRequired()])
     read = SelectField('Read', choices=[('read', 'Read'), ('unread', 'Unread')], validators=[DataRequired()])
     genre = StringField('Genre', validators=[DataRequired()])
     status = SelectField('Status', choices=[('available', 'Available'), ('borrowed', 'Borrowed'), ('ex-libris', 'Ex-Libris')], validators=[DataRequired()])
     format = SelectField('Format', choices=[('physical', 'Physical'), ('e-book', 'E-book'), ('pdf', 'PDF')], validators=[DataRequired()])
+    cover_url = HiddenField()
+    openlibrary_key = HiddenField()
 
 
 class SearchForm(FlaskForm):

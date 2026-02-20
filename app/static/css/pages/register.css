@@ -1,95 +1,485 @@
+/* ==========================================================
+   Register New Book — Search Autocomplete & Form
+   Theme: Dark purple (Amber Archivily)
+   WCAG 2.1 AA compliant — focus states, contrast, aria
+   ========================================================== */
+
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
 
-.input-group {
+/* ── Search Container ─────────────────────────────────── */
+.search-wrapper {
+    position: relative;
+    margin-bottom: 1.25rem;
+}
+
+.search-wrapper .input-group {
     display: flex;
     align-items: center;
-    background-color: #fff;
-    padding: 8px 16px;
-    border-radius: 24px;
-    gap: 8px;
+    background-color: rgba(53, 18, 53, 0.85);
+    border: 2px solid rgba(221, 0, 221, 0.4);
+    padding: 10px 16px;
+    border-radius: 12px;
+    gap: 10px;
+    transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.search-wrapper .input-group:focus-within {
+    border-color: #DD00DD;
+    box-shadow: 0 0 0 3px rgba(221, 0, 221, 0.25);
 }
 
 .input-icon {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 32px;
-    height: 32px;
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
-    background-color: #6046ff;
+    background-color: #DD00DD;
     color: #fff;
-    cursor: pointer;
+    font-size: 14px;
+}
+
+.input-icon ion-icon {
+    font-size: 16px;
 }
 
 .input-field {
     width: 100%;
     border: none;
     background-color: transparent;
+    color: #f3f3f3;
+    font-family: 'Poppins', 'Nunito', sans-serif;
+    font-size: 0.95rem;
+    letter-spacing: 0.02em;
+}
+
+.input-field::placeholder {
+    color: rgba(243, 243, 243, 0.5);
 }
 
 .input-field:focus {
     outline: none;
 }
 
+/* Spinner inside search */
+.search-spinner {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(221, 0, 221, 0.3);
+    border-top: 2px solid #DD00DD;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+}
+
+.search-spinner.d-none {
+    display: none;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ── Results Dropdown ─────────────────────────────────── */
+.search-results-container {
+    position: relative;
+    width: 100%;
+}
+
 .items {
     display: flex;
     flex-direction: column;
-    margin-top: 12px;
-    background-color: #fff;
     list-style: none;
-    border-radius: 24px;
-    width: 350px;
-    padding: 14px;
-    gap: 12px;
-    max-height: 421px;
+    margin: 8px 0 0;
+    padding: 12px;
+    gap: 8px;
+    width: 100%;
+    max-height: 520px;
     overflow-y: auto;
+    background-color: rgba(34, 13, 53, 0.96);
+    border: 1px solid rgba(221, 0, 221, 0.3);
+    border-radius: 12px;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+    z-index: 100;
+
+    /* Smooth scrollbar */
+    scrollbar-width: thin;
+    scrollbar-color: #DD00DD rgba(34, 13, 53, 0.5);
 }
 
+.items::-webkit-scrollbar {
+    width: 6px;
+}
+.items::-webkit-scrollbar-track {
+    background: rgba(34, 13, 53, 0.5);
+    border-radius: 3px;
+}
+.items::-webkit-scrollbar-thumb {
+    background: #DD00DD;
+    border-radius: 3px;
+}
+
+/* ── Individual Result Item ───────────────────────────── */
 .item {
     display: flex;
-    gap: 12px;
+    gap: 14px;
+    cursor: pointer;
+    padding: 12px;
+    border-radius: 10px;
+    border: 2px solid transparent;
+    background-color: rgba(80, 14, 80, 0.25);
+    transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
 }
 
+.item:hover {
+    background-color: rgba(80, 14, 80, 0.55);
+    border-color: rgba(221, 0, 221, 0.4);
+    transform: translateX(2px);
+}
+
+.item:focus-visible,
+.item.active {
+    background-color: rgba(80, 14, 80, 0.65);
+    border-color: #DD00DD;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(221, 0, 221, 0.3);
+}
+
+/* Book cover thumbnail */
 .item-image {
-    width: 100px;
-    height: 120px;
-    border-radius: 8px;
+    flex-shrink: 0;
+    width: 64px;
+    height: 88px;
+    border-radius: 6px;
+    overflow: hidden;
+    background-color: rgba(53, 18, 53, 0.6);
 }
 
 .item-image img {
     width: 100%;
     height: 100%;
-    border-radius: 8px;
     object-fit: cover;
+    border-radius: 6px;
+}
+
+/* Book info */
+.item-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 2px;
+    min-width: 0;          /* allow text truncation */
 }
 
 .item-title {
-    font-size: 18px;
-    color: #333;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #ffffff;
+    margin: 0;
+    line-height: 1.3;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
 }
 
-.item-subtitle, .item-description {
-    font-size: 14px;
-    color: #666;
+.item-subtitle {
+    font-size: 0.82rem;
+    color: #d4b8d4;
+    margin: 0;
+    line-height: 1.4;
+    display: flex;
+    align-items: center;
+    gap: 4px;
 }
 
-#no_results {
-    display: none;
-    text-align: center;
-    font-size: 14px;
-    color: #666;
-    margin-top: 8px;
+.item-description {
+    font-size: 0.78rem;
+    color: #b89ab8;
+    margin: 0;
+    line-height: 1.4;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: flex;
+    align-items: center;
+    gap: 3px;
 }
 
+.item-subtitle ion-icon,
+.item-description ion-icon {
+    font-size: 0.85rem;
+    flex-shrink: 0;
+}
+
+/* ── Source Badges ─────────────────────────────────────── */
+.item-title .badge {
+    font-size: 0.65rem;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 20px;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    vertical-align: middle;
+}
+
+.badge-local {
+    background-color: #198754;
+    color: #fff;
+}
+
+.badge-openlibrary {
+    background-color: #0d6efd;
+    color: #fff;
+}
+
+/* ── Section Labels & Dividers ────────────────────────── */
 .section-label {
-    font-weight: bold;
-    margin-top: 10px;
-    color: #500e50;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #DD00DD;
+    margin: 6px 4px 2px;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    align-items: center;
+}
+
+.section-label ion-icon {
+    font-size: 0.85rem;
+    vertical-align: middle;
 }
 
 .divider {
     border: 0;
     height: 1px;
-    background: #ddd;
-    margin: 10px 0;
+    background: linear-gradient(to right, transparent, #DD00DD, transparent);
+    margin: 6px 0;
 }
+
+/* ── No Results Message ───────────────────────────────── */
+#no_results {
+    display: none;
+    text-align: center;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.88rem;
+    color: #d4b8d4;
+    padding: 16px 12px;
+    margin-top: 8px;
+    background-color: rgba(34, 13, 53, 0.85);
+    border-radius: 10px;
+    border: 1px solid rgba(221, 0, 221, 0.2);
+}
+
+#no_results ion-icon {
+    display: block;
+    font-size: 1.5rem;
+    margin-bottom: 6px;
+    color: #DD00DD;
+    opacity: 0.6;
+}
+
+/* ── Load More Button ─────────────────────────────────── */
+#load-more {
+    display: none;
+    width: 100%;
+    padding: 10px 16px;
+    margin-top: 4px;
+    background: linear-gradient(135deg, #500E50, #DD00DD);
+    color: #fff;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: opacity 0.25s ease, transform 0.15s ease, box-shadow 0.25s ease;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+#load-more:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(221, 0, 221, 0.35);
+}
+
+#load-more:focus-visible {
+    outline: 2px solid #DD00DD;
+    outline-offset: 2px;
+    box-shadow: 0 0 0 4px rgba(221, 0, 221, 0.25);
+}
+
+#load-more:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* ── Results Count / Status ───────────────────────────── */
+.search-status {
+    font-size: 0.75rem;
+    color: #b89ab8;
+    text-align: right;
+    margin-top: 4px;
+    padding-right: 4px;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* ── Form Card Overrides ──────────────────────────────── */
+.register-card {
+    background-color: rgba(34, 13, 53, 0.82);
+    padding: 24px;
+    border-radius: 14px;
+    border: 2px solid rgba(80, 14, 80, 0.6);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+.register-card-inner {
+    background-color: rgba(80, 14, 80, 0.35);
+    border-radius: 12px;
+    border: 1px solid rgba(80, 14, 80, 0.6);
+    box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.2);
+    padding: 28px;
+    color: #f3f3f3;
+}
+
+.register-card-inner h2 {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: #ffffff;
+    letter-spacing: 0.02em;
+}
+
+.register-card-inner .form-label {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 500;
+    font-size: 0.88rem;
+    color: #d4b8d4;
+    margin-bottom: 4px;
+}
+
+.register-card-inner .form-control {
+    background-color: rgba(53, 18, 53, 0.6);
+    border: 1px solid rgba(221, 0, 221, 0.25);
+    color: #f3f3f3;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 0.9rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.register-card-inner .form-control::placeholder {
+    color: rgba(243, 243, 243, 0.4);
+}
+
+.register-card-inner .form-control:focus {
+    border-color: #DD00DD;
+    box-shadow: 0 0 0 3px rgba(221, 0, 221, 0.2);
+    outline: none;
+    background-color: rgba(53, 18, 53, 0.8);
+}
+
+.register-card-inner .form-control option {
+    background-color: #351235;
+    color: #f3f3f3;
+}
+
+/* Submit button */
+.btn-register {
+    background: linear-gradient(135deg, #500E50, #DD00DD);
+    color: #fff;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 1rem;
+    padding: 12px 32px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: opacity 0.25s ease, transform 0.15s ease, box-shadow 0.25s ease;
+    letter-spacing: 0.03em;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.btn-register:hover {
+    opacity: 0.92;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(221, 0, 221, 0.4);
+    color: #fff;
+}
+
+.btn-register:focus-visible {
+    outline: 2px solid #DD00DD;
+    outline-offset: 3px;
+    box-shadow: 0 0 0 4px rgba(221, 0, 221, 0.3);
+}
+
+/* Existing book warning */
+.existing-book-warning {
+    background-color: rgba(80, 14, 80, 0.4);
+    border: 1px solid rgba(221, 0, 221, 0.4);
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 16px;
+}
+
+.existing-book-warning h4 {
+    color: #ff6b6b;
+    font-size: 1rem;
+}
+
+.existing-book-warning .table {
+    color: #f3f3f3;
+    margin-bottom: 8px;
+}
+
+/* ── Responsive ───────────────────────────────────────── */
+@media (max-width: 768px) {
+    .register-card-inner {
+        padding: 18px 14px;
+    }
+
+    .item {
+        gap: 10px;
+        padding: 10px;
+    }
+
+    .item-image {
+        width: 50px;
+        height: 68px;
+    }
+
+    .item-title {
+        font-size: 0.88rem;
+    }
+
+    .items {
+        max-height: 400px;
+    }
+}
+
+@media (max-width: 480px) {
+    .register-card {
+        padding: 14px;
+    }
+
+    .register-card-inner {
+        padding: 16px 12px;
+    }
+
+    .item-description {
+        display: none;
+    }
+}
+

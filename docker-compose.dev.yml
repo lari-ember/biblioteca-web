@@ -24,7 +24,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.dev
-    image: biblioteca-web-dev
     env_file:
       - .env
     volumes:

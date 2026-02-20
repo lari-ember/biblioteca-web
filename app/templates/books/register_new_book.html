@@ -1,217 +1,528 @@
 {% extends "base.html" %}
 
-
 {% block head %}
   {{ super() }}
   <link rel="stylesheet" href="{{ url_for('static', filename='css/pages/register.css') }}">
 {% endblock %}
 
 {% block content %}
-<div class="">
+<div class="container py-4">
     <div class="row justify-content-center">
-        <div class="col-md-6 shadow-lg card" style="background-color: #220d35d2; padding: 20px; border-radius: 10px; border: 2px ridge #251630;">
-            <div class="text-white card p-4" style="background-color: #500e50a9; border-radius: 10px; border: 2px ridge #500e50; box-shadow: 2px 2px 5px #DD00DD;>
-                <h2 class="text-center mb-4">Register New Book</h2>
-                <form action="{{ url_for('books.register_new_book') }}" method="POST">
-                    {{ form.csrf_token }}
-                    <div class="mb-3">
-                        <div id="">
-        <!-- Input de pesquisa -->
-        <div class="input-group">
-            <div class="input-icon">
-                <i class="fa-solid fa-magnifying-glass"></i>
-            </div>
-            <input id="search" type="text" class="input-field" placeholder="Pesquisar">
-        </div>
+        <div class="col-lg-7 col-md-9">
+            <div class="register-card">
+                <div class="register-card-inner">
+                    <h2 class="text-center mb-4">
+                        <ion-icon name="book-outline" aria-hidden="true" class="me-2"></ion-icon>
+                        Registrar Novo Livro
+                    </h2>
 
-        <!-- Lista de itens -->
-        <ul id="autocomplete-results" class="items"></ul>
+                    <form action="{{ url_for('books.register_new_book') }}" method="POST"
+                          id="register-form" novalidate>
+                        {{ form.csrf_token }}
 
-        <!-- Mensagem para nenhum resultado -->
-        <p id="no_results">Nenhum resultado encontrado</p>
-    </div>
-                        <label for="title" class="form-label">Title</label>
-                        {{ form.title(class="form-control", placeholder="Enter the book title") }}
-                    </div>
-                    <div class="mb-3">
-                        <label for="author" class="form-label">Author</label>
-                        {{ form.author(class="form-control", placeholder="Enter the book author") }}
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label for="publisher" class="form-label">Publisher</label>
-                            {{ form.publisher(class="form-control", placeholder="Enter the book publisher") }}
-                        </div>
-                        <div class="col-md-6">
-                            <label for="year" class="form-label">Year</label>
-                            {{ form.year(class="form-control", placeholder="Enter the publication year") }}
-                        </div>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label for="pages" class="form-label">Pages</label>
-                            {{ form.pages(class="form-control", placeholder="Enter the number of pages") }}
-                        </div>
-                        <div class="col-md-6">
-                            <label for="read" class="form-label">Read</label>
-                            {{ form.read(class="form-control", placeholder="Have you read this book?") }}
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <label for="genre" class="form-label">Genre</label>
-                        {{ form.genre(class="form-control", placeholder="Enter the book genre") }}
-                    </div>
-                    <div class="mb-3">
-                        <label for="status" class="form-label">Status</label>
-                        {{ form.status(class="form-control", placeholder="Enter the book status") }}
-                    </div>
-                    <div class="mb-3">
-                        <label for="format" class="form-label">Format</label>
-                        {{ form.format(class="form-control", placeholder="Enter the book format") }}
-                    </div>
+                        <!-- ══════ Search Autocomplete ══════ -->
+                        <div class="search-wrapper mb-4">
+                            <label for="search" class="form-label">
+                                <ion-icon name="search-outline" aria-hidden="true" class="me-1"></ion-icon>
+                                Buscar livro
+                            </label>
 
-                    {% if existing_book %}
-                    <div class="existing-book mb-3">
-                        <h4 class="text-danger">A similar book already exists:</h4>
-                        <table class="table table-bordered table-striped table-hover table-dark">
-                            <tr>
-                                <th>Title</th>
-                                <td>{{ existing_book.title }}</td>
-                            </tr>
-                            <tr>
-                                <th>Author</th>
-                                <td>{{ existing_book.author }}</td>
-                            </tr>
-                        </table>
-                        <p class="text-warning">Do you still want to add a new record?</p>
-                        <button onclick="confirmNewBook({{ existing_book.id }})" class="btn btn-danger">Yes</button>
-                    </div>
-                    {% endif %}
+                            <div class="input-group" role="search">
+                                <div class="input-icon" aria-hidden="true">
+                                    <ion-icon name="search-outline"></ion-icon>
+                                </div>
+                                <input id="search"
+                                       type="text"
+                                       class="input-field"
+                                       placeholder="Digite título, autor ou ISBN…"
+                                       autocomplete="off"
+                                       role="combobox"
+                                       aria-label="Buscar livros no acervo e na OpenLibrary"
+                                       aria-expanded="false"
+                                       aria-controls="autocomplete-results"
+                                       aria-autocomplete="list"
+                                       aria-activedescendant="">
+                                <div id="search-spinner" class="search-spinner d-none"
+                                     role="status" aria-label="Carregando resultados">
+                                </div>
+                            </div>
 
-                    <div class="text-center">
-                        <button type="submit" class="btn btn-primary">Register New Book</button>
-                    </div>
-                </form>
+                            <!-- Search results container -->
+                            <div class="search-results-container">
+                                <ul id="autocomplete-results"
+                                    class="items"
+                                    role="listbox"
+                                    aria-label="Resultados da busca"
+                                    style="display:none">
+                                </ul>
+
+                                <button type="button"
+                                        id="load-more"
+                                        aria-label="Carregar mais resultados">
+                                    <ion-icon name="chevron-down-outline" aria-hidden="true" class="me-1"></ion-icon>
+                                    Carregar mais
+                                </button>
+
+                                <p id="no_results" aria-live="polite" role="status">
+                                    <ion-icon name="book-outline" aria-hidden="true"></ion-icon>
+                                    Nenhum resultado encontrado. Preencha manualmente abaixo.
+                                </p>
+
+                                <div id="search-status" class="search-status" aria-live="polite"></div>
+                            </div>
+                        </div>
+
+                        <!-- ══════ Book Form Fields ══════ -->
+                        <fieldset>
+                            <legend class="sr-only">Informações do Livro</legend>
+
+                            <div class="mb-3">
+                                <label for="title" class="form-label">Título *</label>
+                                {{ form.title(class="form-control", id="title",
+                                   placeholder="Título do livro",
+                                   aria_required="true") }}
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="author" class="form-label">Autor(a) *</label>
+                                {{ form.author(class="form-control", id="author",
+                                   placeholder="Nome do autor",
+                                   aria_required="true") }}
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="publisher" class="form-label">Editora *</label>
+                                    {{ form.publisher(class="form-control", id="publisher",
+                                       placeholder="Editora",
+                                       aria_required="true") }}
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="year" class="form-label">Ano *</label>
+                                    {{ form.year(class="form-control", id="year",
+                                       placeholder="Ano de publicação",
+                                       aria_required="true") }}
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="isbn" class="form-label">ISBN</label>
+                                    {{ form.isbn(class="form-control", id="isbn",
+                                       placeholder="ISBN (opcional)") }}
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="pages" class="form-label">Páginas *</label>
+                                    {{ form.pages(class="form-control", id="pages",
+                                       placeholder="Nº de páginas",
+                                       aria_required="true") }}
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="genre" class="form-label">Gênero *</label>
+                                    {{ form.genre(class="form-control", id="genre",
+                                       placeholder="Gênero literário",
+                                       aria_required="true") }}
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="read" class="form-label">Leitura</label>
+                                    {{ form.read(class="form-control", id="read") }}
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="status" class="form-label">Status</label>
+                                    {{ form.status(class="form-control", id="status") }}
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="format" class="form-label">Formato</label>
+                                    {{ form.format(class="form-control", id="format") }}
+                                </div>
+                            </div>
+
+                            <!-- Hidden fields for autocomplete metadata -->
+                            {{ form.cover_url(id="cover_url") }}
+                            {{ form.openlibrary_key(id="openlibrary_key") }}
+                        </fieldset>
+
+                        <!-- Existing book warning -->
+                        {% if existing_book %}
+                        <div class="existing-book-warning mb-3" role="alert">
+                            <h4>
+                                <ion-icon name="alert-circle-outline" aria-hidden="true" class="me-1"></ion-icon>
+                                Um livro similar já existe:
+                            </h4>
+                            <table class="table table-bordered table-sm mt-2">
+                                <tr>
+                                    <th scope="row">Título</th>
+                                    <td>{{ existing_book.title }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Autor</th>
+                                    <td>{{ existing_book.author }}</td>
+                                </tr>
+                            </table>
+                            <p class="text-warning mb-2">Deseja adicionar um novo registro mesmo assim?</p>
+                            <button type="button"
+                                    onclick="confirmNewBook({{ existing_book.id }})"
+                                    class="btn btn-outline-danger btn-sm">
+                                <ion-icon name="checkmark-outline" aria-hidden="true" class="me-1"></ion-icon>
+                                Sim, registrar novo
+                            </button>
+                        </div>
+                        {% endif %}
+
+                        <div class="text-center mt-4">
+                            <button type="submit" class="btn-register">
+                                <ion-icon name="add-outline" aria-hidden="true" class="me-1"></ion-icon>
+                                Registrar Novo Livro
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-    function confirmNewBook(bookId) {
-        window.location.href = "/confirm_new_book/" + bookId;
+function confirmNewBook(bookId) {
+    window.location.href = "/confirm_new_book/" + bookId;
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    /* ── DOM References ─────────────────────────────────── */
+    const searchInput   = document.getElementById('search');
+    const resultsList   = document.getElementById('autocomplete-results');
+    const noResults     = document.getElementById('no_results');
+    const loadMoreBtn   = document.getElementById('load-more');
+    const spinner       = document.getElementById('search-spinner');
+    const statusEl      = document.getElementById('search-status');
+
+    // Form fields
+    const fields = {
+        title:     document.getElementById('title'),
+        author:    document.getElementById('author'),
+        year:      document.getElementById('year'),
+        publisher: document.getElementById('publisher'),
+        pages:     document.getElementById('pages'),
+        genre:     document.getElementById('genre'),
+        isbn:      document.getElementById('isbn'),
+        cover_url: document.getElementById('cover_url'),
+        openlibrary_key: document.getElementById('openlibrary_key')
+    };
+
+    /* ── State ──────────────────────────────────────────── */
+    let debounceTimeout = null;
+    let abortController = null;
+    let selectedIndex   = -1;
+    let allVisibleItems = [];     // items currently displayed
+    let currentQuery    = '';
+    let currentOffset   = 0;
+    const PAGE_SIZE     = 3;
+
+    /* ── Helpers ────────────────────────────────────────── */
+    function showSpinner()  { spinner.classList.remove('d-none'); }
+    function hideSpinner()  { spinner.classList.add('d-none'); }
+
+    function setExpanded(expanded) {
+        searchInput.setAttribute('aria-expanded', expanded ? 'true' : 'false');
     }
-</script>
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const searchInput = document.getElementById('search');
-        const resultsList = document.getElementById('autocomplete-results');
-        const noResultsMessage = document.getElementById('no_results');
-        let debounceTimeout;
 
-        searchInput.addEventListener('input', function () {
-            const query = searchInput.value.trim();
-            if (query.length >= 3) {
-                clearTimeout(debounceTimeout);
-                debounceTimeout = setTimeout(function () {
-                    fetch(`/autocomplete?query=${query}`)
-                        .then(response => response.json())
-                        .then(data => {
-                            resultsList.innerHTML = ''; // Limpa os resultados anteriores
-                            noResultsMessage.style.display = 'none'; // Esconde a mensagem de "nenhum resultado"
+    function setStatus(text) {
+        statusEl.textContent = text;
+    }
 
-                            if (data.local.length > 0 || data.suggestions.length > 0) {
-                                resultsList.style.display = 'block'; // Mostra a lista
+    function escapeHtml(str) {
+        const div = document.createElement('div');
+        div.textContent = str || '';
+        return div.innerHTML;
+    }
 
-                                // Livros do Banco Local
-                                if (data.local.length > 0) {
-                                    const localLabel = document.createElement('label');
-                                    localLabel.textContent = 'Livros do Banco Local';
-                                    localLabel.classList.add('section-label');
-                                    resultsList.appendChild(localLabel);
+    /* ── Populate form with selected item ───────────────── */
+    function populateForm(item) {
+        if (fields.title)     fields.title.value     = item.title || '';
+        if (fields.author)    fields.author.value    = item.author || '';
+        if (fields.year)      fields.year.value      = item.year || '';
+        if (fields.publisher) fields.publisher.value  = item.publisher || '';
+        if (fields.pages && item.pages) fields.pages.value = item.pages;
+        if (fields.genre)     fields.genre.value     = item.genre || '';
+        if (fields.isbn && item.isbn)  fields.isbn.value = item.isbn;
+        if (fields.cover_url && item.cover_url) fields.cover_url.value = item.cover_url;
+        if (fields.openlibrary_key && item.openlibrary_key) {
+            fields.openlibrary_key.value = item.openlibrary_key;
+        }
 
-                                    data.local.forEach(item => {
-                                        const li = document.createElement('li');
-                                        li.classList.add('item');
+        // Close search
+        searchInput.value = '';
+        resultsList.style.display = 'none';
+        loadMoreBtn.style.display = 'none';
+        noResults.style.display   = 'none';
+        setExpanded(false);
+        selectedIndex = -1;
+        setStatus('');
 
-                                        li.innerHTML = `
-                                            <div class="item-image">
-                                                <img src="${item.cover_url || 'default.jpg'}" alt="${item.title}">
-                                            </div>
-                                            <div class="item-content">
-                                                <h2 class="item-title">${item.title}</h2>
-                                                <p class="item-subtitle">
-                                                    <i class="fa-solid fa-user"></i> ${item.author}
-                                                </p>
-                                                <p class="item-description">${item.genre} | ${item.year}</p>
-                                            </div>
-                                        `;
+        // Focus first field
+        if (fields.title) fields.title.focus();
+    }
 
-                                        li.addEventListener('click', function () {
-                                            searchInput.value = item.title;
-                                            resultsList.style.display = 'none';
-                                        });
+    /* ── Create a single book result item ───────────────── */
+    function createBookItem(item, source) {
+        const li = document.createElement('li');
+        const idx = allVisibleItems.length;
+        li.classList.add('item');
+        li.setAttribute('role', 'option');
+        li.setAttribute('id', 'result-' + idx);
+        li.setAttribute('tabindex', '-1');
+        li.setAttribute('aria-selected', 'false');
+        allVisibleItems.push(item);
 
-                                        resultsList.appendChild(li);
-                                    });
+        // Badge
+        const badgeClass = source === 'local' ? 'badge-local' : 'badge-openlibrary';
+        const badgeText  = source === 'local' ? 'Acervo' : 'OpenLibrary';
+        const badge = `<span class="badge ${badgeClass}">${badgeText}</span>`;
 
-                                    // Linha divisória
-                                    const divider = document.createElement('hr');
-                                    divider.classList.add('divider');
-                                    resultsList.appendChild(divider);
-                                }
+        // Cover image
+        const imgSrc = item.cover_url || '/static/images/book-placeholder.png';
+        const fallbacks = item.fallback_urls || [];
+        const fallback = fallbacks.length > 0 ? fallbacks[0] : '/static/images/book-placeholder.png';
 
-                                // Sugestões da OpenLibrary
-                                if (data.suggestions.length > 0) {
-                                    const suggestionsLabel = document.createElement('label');
-                                    suggestionsLabel.textContent = 'Sugestões da OpenLibrary';
-                                    suggestionsLabel.classList.add('section-label');
-                                    resultsList.appendChild(suggestionsLabel);
+        li.innerHTML = `
+            <div class="item-image">
+                <img src="${escapeHtml(imgSrc)}"
+                     alt="Capa de ${escapeHtml(item.title)}"
+                     loading="lazy"
+                     onerror="this.onerror=null; this.src='${escapeHtml(fallback)}'">
+            </div>
+            <div class="item-content">
+                <h3 class="item-title">${escapeHtml(item.title)} ${badge}</h3>
+                <p class="item-subtitle">
+                    <ion-icon name="person-outline" aria-hidden="true"></ion-icon>
+                    ${escapeHtml(item.author)}
+                </p>
+                <p class="item-description">
+                    <ion-icon name="pricetag-outline" aria-hidden="true"></ion-icon> ${escapeHtml(item.genre)}
+                    <span aria-hidden="true">·</span>
+                    <ion-icon name="calendar-outline" aria-hidden="true"></ion-icon> ${item.year || '—'}
+                    ${item.publisher
+                        ? `<span aria-hidden="true">·</span> <ion-icon name="business-outline" aria-hidden="true"></ion-icon> ${escapeHtml(item.publisher)}`
+                        : ''}
+                </p>
+            </div>
+        `;
 
-                                    data.suggestions.forEach(item => {
-                                        const li = document.createElement('li');
-                                        li.classList.add('item');
+        li.addEventListener('click', () => populateForm(item));
+        return li;
+    }
 
-                                        li.innerHTML = `
-                                            <div class="item-image">
-                                                <img src="${item.cover_url || 'default.jpg'}" alt="${item.title}">
-                                            </div>
-                                            <div class="item-content">
-                                                <h2 class="item-title">${item.title}</h2>
-                                                <p class="item-subtitle">
-                                                    <i class="fa-solid fa-user"></i> ${item.author}
-                                                </p>
-                                                <p class="item-description">${item.genre} | ${item.year}</p>
-                                            </div>
-                                        `;
-
-                                        li.addEventListener('click', function () {
-                                            searchInput.value = item.title;
-                                            resultsList.style.display = 'none';
-                                        });
-
-                                        resultsList.appendChild(li);
-                                    });
-                                }
-                            } else {
-                                resultsList.style.display = 'none';
-                                noResultsMessage.style.display = 'block'; // Mostra a mensagem de "nenhum resultado"
-                            }
-                        })
-                        .catch(error => console.error('Erro ao buscar itens:', error));
-                }, 300); // Debounce de 300ms
+    /* ── Highlight item for keyboard navigation ─────────── */
+    function highlightItem(index) {
+        const items = resultsList.querySelectorAll('.item');
+        items.forEach((el, i) => {
+            if (i === index) {
+                el.classList.add('active');
+                el.setAttribute('aria-selected', 'true');
+                el.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+                searchInput.setAttribute('aria-activedescendant', el.id);
             } else {
-                resultsList.style.display = 'none'; // Esconde a lista
-                noResultsMessage.style.display = 'none'; // Esconde a mensagem
+                el.classList.remove('active');
+                el.setAttribute('aria-selected', 'false');
             }
         });
+    }
 
-        // Fecha os resultados se clicar fora
-        document.addEventListener('click', function (e) {
-            if (!resultsList.contains(e.target) && e.target !== searchInput) {
-                resultsList.style.display = 'none';
+    /* ── Render results from API response ───────────────── */
+    function renderResults(data, append) {
+        if (!append) {
+            resultsList.innerHTML = '';
+            allVisibleItems = [];
+            selectedIndex = -1;
+        }
+
+        const hasLocal = data.local && data.local.length > 0;
+        const hasSuggestions = data.suggestions && data.suggestions.length > 0;
+        const hasResults = hasLocal || hasSuggestions;
+
+        if (hasResults) {
+            resultsList.style.display = 'flex';
+            noResults.style.display   = 'none';
+            setExpanded(true);
+
+            // If appending, we may need section labels only for new sections
+            if (hasLocal) {
+                // Only add local label if it doesn't already exist or not appending
+                if (!append || !resultsList.querySelector('.section-label-local')) {
+                    const label = document.createElement('li');
+                    label.className = 'section-label section-label-local';
+                    label.setAttribute('role', 'presentation');
+                    label.innerHTML = '<ion-icon name="library-outline" aria-hidden="true" class="me-1"></ion-icon> Seu Acervo';
+                    resultsList.appendChild(label);
+                }
+                data.local.forEach(item => {
+                    resultsList.appendChild(createBookItem(item, 'local'));
+                });
             }
-        });
+
+            if (hasSuggestions) {
+                if (hasLocal && !append) {
+                    const hr = document.createElement('li');
+                    hr.setAttribute('role', 'presentation');
+                    hr.innerHTML = '<hr class="divider">';
+                    resultsList.appendChild(hr);
+                }
+
+                if (!append || !resultsList.querySelector('.section-label-api')) {
+                    const label = document.createElement('li');
+                    label.className = 'section-label section-label-api';
+                    label.setAttribute('role', 'presentation');
+                    label.innerHTML = '<ion-icon name="globe-outline" aria-hidden="true" class="me-1"></ion-icon> OpenLibrary';
+                    resultsList.appendChild(label);
+                }
+                data.suggestions.forEach(item => {
+                    resultsList.appendChild(createBookItem(item, 'openlibrary'));
+                });
+            }
+
+            // Update status
+            const meta = data.metadata || {};
+            setStatus(`Mostrando ${allVisibleItems.length} de ${meta.total || '?'} resultados`);
+        } else if (!append) {
+            resultsList.style.display = 'none';
+            noResults.style.display   = 'block';
+            setExpanded(false);
+            setStatus('');
+        }
+
+        // Load More button
+        const meta = data.metadata || {};
+        if (meta.has_more) {
+            loadMoreBtn.style.display = 'flex';
+        } else {
+            loadMoreBtn.style.display = 'none';
+        }
+    }
+
+    /* ── Fetch results from API ─────────────────────────── */
+    function fetchResults(query, offset, append) {
+        if (abortController) abortController.abort();
+        abortController = new AbortController();
+
+        showSpinner();
+        if (!append) loadMoreBtn.style.display = 'none';
+
+        const url = `/autocomplete?query=${encodeURIComponent(query)}&offset=${offset}&page_size=${PAGE_SIZE}`;
+
+        fetch(url, { signal: abortController.signal })
+            .then(res => res.json())
+            .then(data => {
+                hideSpinner();
+                renderResults(data, append);
+                currentOffset = offset + PAGE_SIZE;
+
+                // Debug
+                if (data.metadata) {
+                    console.log(
+                        `Autocomplete: ${data.metadata.total} results, ` +
+                        `offset=${offset}, has_more=${data.metadata.has_more}, ` +
+                        `${data.metadata.response_time_ms}ms`
+                    );
+                }
+            })
+            .catch(err => {
+                if (err.name !== 'AbortError') {
+                    console.error('Erro na busca:', err);
+                    hideSpinner();
+                    if (!append) {
+                        noResults.style.display = 'block';
+                        resultsList.style.display = 'none';
+                    }
+                }
+            });
+    }
+
+    /* ── Search Input Handler ───────────────────────────── */
+    searchInput.addEventListener('input', function () {
+        const query = searchInput.value.trim();
+
+        if (query.length >= 2) {
+            clearTimeout(debounceTimeout);
+            currentQuery  = query;
+            currentOffset = 0;
+
+            debounceTimeout = setTimeout(() => {
+                fetchResults(query, 0, false);
+            }, 350);
+        } else {
+            // Clear everything
+            resultsList.style.display = 'none';
+            noResults.style.display   = 'none';
+            loadMoreBtn.style.display = 'none';
+            hideSpinner();
+            allVisibleItems = [];
+            selectedIndex = -1;
+            setExpanded(false);
+            setStatus('');
+        }
     });
+
+    /* ── Load More Handler ──────────────────────────────── */
+    loadMoreBtn.addEventListener('click', function () {
+        if (currentQuery) {
+            fetchResults(currentQuery, currentOffset, true);
+        }
+    });
+
+    /* ── Keyboard Navigation ────────────────────────────── */
+    searchInput.addEventListener('keydown', function (e) {
+        const items = resultsList.querySelectorAll('.item');
+        if (items.length === 0) return;
+
+        switch (e.key) {
+            case 'ArrowDown':
+                e.preventDefault();
+                selectedIndex = Math.min(selectedIndex + 1, items.length - 1);
+                highlightItem(selectedIndex);
+                break;
+
+            case 'ArrowUp':
+                e.preventDefault();
+                selectedIndex = Math.max(selectedIndex - 1, 0);
+                highlightItem(selectedIndex);
+                break;
+
+            case 'Enter':
+                e.preventDefault();
+                if (selectedIndex >= 0 && selectedIndex < allVisibleItems.length) {
+                    populateForm(allVisibleItems[selectedIndex]);
+                }
+                break;
+
+            case 'Escape':
+                e.preventDefault();
+                resultsList.style.display = 'none';
+                loadMoreBtn.style.display = 'none';
+                selectedIndex = -1;
+                setExpanded(false);
+                break;
+        }
+    });
+
+    /* ── Close on outside click ─────────────────────────── */
+    document.addEventListener('click', function (e) {
+        if (!resultsList.contains(e.target)
+            && e.target !== searchInput
+            && e.target !== loadMoreBtn
+            && !loadMoreBtn.contains(e.target)) {
+            resultsList.style.display = 'none';
+            loadMoreBtn.style.display = 'none';
+            selectedIndex = -1;
+            setExpanded(false);
+        }
+    });
+});
 </script>
 {% endblock %}
+

@@ -6,6 +6,8 @@ from logging.handlers import RotatingFileHandler
 
 from flask import Flask
 from flask_caching import Cache
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.middleware.proxy_fix import ProxyFix
@@ -17,6 +19,10 @@ from .security.middleware import security_headers
 # Inicializa extensões globais
 db = SQLAlchemy()
 cache = Cache()
+limiter = Limiter(
+    key_func=get_remote_address,
+    default_limits=["200 per day", "50 per hour"]
+)
 login_manager = LoginManager()
 csrf = CSRFProtect()
 
@@ -272,6 +278,7 @@ def create_app():
     csrf.init_app(app)
     register_login_manager(app)
     cache.init_app(app)
+    limiter.init_app(app)
 
     # Registrar blueprints
     register_blueprints(app)

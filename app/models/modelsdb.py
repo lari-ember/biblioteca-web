@@ -136,6 +136,7 @@ class Book(db.Model):
     __table_args__ = (
         CheckConstraint('publication_year BETWEEN 1800 AND EXTRACT(YEAR FROM NOW())',
                         name='valid_publication_year'),
+        db.Index('idx_book_search', 'title', 'author'),
     )
 
     @validates('isbn')
@@ -294,6 +295,32 @@ class UserPreferences(db.Model):
     
     def __repr__(self):
         return f'<UserPreferences user_id={self.user_id}>'
+
+
+class APIMetrics(db.Model):
+    """
+    Performance metrics for API calls (OpenLibrary, etc.).
+
+    Tracks response times, cache hits, errors, and query patterns
+    for analytics and optimization.
+    """
+    __tablename__ = 'api_metrics'
+    id = db.Column(db.Integer, primary_key=True)
+    endpoint = db.Column(db.String(100), nullable=False)
+    response_time_ms = db.Column(db.Float, nullable=False)
+    cache_hit = db.Column(db.Boolean, default=False, nullable=False)
+    error_occurred = db.Column(db.Boolean, default=False, nullable=False)
+    error_message = db.Column(db.Text, nullable=True)
+    query = db.Column(db.String(200), nullable=True)
+    results_count = db.Column(db.Integer, default=0, nullable=False)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow, nullable=False, index=True)
+
+    __table_args__ = (
+        db.Index('idx_metrics_endpoint_time', 'endpoint', 'timestamp'),
+    )
+
+    def __repr__(self):
+        return f'<APIMetrics endpoint={self.endpoint} time={self.response_time_ms}ms>'
 
 
 # ============================================================================

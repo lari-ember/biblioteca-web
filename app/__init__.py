@@ -17,6 +17,9 @@ from flask_wtf import CSRFProtect
 
 from .security.middleware import security_headers
 
+# Version
+__version__ = "1.2.4"
+
 # Inicializa extensões globais
 db = SQLAlchemy()
 cache = Cache()

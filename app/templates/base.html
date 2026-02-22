@@ -122,6 +122,9 @@
     <link href="{{ url_for('static', filename='css/pages/home.css') }}" rel="stylesheet">
     {% endif %}
 
+    <!-- Bloco para CSS específico da página (templates filhas podem estender) -->
+    {% block head %}{% endblock %}
+
     <!-- Scripts críticos -->
     <script>
         // Detecção de preferências do usuário

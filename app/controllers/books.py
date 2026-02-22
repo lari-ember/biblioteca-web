@@ -165,13 +165,14 @@ def autocomplete():
 
     try:
         # Step 1: Search user's local collection (always prioritized)
+        # Search filters: title (starts with), author (contains), ISBN (contains)
         search_filters = [
-            Book.title.ilike(f'%{query}%'),
-            Book.author.ilike(f'%{query}%'),
+            Book.title.ilike(f'{query}%'),      # ← Starts with (better results)
+            Book.author.ilike(f'%{query}%'),    # ← Contains (author names vary)
         ]
         # Add ISBN search if query looks like a number
         if query.replace('-', '').replace(' ', '').isdigit():
-            search_filters.append(Book.isbn.ilike(f'%{query}%'))
+            search_filters.append(Book.isbn.ilike(f'%{query}%'))  # ← Contains (formatting variations)
 
         local_books = Book.query.join(UserBooks).filter(
             UserBooks.user_id == current_user.id,

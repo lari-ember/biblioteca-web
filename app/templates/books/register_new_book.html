@@ -28,9 +28,7 @@
                             </label>
 
                             <div class="search-input-group" role="search">
-                                <div class="input-icon" aria-hidden="true">
-                                    <ion-icon name="search-outline"></ion-icon>
-                                </div>
+                                <ion-icon name="search-outline"></ion-icon>
                                 <input id="search"
                                        type="text"
                                        class="input-field"
@@ -124,20 +122,12 @@
                                 </div>
                                 <div class="col-md-6">
                                     <label for="pages" class="form-label">Pages <span class="required-mark">*</span></label>
-                                    <div class="pages-input-wrapper">
-                                        <button type="button" class="pages-btn pages-minus" aria-label="Decrease pages" tabindex="-1">
-                                            <ion-icon name="remove-outline" aria-hidden="true"></ion-icon>
-                                        </button>
                                         {{ form.pages(class="form-control pages-field", id="pages",
-                                           placeholder="0",
+                                           placeholder="100",
                                            min="1",
-                                           max="99999",
+                                           max="9999",
                                            inputmode="numeric",
                                            aria_required="true") }}
-                                        <button type="button" class="pages-btn pages-plus" aria-label="Increase pages" tabindex="-1">
-                                            <ion-icon name="add-outline" aria-hidden="true"></ion-icon>
-                                        </button>
-                                    </div>
                                 </div>
                             </div>
 
@@ -213,8 +203,7 @@
                         {% endif %}
 
                         <div class="text-center mt-4">
-                            <button type="submit" class="btn-register">
-                                <ion-icon name="add-outline" aria-hidden="true" class="me-1"></ion-icon>
+                            <button type="submit" class="btn btn btn-outline-light">
                                 Register New Book
                             </button>
                         </div>
@@ -340,6 +329,18 @@ document.addEventListener('DOMContentLoaded', function () {
     /* ================================================================
        Create a single book result card
        ================================================================ */
+    // Array of generic placeholder covers (randomly selected)
+    const GENERIC_COVERS = [
+        '/static/images/cine_metah.jpg',
+        '/static/images/elevator_painting.jpg',
+        '/static/images/jalaish-ill.png',
+        '/static/images/wallpaper.jpg'
+    ];
+
+    function getRandomPlaceholder() {
+        return GENERIC_COVERS[Math.floor(Math.random() * GENERIC_COVERS.length)];
+    }
+
     function createBookItem(item, source) {
         const li = document.createElement('li');
         const idx = allVisibleItems.length;
@@ -355,9 +356,9 @@ document.addEventListener('DOMContentLoaded', function () {
         const badgeText  = isLocal ? 'Your Collection' : 'OpenLibrary';
         const badgeIcon  = isLocal ? 'library-outline' : 'globe-outline';
 
-        const imgSrc  = item.cover_url || '/static/images/book-placeholder.png';
+        const imgSrc  = item.cover_url || getRandomPlaceholder();
         const fallbacks = item.fallback_urls || [];
-        const fallback  = fallbacks[0] || '/static/images/book-placeholder.png';
+        const fallback  = fallbacks[0] || getRandomPlaceholder();
 
         // Extra metadata chips
         const chips = [];

@@ -79,7 +79,7 @@
     display: flex;
     align-items: center;
     background-color: var(--reg-bg-field);
-    border: 2px solid var(--reg-accent-dim);
+    border: 2px solid rgba(221, 0, 221, 0.35);
     padding: 10px 16px;
     border-radius: var(--reg-radius);
     gap: 10px;
@@ -109,12 +109,12 @@
     width: 100%;
     border: none;
     background: transparent;
-    color: var(--reg-text);
+    color: #ffffff;
     font-family: var(--reg-font);
     font-size: 0.95rem;
 }
 
-.input-field::placeholder { color: rgba(243,243,243,0.45); }
+.input-field::placeholder { color: rgba(255,255,255,0.5); }
 .input-field:focus { outline: none; }
 
 /* Spinner */
@@ -134,10 +134,11 @@
     position: relative;
     width: 100%;
     margin-top: 8px;
-    background: var(--reg-bg-deep);
-    border: 1px solid var(--reg-accent-dim);
+    background: rgba(34, 13, 53, 0.8);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(221, 0, 221, 0.4);
     border-radius: var(--reg-radius);
-    box-shadow: 0 12px 36px rgba(0,0,0,0.55);
+    box-shadow: 0 12px 36px rgba(0,0,0,0.55), inset 0 1px 3px rgba(255, 255, 255, 0.08);
     padding: 10px;
     z-index: 200;
 }
@@ -189,25 +190,31 @@
     align-items: center;
     gap: 14px;
     padding: 12px 14px;
-    border-radius: 8px;
-    border: 1.5px solid transparent;
-    background: rgba(80, 14, 80, 0.18);
+    border-radius: 10px;
+    border: 1.5px solid rgba(221, 0, 221, 0.3);
+    background: rgba(80, 14, 80, 0.25);
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25), inset 0 1px 2px rgba(255, 255, 255, 0.08);
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.3s ease;
     list-style: none;
+    position: relative;
 }
 
 .result-item:hover {
-    background: rgba(80, 14, 80, 0.45);
-    border-color: var(--reg-accent-dim);
+    background: rgba(80, 14, 80, 0.35);
+    border-color: rgba(221, 0, 221, 0.5);
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(221, 0, 221, 0.2), inset 0 1px 2px rgba(255, 255, 255, 0.12);
 }
 
 .result-item.active,
 .result-item:focus-visible {
-    background: rgba(80, 14, 80, 0.55);
+    background: rgba(80, 14, 80, 0.4);
     border-color: var(--reg-accent);
     outline: none;
-    box-shadow: 0 0 0 2px var(--reg-accent-glow);
+    box-shadow: 0 0 0 2px var(--reg-accent-glow), 0 8px 24px rgba(221, 0, 221, 0.25), inset 0 1px 2px rgba(255, 255, 255, 0.12);
+    transform: translateY(-4px);
 }
 
 /* Cover image */
@@ -333,9 +340,11 @@
     color: var(--reg-text-dim);
     padding: 18px 12px;
     margin-top: 8px;
-    background: var(--reg-bg-deep);
+    background: rgba(34, 13, 53, 0.6);
+    backdrop-filter: blur(8px);
     border-radius: var(--reg-radius);
-    border: 1px solid rgba(221,0,221,0.15);
+    border: 2px solid rgba(221, 0, 221, 0.3);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25), inset 0 1px 2px rgba(255, 255, 255, 0.08);
 }
 .no-results-msg ion-icon {
     display: block;
@@ -356,7 +365,7 @@
     font-size: 0.82rem;
     font-weight: 600;
     letter-spacing: 0.03em;
-    border: 1px solid var(--reg-accent-dim);
+    border: 2px solid rgba(221, 0, 221, 0.4);
     border-radius: 8px;
     cursor: pointer;
     display: flex;
@@ -367,6 +376,7 @@
 }
 .load-more-btn:hover {
     background: linear-gradient(135deg, rgba(80,14,80,0.8), rgba(221,0,221,0.5));
+    border-color: var(--reg-accent);
     box-shadow: 0 4px 12px rgba(221,0,221,0.3);
 }
 .load-more-btn:focus-visible {
@@ -405,7 +415,7 @@
 .register-card-inner .form-control,
 .register-card-inner .form-select {
     background-color: var(--reg-bg-field);
-    border: 1px solid rgba(221,0,221,0.2);
+    border: 2px solid rgba(221,0,221,0.25);
     color: var(--reg-text);
     border-radius: 8px;
     padding: 10px 14px;
@@ -528,10 +538,11 @@
     list-style: none;
     margin: 4px 0 0;
     padding: 6px;
-    background: var(--reg-bg-deep);
-    border: 1px solid var(--reg-accent-dim);
+    background: rgba(34, 13, 53, 0.85);
+    backdrop-filter: blur(8px);
+    border: 2px solid rgba(221, 0, 221, 0.4);
     border-radius: 8px;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.5), inset 0 1px 2px rgba(255, 255, 255, 0.08);
     max-height: 280px;
     overflow-y: auto;
 
@@ -594,8 +605,8 @@
 .genre-new-hint {
     margin-top: 6px;
     padding: 8px 12px;
-    background: rgba(221,0,221,0.08);
-    border: 1px dashed var(--reg-accent-dim);
+    background: rgba(221, 0, 221, 0.08);
+    border: 2px dashed rgba(221, 0, 221, 0.4);
     border-radius: 8px;
     font-size: 0.8rem;
     color: var(--reg-accent);
@@ -645,7 +656,7 @@
 /* ── Existing book warning ────────────────────────────── */
 .existing-book-warning {
     background: rgba(80,14,80,0.3);
-    border: 1px solid var(--reg-accent-dim);
+    border: 2px solid rgba(255, 107, 107, 0.4);
     border-radius: var(--reg-radius);
     padding: 16px;
 }

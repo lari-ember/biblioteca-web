@@ -1,9 +1,87 @@
-# Changelog
+a# Changelog
 
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [1.2.4] - 2026-02-22
+
+### Added
+
+#### UI/UX Visual Enhancements - Register New Book Page
+
+**CSS Styling (`app/static/css/pages/register.css`):**
+- ✅ **Glassmorphism Effects**: Added `backdrop-filter: blur(8px-10px)` to major containers (autocomplete results, result cards, genre dropdown, no-results message) for modern frosted glass appearance
+- ✅ **Enhanced Border System**: Updated all components with 2px solid borders for better visual separation:
+  - Primary cards: `rgba(221, 0, 221, 0.35)` magenta border
+  - Search input: `rgba(221, 0, 221, 0.35)` border
+  - Form fields: `rgba(221, 0, 221, 0.25)` border
+  - Result items: `rgba(221, 0, 221, 0.3)` border with 1.5px thickness
+  - Load more button: `rgba(221, 0, 221, 0.4)` border
+  - Genre dropdown: `rgba(221, 0, 221, 0.4)` border with glassmorphism
+  - Warning elements: `rgba(255, 107, 107, 0.4)` red border
+- ✅ **3D Hover Effects**: Result items now lift on hover with:
+  - `transform: translateY(-4px)` for floating effect
+  - Enhanced shadow: `0 8px 24px rgba(221, 0, 221, 0.2)`
+  - Smooth 0.3s transition timing
+  - Visual feedback indicating interactivity
+- ✅ **Dual-Layer Shadow System**: Implemented professional shadow depth:
+  - Drop shadows for elevation effect
+  - Inset highlights (0.08-0.12 alpha white) for subtle top lighting
+  - Default: `0 4px 12px`, Hover: `0 8px 24px`, Containers: `0 12px 36px`
+- ✅ **Search Input Text Color**: Changed text color to pure white (`#ffffff`) with improved placeholder contrast (`rgba(255, 255, 255, 0.5)`)
+
+#### Search Algorithm Improvement
+
+**Backend (`app/controllers/books.py`):**
+- ✅ **Title-Based Search Prioritization**: Changed local database search from "contains anywhere" (`%query%`) to "starts with" (`query%`) pattern
+  - Results now prioritize titles beginning with search query
+  - Example: "a casa" returns only "A CASA", "A CASA PEQUENA", etc., not "BANCO MERCANTIL C.A. S.A.C.A"
+  - Author search remains flexible with "contains anywhere" pattern for name variations
+  - ISBN search maintains "contains" pattern for formatting flexibility
+
+#### Template Infrastructure
+
+**Base Template (`app/templates/base.html`):**
+- ✅ **Added `{% block head %}` Block**: Enables child templates to inject page-specific CSS
+  - Positioned before closing `</head>` tag
+  - Allows proper template inheritance for page-specific styling
+  - Fixed register.css loading issue
+
+#### Placeholder Image System
+
+**Frontend (`app/templates/books/register_new_book.html`):**
+- ✅ **Random Generic Placeholder Images**: Implemented smart fallback for books without covers:
+  - Array of 4 existing generic images: `cine_metah.jpg`, `elevator_painting.jpg`, `jalaish-ill.png`, `wallpaper.jpg`
+  - Random selection function: `getRandomPlaceholder()` with fair 25% distribution per image
+  - Applied to both primary image and fallback: `item.cover_url || getRandomPlaceholder()`
+  - Eliminates 404 errors for missing placeholder
+  - Adds visual diversity to autocomplete results
+  - Works seamlessly with lazy loading
+
+### Changed
+
+- **CSS Components**: All border styles updated to 2px thickness with consistent magenta color scheme
+- **Visual Design**: More polished, modern appearance with glassmorphism and 3D effects
+- **Search Results**: Improved relevance with title-based prioritization
+- **Placeholder Handling**: Dynamic image selection instead of static file
+
+### Improved
+
+- **Visual Hierarchy**: Clearer element separation with enhanced borders and depth
+- **User Engagement**: 3D hover effects and glassmorphism create more interactive feel
+- **Search Accuracy**: Title search now returns more relevant results first
+- **Design Consistency**: All UI elements follow unified styling system
+- **Accessibility**: Enhanced contrast and focus states maintained
+
+### Fixed
+
+- **Template Inheritance**: Child templates can now properly extend `base.html` with page-specific CSS
+- **Placeholder Images**: No more 404 errors; all books without covers display generic images successfully
+- **Search Results**: No more irrelevant results when typing specific titles
+
+---
 
 ## [1.1.0] - 2026-02-20
 

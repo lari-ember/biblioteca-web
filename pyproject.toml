@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "biblioteca-web"
-version = "1.1.0"
+como version = "1.2.4"
 description = "A comprehensive digital library management system"
 authors = [{name = "Larissa Ember", email = "larissaember0@gmail.com"}]
 license = {text = "MIT"}

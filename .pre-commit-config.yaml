@@ -31,3 +31,12 @@ repos:
     hooks:
       - id: bandit
         args: [-r, app/, -ll]
+
+  - repo: local
+    hooks:
+      - id: bump-version
+        name: Sync version from CHANGELOG.md
+        language: python
+        entry: python scripts/bump_version.py
+        pass_filenames: false
+        files: ^CHANGELOG\.md$

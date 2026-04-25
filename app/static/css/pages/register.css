@@ -395,6 +395,77 @@
 }
 
 /* ================================================================
+   VALIDATION ERRORS
+   ================================================================ */
+
+.validation-errors-alert {
+    background: linear-gradient(135deg, rgba(220, 53, 69, 0.1), rgba(255, 107, 107, 0.1));
+    border: 2px solid rgba(220, 53, 69, 0.3);
+    border-left: 4px solid #dc3545;
+    border-radius: var(--reg-radius);
+    padding: 1rem 1.5rem;
+    margin-bottom: 1.5rem;
+    color: #f8d7da;
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.validation-errors-alert h4 {
+    margin: 0 0 0.75rem;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #ff6b6b;
+    display: flex;
+    align-items: center;
+    font-family: var(--reg-font);
+}
+
+.validation-errors-alert h4 ion-icon {
+    font-size: 1.2rem;
+}
+
+.validation-errors-alert ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.validation-errors-alert ul li {
+    padding-left: 1.5rem;
+    position: relative;
+    font-size: 0.9rem;
+    color: #f8d7da;
+}
+
+.validation-errors-alert ul li::before {
+    content: '✕';
+    position: absolute;
+    left: 0;
+    color: #dc3545;
+    font-weight: bold;
+}
+
+/* Highlight invalid fields */
+.register-card-inner .form-control.validation-error,
+.register-card-inner .form-select.validation-error {
+    border-color: #dc3545 !important;
+    box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.2) !important;
+}
+
+/* ================================================================
    FORM FIELDS
    ================================================================ */
 
@@ -670,6 +741,281 @@
 .existing-book-warning .table { color: var(--reg-text); margin-bottom: 8px; }
 
 /* ================================================================
+   CONFIRMATION MODAL — Book Summary & Duplicate Detection
+   ================================================================ */
+
+/* Modal Overlay */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    backdrop-filter: blur(6px);
+}
+
+.modal-overlay::backdrop {
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+.modal-content {
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid rgba(221, 0, 221, 0.3);
+}
+
+.modal-header h3 {
+    margin: 0;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--reg-font);
+}
+
+.modal-header .btn-close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    font-size: 1.5rem;
+    color: var(--reg-text-dim);
+    transition: color 0.2s ease;
+    flex-shrink: 0;
+}
+
+.modal-header .btn-close:hover {
+    color: var(--reg-accent);
+}
+
+.modal-footer {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 2px solid rgba(221, 0, 221, 0.3);
+}
+
+.modal-footer button {
+    flex: 1;
+    padding: 12px 20px;
+    border-radius: var(--reg-radius);
+    font-weight: 600;
+}
+
+.modal-footer button:first-child {
+    background-color: rgba(80, 14, 80, 0.5);
+    border: 2px solid rgba(221, 0, 221, 0.3);
+    color: var(--reg-text);
+    transition: all 0.2s ease;
+}
+
+.modal-footer button:first-child:hover {
+    background-color: rgba(80, 14, 80, 0.7);
+    border-color: rgba(221, 0, 221, 0.5);
+}
+
+/* Confirmation Panel */
+.confirmation-book-summary {
+    background: rgba(80, 14, 80, 0.25);
+    padding: 1.5rem;
+    border-radius: var(--reg-radius);
+    border: 2px solid rgba(221, 0, 221, 0.2);
+    margin-bottom: 1.5rem;
+}
+
+.confirmation-book-summary h4 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #fff;
+    margin: 0 0 1rem;
+    font-family: var(--reg-font);
+}
+
+.summary-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+
+.summary-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.summary-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--reg-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-family: var(--reg-font);
+}
+
+.summary-value {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: #fff;
+    word-break: break-word;
+    font-family: var(--reg-font);
+}
+
+/* Duplicates Warning */
+.duplicates-warning {
+    background: linear-gradient(135deg, rgba(255, 193, 7, 0.08), rgba(255, 107, 107, 0.08));
+    border-left: 4px solid #FFB020;
+    padding: 1.5rem;
+    border-radius: var(--reg-radius);
+    margin-bottom: 1.5rem;
+    border: 2px solid rgba(255, 107, 107, 0.2);
+}
+
+.duplicates-warning h4 {
+    color: #FFB020;
+    margin: 0 0 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 700;
+    font-size: 1rem;
+    font-family: var(--reg-font);
+}
+
+.duplicates-warning > p {
+    color: var(--reg-text-dim);
+    margin: 0.5rem 0 1rem;
+    font-size: 0.9rem;
+}
+
+.duplicates-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.duplicate-item {
+    background: rgba(53, 18, 53, 0.5);
+    padding: 1rem;
+    border-radius: 8px;
+    border: 2px solid rgba(255, 107, 107, 0.25);
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 1rem;
+    align-items: start;
+}
+
+.duplicate-cover {
+    width: 60px;
+    height: 80px;
+    border-radius: 6px;
+    overflow: hidden;
+    background: rgba(25, 10, 35, 0.8);
+    border: 1px solid rgba(221, 0, 221, 0.2);
+    flex-shrink: 0;
+}
+
+.duplicate-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.duplicate-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.duplicate-info h5 {
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #fff;
+    font-family: var(--reg-font);
+}
+
+.duplicate-info p {
+    margin: 0;
+    font-size: 0.8rem;
+    color: var(--reg-text-dim);
+}
+
+.duplicate-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    background: rgba(221, 0, 221, 0.15);
+    color: var(--reg-accent);
+    margin-top: 0.5rem;
+    width: fit-content;
+}
+
+.similarity-score {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    text-align: center;
+}
+
+.similarity-badge {
+    font-weight: 700;
+    font-size: 1.3rem;
+    font-family: 'Courier Prime', 'Courier New', monospace;
+}
+
+.similarity-high {
+    color: #ff6b6b;
+}
+
+.similarity-medium {
+    color: #FFB020;
+}
+
+.similarity-low {
+    color: #25C744;
+}
+
+.similarity-score small {
+    font-size: 0.7rem;
+    color: var(--reg-text-muted);
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+/* ================================================================
    RESPONSIVE
    ================================================================ */
 @media (max-width: 768px) {
@@ -694,3 +1040,43 @@
     .search-input-group { padding: 8px 12px; }
 }
 
+@media (max-width: 768px) {
+    .summary-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .modal-overlay {
+        align-items: flex-end;
+    }
+
+    .modal-content {
+        border-radius: 20px 20px 0 0;
+        max-height: 95vh;
+        width: 100%;
+    }
+
+    .duplicate-item {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+
+    .duplicate-cover {
+        display: none;
+    }
+
+    .similarity-score {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        text-align: left;
+    }
+
+    .modal-footer {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .modal-footer button {
+        width: 100%;
+    }
+}

@@ -34,6 +34,85 @@ def _normalize_search_text(value):
     return ' '.join(value.split())
 
 
+@books_bp.route('/check_duplicates', methods=['POST'])
+@login_required
+def check_duplicates():
+    """Check for similar books in the user's collection."""
+    try:
+        data = request.get_json()
+        title = (data.get('title') or '').strip()
+        author = (data.get('author') or '').strip()
+        isbn = (data.get('isbn') or '').strip()
+        
+        if not title or not author:
+            return jsonify({'duplicates': [], 'error': 'Title and author are required'}), 400
+        
+        # Normalize search terms
+        title_search = f'%{title}%'
+        author_search = f'%{author}%'
+        
+        # Find similar books in user's collection
+        similar_books = db.session.query(Book, UserBooks).join(
+            UserBooks, Book.id == UserBooks.book_id
+        ).filter(
+            UserBooks.user_id == current_user.id,
+            db.or_(
+                Book.title.ilike(title_search),
+                Book.author.ilike(author_search),
+                (Book.isbn == isbn) if isbn else False
+            )
+        ).all()
+        
+        duplicates = []
+        for book, user_book in similar_books:
+            # Calculate similarity score
+            title_match = book.title.lower().strip() == title.lower().strip()
+            author_match = book.author.lower().strip() == author.lower().strip()
+            isbn_match = book.isbn == isbn if isbn else False
+            
+            similarity = 0
+            if title_match:
+                similarity += 50
+            elif title.lower() in book.title.lower():
+                similarity += 25
+                
+            if author_match:
+                similarity += 40
+            elif author.lower() in book.author.lower():
+                similarity += 20
+                
+            if isbn_match:
+                similarity += 40
+            
+            duplicates.append({
+                'id': book.id,
+                'title': book.title,
+                'author': book.author,
+                'year': book.publication_year,
+                'isbn': book.isbn,
+                'cover_url': book.cover_url,
+                'similarity': similarity,
+                'read_status': user_book.read_status if user_book else 'unread',
+                'status': user_book.status if user_book else 'available'
+            })
+        
+        # Sort by similarity score descending
+        duplicates.sort(key=lambda x: x['similarity'], reverse=True)
+        
+        return jsonify({
+            'duplicates': duplicates,
+            'has_duplicates': len(duplicates) > 0,
+            'book_data': {
+                'title': title,
+                'author': author,
+                'isbn': isbn
+            }
+        })
+    except Exception as e:
+        current_app.logger.error(f"Check duplicates error: {str(e)}")
+        return jsonify({'error': str(e), 'duplicates': []}), 500
+
+
 @books_bp.route('/register_new_book', methods=['GET', 'POST'])
 @login_required
 def register_new_book():

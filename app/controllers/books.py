@@ -6,8 +6,11 @@ This ensures the app can start without errors.
 import json
 import os
 import time
+import io
+import csv
+import unicodedata
 
-from flask import Blueprint, render_template, redirect, url_for, flash, request, current_app, jsonify
+from flask import Blueprint, render_template, redirect, url_for, flash, request, current_app, jsonify, Response
 from flask_login import login_required, current_user
 from app import db, cache, limiter
 from app.models.modelsdb import Book, UserBooks
@@ -18,6 +21,17 @@ from datetime import datetime
 
 # Blueprint creation
 books_bp = Blueprint('books', __name__, url_prefix='')
+
+VALID_READ_STATUS = {'want_to_read', 'unread', 'reading', 'read'}
+VALID_BOOK_STATUS = {'available', 'borrowed', 'wishlist', 'ex-libris'}
+VALID_FORMATS = {'physical', 'hardcover', 'paperback', 'ebook', 'pdf', 'audiobook', 'comic'}
+
+
+def _normalize_search_text(value):
+    value = (value or '').strip().lower()
+    value = unicodedata.normalize('NFKD', value)
+    value = ''.join(ch for ch in value if not unicodedata.combining(ch))
+    return ' '.join(value.split())
 
 
 @books_bp.route('/register_new_book', methods=['GET', 'POST'])
@@ -53,6 +67,8 @@ def register_new_book():
                 genre=genre_title,
                 isbn=form.isbn.data.strip() if form.isbn.data else None,
                 cover_url=form.cover_url.data if form.cover_url.data else None,
+                country_of_origin=form.country_of_origin.data.strip() if form.country_of_origin.data else None,
+                original_language=form.original_language.data.strip() if form.original_language.data else None,
             )
 
             db.session.add(book)
@@ -102,8 +118,7 @@ def your_collection():
         page = request.args.get('page', 1, type=int)
         per_page = 20
 
-        # Query user's books
-        books_query = Book.query.join(UserBooks).filter(
+        books_query = db.session.query(UserBooks, Book).join(Book).filter(
             UserBooks.user_id == current_user.id
         ).order_by(Book.title.asc())
 
@@ -165,10 +180,10 @@ def autocomplete():
 
     try:
         # Step 1: Search user's local collection (always prioritized)
-        # Search filters: title (starts with), author (contains), ISBN (contains)
+        # Search filters: starts-with for title/author to avoid noisy matches
         search_filters = [
             Book.title.ilike(f'{query}%'),      # ← Starts with (better results)
-            Book.author.ilike(f'%{query}%'),    # ← Contains (author names vary)
+            Book.author.ilike(f'{query}%'),
         ]
         # Add ISBN search if query looks like a number
         if query.replace('-', '').replace(' ', '').isdigit():
@@ -189,6 +204,8 @@ def autocomplete():
                 'publisher': book.publisher,
                 'pages': book.pages,
                 'isbn': book.isbn,
+                'country_of_origin': book.country_of_origin,
+                'original_language': book.original_language,
                 'source': 'local'
             }
             for book in local_books
@@ -203,6 +220,16 @@ def autocomplete():
                 ol_service = get_openlibrary_service()
                 api_results = ol_service.search_books(query, limit=remaining_for_api)
 
+                normalized_query = _normalize_search_text(query)
+                is_numeric_query = query.replace('-', '').replace(' ', '').isdigit()
+                filtered_api_results = []
+                for item in api_results:
+                    title_norm = _normalize_search_text(item.get('title', ''))
+                    if is_numeric_query:
+                        filtered_api_results.append(item)
+                    elif normalized_query and title_norm.startswith(normalized_query):
+                        filtered_api_results.append(item)
+
                 all_suggestions = [
                     {
                         'title': item['title'],
@@ -214,10 +241,12 @@ def autocomplete():
                         'publisher': item['publisher'],
                         'pages': item.get('pages', 0),
                         'isbn': item.get('isbn'),
+                        'country_of_origin': item.get('country_of_origin'),
+                        'original_language': item.get('original_language'),
                         'openlibrary_key': item.get('openlibrary_key'),
                         'source': 'openlibrary'
                     }
-                    for item in api_results
+                    for item in filtered_api_results
                 ]
             except Exception as api_err:
                 current_app.logger.warning(f"OpenLibrary fallback error: {api_err}")
@@ -329,14 +358,152 @@ def add_to_collection(book_id):
 
 
 @books_bp.route('/view_book/<int:book_id>', methods=['GET'])
+@login_required
 def view_book(book_id):
-    """Placeholder - to be implemented after migration."""
+    """Display a single book page for the current user's collection item."""
     try:
-        book = Book.query.get_or_404(book_id)
-        return render_template('view_book.html', book=book)
+        user_book = UserBooks.query.filter_by(user_id=current_user.id, book_id=book_id).first()
+        if not user_book:
+            flash('Book not found in your collection.', 'warning')
+            return redirect(url_for('books.your_collection'))
+
+        return render_template('view_book.html', book=user_book.book, user_book=user_book)
     except Exception as e:
+        current_app.logger.error(f"View book error: {str(e)}")
         flash('Book not found', 'error')
         return redirect(url_for('books.your_collection'))
+
+
+@books_bp.route('/your_collection/export', methods=['GET'])
+@login_required
+def export_collection():
+    """Export the current user's collection to CSV."""
+    rows = db.session.query(UserBooks, Book).join(Book).filter(
+        UserBooks.user_id == current_user.id
+    ).order_by(Book.title.asc()).all()
+
+    output = io.StringIO()
+    writer = csv.writer(output)
+    writer.writerow([
+        'title', 'author', 'publisher', 'publication_year', 'pages', 'genre', 'isbn',
+        'country_of_origin', 'original_language', 'status', 'read_status', 'format',
+        'cover_url', 'openlibrary_key'
+    ])
+
+    for user_book, book in rows:
+        writer.writerow([
+            book.title,
+            book.author,
+            book.publisher,
+            book.publication_year,
+            book.pages,
+            book.genre,
+            book.isbn or '',
+            book.country_of_origin or '',
+            book.original_language or '',
+            user_book.status,
+            user_book.read_status,
+            user_book.format,
+            book.cover_url or '',
+            ''
+        ])
+
+    csv_data = output.getvalue()
+    filename = f"collection_user_{current_user.id}_{datetime.utcnow().strftime('%Y%m%d_%H%M%S')}.csv"
+    return Response(
+        csv_data,
+        mimetype='text/csv',
+        headers={'Content-Disposition': f'attachment; filename={filename}'}
+    )
+
+
+@books_bp.route('/your_collection/import', methods=['POST'])
+@login_required
+def import_collection():
+    """Import books from a CSV file into the current user's collection."""
+    uploaded = request.files.get('collection_file')
+    if not uploaded or not uploaded.filename:
+        flash('Please choose a CSV file to import.', 'warning')
+        return redirect(url_for('books.your_collection'))
+
+    try:
+        content = uploaded.read().decode('utf-8-sig')
+        reader = csv.DictReader(io.StringIO(content))
+    except Exception:
+        flash('Invalid file format. Please upload a UTF-8 CSV file.', 'danger')
+        return redirect(url_for('books.your_collection'))
+
+    imported_count = 0
+    skipped_count = 0
+
+    for row in reader:
+        savepoint = None
+        try:
+            title = (row.get('title') or '').strip()
+            author = (row.get('author') or '').strip()
+            publisher = (row.get('publisher') or '').strip() or 'Unknown Publisher'
+            genre = (row.get('genre') or '').strip() or 'General'
+
+            if not title or not author:
+                skipped_count += 1
+                continue
+
+            publication_year = int((row.get('publication_year') or '').strip() or datetime.utcnow().year)
+            pages = int((row.get('pages') or '').strip() or 1)
+
+            code = generate_book_code(genre.title(), author, title)
+            if not code:
+                code = f"{author[:1].upper()}000{title[:1].lower()}"
+
+            savepoint = db.session.begin_nested()
+
+            book = Book(
+                code=code,
+                title=title,
+                author=author,
+                publisher=publisher,
+                publication_year=publication_year,
+                pages=max(1, pages),
+                genre=genre.title(),
+                isbn=(row.get('isbn') or '').strip() or None,
+                country_of_origin=(row.get('country_of_origin') or '').strip() or None,
+                original_language=(row.get('original_language') or '').strip() or None,
+                cover_url=(row.get('cover_url') or '').strip() or None,
+            )
+            db.session.add(book)
+            db.session.flush()
+
+            raw_status = (row.get('status') or 'available').strip().lower()
+            raw_read = (row.get('read_status') or 'unread').strip().lower()
+            raw_format = (row.get('format') or 'physical').strip().lower()
+
+            user_book = UserBooks(
+                user_id=current_user.id,
+                book_id=book.id,
+                status=raw_status if raw_status in VALID_BOOK_STATUS else 'available',
+                read_status=raw_read if raw_read in VALID_READ_STATUS else 'unread',
+                format=raw_format if raw_format in VALID_FORMATS else 'physical',
+                acquisition_date=datetime.utcnow()
+            )
+            db.session.add(user_book)
+            savepoint.commit()
+            imported_count += 1
+        except Exception:
+            if savepoint is not None:
+                savepoint.rollback()
+            skipped_count += 1
+            continue
+
+    try:
+        db.session.commit()
+        cache.clear()
+        flash(f'Import completed: {imported_count} book(s) added, {skipped_count} skipped.', 'success')
+    except Exception as e:
+        db.session.rollback()
+        current_app.logger.error(f"Import error: {str(e)}")
+        flash('Error importing collection.', 'danger')
+
+    return redirect(url_for('books.your_collection'))
 
 
 @books_bp.route('/edit_book/<int:book_id>', methods=['GET', 'POST'])

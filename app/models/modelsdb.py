@@ -125,6 +125,8 @@ class Book(db.Model):
     pages = db.Column(db.Integer, nullable=False)
     cover_url = db.Column(db.String(200))
     genre = db.Column(db.String(50), nullable=False)
+    country_of_origin = db.Column(db.String(80))
+    original_language = db.Column(db.String(40))
     description = db.Column(db.Text)  # Book summary for SEO
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
@@ -186,7 +188,7 @@ class UserBooks(db.Model):
     
     # User-specific attributes (moved from Book model)
     status = db.Column(db.String(20), nullable=False, default='available')  # available/borrowed/ex-libris
-    read_status = db.Column(db.String(20), nullable=False, default='unread')  # read/unread/reading
+    read_status = db.Column(db.String(20), nullable=False, default='unread')  # want_to_read/unread/reading/read
     format = db.Column(db.String(20), nullable=False, default='physical')  # physical/ebook/pdf
     quantity = db.Column(db.Integer, nullable=False, default=1)
     acquisition_notes = db.Column(db.Text)

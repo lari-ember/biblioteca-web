@@ -1,178 +1,55 @@
 {% extends "base.html" %}
 
-{% set is_book_page = true %}
+{% block head %}
+  {{ super() }}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/pages/collection.css') }}">
+{% endblock %}
 
 {% block content %}
-<div class="parallax-container backgbs text-white">
-    <div class="container-fluid">
-        <h1 class="text-center my-4">{{ book.title }}</h1>
-        <div class="row">
-            <div class="d-flex text-center col-xl-12 col-md-12 mb-4 justify-content-center align-items-center">
-                <div class="text-center col-xl-1 col-md-1 mb-4 p-4 bginfob">
-                    <p>Número de Páginas: {{ book.pages }}</p>
-                    <p>Gênero: {{ book.genre }}</p>
-                </div>
-                <div class="text-center col-xl-2 col-md-2 book-cover">
-                    <a href="/register_new_book">
-                        <img class="img" src="{{ book.cover_url }}">
-                    </a>
-                </div>
-                <div class="text-center col-xl-1 col-md-3 mb-4 p-4 bginfob">
-                    <p>Autor: {{ book.author }}</p>
-                    <p>Ano: {{ book.year }}</p>
-                </div>
-            </div>
-            <div class="text-center col-xl-12 col-md-2 book-cover">
-                <a class="btn btn-outline-primary" href="/register_new_book">add to your Library</a>
-            </div>
-            <div class="row justify-content-center align-items-center text-center">
-                <div class="col-xl-2 col-md-3 mb-4">
-                        <div class="card bginfob border-left-warning shadow h-100 py-2 text-white">
-                            <div class="card-body">
-                                <div class="row no-gutters align-items-center">
-                                    <div class="col mr-2">
-                                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                            code</div>
-                                        <div class="h5 mb-0 font-weight-bold ">{{ book.code }}</div>
-                                    </div>
-                                    <div class="col-auto">
-                                        <ion-icon name="library-outline"></ion-icon>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                </div>
-                <div class="col-xl-2 col-md-3 mb-4">
-                        <div class="bginfob card border-left-warning shadow h-100 py-2 text-white">
-                            <div class="card-body">
-                                <div class="row no-gutters align-items-center">
-                                    <div class="col mr-2">
-                                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                            publisher
-                                        </div>
-                                        <div class="h5 mb-0 font-weight-bold">{{ book.publisher }}</div>
-                                    </div>
-                                    <div class="col-auto">
-                                        <ion-icon name="people-outline"></ion-icon>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                </div>  
-                <div class="col-xl-2 col-md-3 mb-4">
-                        <div class="bginfob card border-left-warning shadow h-100 py-2 text-white">
-                            <div class="card-body">
-                                <div class="row no-gutters align-items-center">
-                                    <div class="col mr-2">
-                                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                            isbn
-                                        </div>
-                                        <div class="h5 mb-0 font-weight-bold">{{ book.isbn }}</div>
-                                    </div>
-                                    <div class="col-auto">
-                                        <ion-icon name="people-outline"></ion-icon>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                </div>  
-                <div class="col-xl-2 col-md-3 mb-4">
-                        <div class="bginfob card border-left-warning shadow h-100 py-2 text-white">
-                            <div class="card-body">
-                                <div class="row no-gutters align-items-center">
-                                    <div class="col mr-2">
-                                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                            format
-                                        </div>
-                                        <div class="h5 mb-0 font-weight-bold">{{ book.format }}</div>
-                                    </div>
-                                    <div class="col-auto">
-                                        <ion-icon name="people-outline"></ion-icon>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                </div>  
+<div class="container py-4 book-page">
+    <div class="collection-toolbar mb-4">
+        <div>
+            <h1 class="collection-title">{{ book.title }}</h1>
+            <p class="collection-subtitle">By {{ book.author }}</p>
+        </div>
+        <div class="collection-actions">
+            <a href="{{ url_for('books.your_collection') }}" class="btn btn-outline-light">Back to collection</a>
+            <a href="{{ url_for('books.edit_book', book_id=book.id) }}" class="btn btn-outline-warning">Edit</a>
+        </div>
+    </div>
+
+    <div class="book-detail-card">
+        <div class="book-detail-cover">
+            {% if book.cover_url %}
+            <img src="{{ book.cover_url }}" alt="Cover of {{ book.title }}">
+            {% else %}
+            <img src="{{ url_for('static', filename='images/book-placeholder.png') }}" alt="Generic book cover">
+            {% endif %}
+        </div>
+
+        <div class="book-detail-content">
+            <div class="book-data-grid">
+                <div><strong>Code:</strong> {{ book.code }}</div>
+                <div><strong>Publisher:</strong> {{ book.publisher }}</div>
+                <div><strong>Publication year:</strong> {{ book.publication_year }}</div>
+                <div><strong>Pages:</strong> {{ book.pages }}</div>
+                <div><strong>Genre:</strong> {{ book.genre }}</div>
+                <div><strong>ISBN:</strong> {{ book.isbn or 'Not informed' }}</div>
+                <div><strong>Country of origin:</strong> {{ book.country_of_origin or 'Not informed' }}</div>
+                <div><strong>Original language:</strong> {{ book.original_language or 'Not informed' }}</div>
             </div>
 
-        </div>
-    </div>
-</div>
-<hr class="bg-white">
-<div class="d-md-flex flex-md-equal w-100 my-md-3 ps-md-3">
-    <div class="about-bg me-md-3 pt-3 px-3 pt-md-5 px-md-5 text-white overflow-hidden">
-        <div class="">
-            <h2 class="font-weight-bold display-1" id="about">description</h2>
-            <p class="lead">
-                Lorem, ipsum dolor sit amet consectetur adipisicing elit. Eaque facere velit nulla, unde sunt possimus mollitia est cum soluta inventore! Deserunt iste maxime placeat nemo natus ratione animi, porro ex.
-            </p>
-        </div>
-    </div>
-    <div class="row text-center">
-        <div class="col-xl-6 col-md-6 mb-4">
-            <div class="card bginfob border-left-warning shadow h-100 py-2 text-white">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                code</div>
-                            <div class="h5 mb-0 font-weight-bold ">{{ book.code }}</div>
-                        </div>
-                        <div class="col-auto">
-                            <ion-icon name="library-outline"></ion-icon>
-                        </div>
-                    </div>
-                </div>
+            <hr>
+            <div class="collection-state">
+                <span class="chip">{{ user_book.read_status|replace('-', ' ')|title }}</span>
+                <span class="chip">{{ user_book.status|replace('-', ' ')|title }}</span>
+                <span class="chip">{{ user_book.format|replace('-', ' ')|title }}</span>
+                <span class="chip">Added {{ user_book.acquisition_date|timeago }}</span>
             </div>
-        </div>
-        <div class="col-xl-6 col-md-6 mb-4">
-            <div class="card bginfob border-left-warning shadow h-100 py-2 text-white">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                code</div>
-                            <div class="h5 mb-0 font-weight-bold ">{{ book.code }}</div>
-                        </div>
-                        <div class="col-auto">
-                            <ion-icon name="library-outline"></ion-icon>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Adicione mais duas colunas aqui -->
-        <div class="col-xl-6 col-md-6 mb-4">
-            <div class="card bginfob border-left-warning shadow h-100 py-2 text-white">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                code</div>
-                            <div class="h5 mb-0 font-weight-bold ">{{ book.code }}</div>
-                        </div>
-                        <div class="col-auto">
-                            <ion-icon name="library-outline"></ion-icon>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-xl-6 col-md-6 mb-4">
-            <div class="card bginfob border-left-warning shadow h-100 py-2 text-white">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                code</div>
-                            <div class="h5 mb-0 font-weight-bold ">{{ book.code }}</div>
-                        </div>
-                        <div class="col-auto">
-                            <ion-icon name="library-outline"></ion-icon>
-                        </div>
-                    </div>
-                </div>
-            </div>
+
+            {% if book.description %}
+            <p class="book-description mt-3">{{ book.description }}</p>
+            {% endif %}
         </div>
     </div>
 </div>

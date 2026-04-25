@@ -122,12 +122,33 @@
                                 </div>
                                 <div class="col-md-6">
                                     <label for="pages" class="form-label">Pages <span class="required-mark">*</span></label>
+                                    <div class="pages-input-wrapper">
+                                        <button class="pages-btn pages-minus" type="button" aria-label="Decrease pages by 10">
+                                            <ion-icon name="remove-outline" aria-hidden="true"></ion-icon>
+                                        </button>
                                         {{ form.pages(class="form-control pages-field", id="pages",
                                            placeholder="100",
                                            min="1",
                                            max="9999",
                                            inputmode="numeric",
                                            aria_required="true") }}
+                                        <button class="pages-btn pages-plus" type="button" aria-label="Increase pages by 10">
+                                            <ion-icon name="add-outline" aria-hidden="true"></ion-icon>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="country_of_origin" class="form-label">Country of Origin</label>
+                                    {{ form.country_of_origin(class="form-control", id="country_of_origin",
+                                       placeholder="e.g. Brazil") }}
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="original_language" class="form-label">Original Language</label>
+                                    {{ form.original_language(class="form-control", id="original_language",
+                                       placeholder="e.g. Portuguese") }}
                                 </div>
                             </div>
 
@@ -203,7 +224,7 @@
                         {% endif %}
 
                         <div class="text-center mt-4">
-                            <button type="submit" class="btn btn btn-outline-light">
+                            <button type="submit" class="btn btn-register">
                                 Register New Book
                             </button>
                         </div>
@@ -242,6 +263,8 @@ document.addEventListener('DOMContentLoaded', function () {
         genre:           document.getElementById('genre'),
         genreSearch:     document.getElementById('genre-search'),
         isbn:            document.getElementById('isbn'),
+        country_of_origin: document.getElementById('country_of_origin'),
+        original_language: document.getElementById('original_language'),
         cover_url:       document.getElementById('cover_url'),
         openlibrary_key: document.getElementById('openlibrary_key')
     };
@@ -286,6 +309,8 @@ document.addEventListener('DOMContentLoaded', function () {
         if (F.author)    F.author.value    = item.author || '';
         if (F.year)      F.year.value      = item.year || '';
         if (F.publisher) F.publisher.value  = item.publisher || '';
+        if (F.country_of_origin) F.country_of_origin.value = item.country_of_origin || '';
+        if (F.original_language) F.original_language.value = item.original_language || '';
 
         // Pages — always set even if 0 (user can fix)
         if (F.pages) F.pages.value = item.pages || '';
@@ -388,6 +413,8 @@ document.addEventListener('DOMContentLoaded', function () {
                     ${item.genre ? `<span class="meta-chip"><ion-icon name="pricetag-outline" aria-hidden="true"></ion-icon>${escapeHtml(item.genre)}</span>` : ''}
                     ${item.year ? `<span class="meta-chip"><ion-icon name="calendar-outline" aria-hidden="true"></ion-icon>${item.year}</span>` : ''}
                     ${item.publisher ? `<span class="meta-chip"><ion-icon name="business-outline" aria-hidden="true"></ion-icon>${escapeHtml(item.publisher)}</span>` : ''}
+                    ${item.original_language ? `<span class="meta-chip"><ion-icon name="language-outline" aria-hidden="true"></ion-icon>${escapeHtml(item.original_language)}</span>` : ''}
+                    ${item.country_of_origin ? `<span class="meta-chip"><ion-icon name="earth-outline" aria-hidden="true"></ion-icon>${escapeHtml(item.country_of_origin)}</span>` : ''}
                     ${chips.map(c => `<span class="meta-chip meta-chip-subtle">${c}</span>`).join('')}
                 </div>
             </div>
@@ -651,7 +678,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function stepPages(delta) {
         const cur = parseInt(pagesField.value) || 0;
-        const next = Math.max(1, Math.min(99999, cur + delta));
+        const next = Math.max(1, Math.min(9999, cur + delta));
         pagesField.value = next;
     }
 

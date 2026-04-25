@@ -13,6 +13,7 @@ Provides robust book search functionality with:
 import json
 import os
 import time
+import logging
 from typing import List, Dict, Optional
 
 import requests
@@ -20,6 +21,9 @@ from flask import current_app
 
 from app import db, cache
 from app.models.modelsdb import APIMetrics
+
+# Logger that works with or without app context
+logger = logging.getLogger(__name__)
 
 
 class OpenLibraryService:
@@ -43,7 +47,7 @@ class OpenLibraryService:
             with open(translations_path, 'r', encoding='utf-8') as f:
                 self.genre_translations = json.load(f)
         except Exception as e:
-            current_app.logger.warning(f"Could not load genre translations: {e}")
+            logger.warning(f"Could not load genre translations: {e}")
             self.genre_translations = {}
     
     def _translate_genre(self, genre_en: str) -> str:
@@ -111,16 +115,14 @@ class OpenLibraryService:
         """
         Save API call metrics to database for analytics.
         
-        Args:
-            endpoint: API endpoint called
-            query: Search query
-            response_time_ms: Response time in milliseconds
-            results_count: Number of results returned
-            cache_hit: Whether result came from cache
-            error_occurred: Whether an error occurred
-            error_message: Error details if any
+        Safe to call with or without app context.
         """
         try:
+            from flask import has_app_context
+            # Only try to save if we have an app context
+            if not has_app_context():
+                return  # Silently skip when no app context
+
             metric = APIMetrics(
                 endpoint=endpoint,
                 query=query,
@@ -132,11 +134,10 @@ class OpenLibraryService:
             )
             db.session.add(metric)
             db.session.commit()
-        except Exception as e:
-            current_app.logger.error(f"Failed to save API metrics: {e}")
-            db.session.rollback()
-    
-    @cache.memoize(timeout=3600)  # 1-hour cache
+        except Exception:
+            # Silently fail - metrics are not critical
+            pass
+
     def search_books(self, query: str, limit: int = 10, lang: str = 'pt') -> List[Dict]:
         """
         Search for books in OpenLibrary API with caching and translation.
@@ -149,6 +150,13 @@ class OpenLibraryService:
         Returns:
             List of book dictionaries with translated metadata
         """
+        # Check cache manually (cache.memoize doesn't work with class methods)
+        cache_key = f'openlibrary_search:{query}:{limit}'
+        cached_result = cache.get(cache_key)
+        if cached_result is not None:
+            logger.info(f"Cache hit for query: {query}")
+            return cached_result
+
         start_time = time.time()
         endpoint = 'openlibrary_search'
         
@@ -209,6 +217,10 @@ class OpenLibraryService:
                 f"time={response_time_ms:.2f}ms"
             )
             
+            # Cache the results for 1 hour
+            cache_key = f'openlibrary_search:{query}:{limit}'
+            cache.set(cache_key, results, timeout=3600)
+
             return results
             
         except requests.RequestException as e:
@@ -225,7 +237,10 @@ class OpenLibraryService:
                 error_message=error_msg
             )
             
-            current_app.logger.error(f"OpenLibrary API error: {error_msg}")
+            try:
+                logger.error(f"OpenLibrary API error: {error_msg}")
+            except Exception:
+                pass  # Logging failed, continue
             return []
             
         except Exception as e:
@@ -242,7 +257,10 @@ class OpenLibraryService:
                 error_message=error_msg
             )
             
-            current_app.logger.error(f"Unexpected error in search_books: {error_msg}")
+            try:
+                logger.error(f"Unexpected error in search_books: {error_msg}")
+            except Exception:
+                pass  # Even logging failed, still return empty list
             return []
 
 

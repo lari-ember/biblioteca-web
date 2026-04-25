@@ -1,8 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, IntegerField, SelectField, HiddenField
 from wtforms.validators import DataRequired, EqualTo, Optional, Length
-from wtforms import StringField, PasswordField, BooleanField, SubmitField
-from wtforms.validators import DataRequired, Length
 
 class LoginForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired(), Length(min=1, max=64)])
@@ -26,7 +24,10 @@ class BookForm(FlaskForm):
     year = IntegerField('Year', validators=[DataRequired()])
     isbn = StringField('ISBN', validators=[Optional(), Length(max=17)])
     pages = IntegerField('Pages', validators=[DataRequired()])
+    country_of_origin = StringField('Country of Origin', validators=[Optional(), Length(max=80)])
+    original_language = StringField('Original Language', validators=[Optional(), Length(max=40)])
     read = SelectField('Reading Status', choices=[
+        ('want_to_read', 'Want to read — Added to wishlist'),
         ('unread', 'Unread — Not started yet'),
         ('reading', 'Reading — Currently in progress'),
         ('read', 'Read — Finished reading'),
@@ -40,9 +41,12 @@ class BookForm(FlaskForm):
     ], default='available', validators=[DataRequired()])
     format = SelectField('Format', choices=[
         ('physical', 'Physical — Printed book'),
+        ('hardcover', 'Hardcover — Rigid cover edition'),
+        ('paperback', 'Paperback — Soft cover edition'),
         ('ebook', 'E-book — Digital reader'),
         ('pdf', 'PDF — Digital document'),
         ('audiobook', 'Audiobook — Audio format'),
+        ('comic', 'Comic/Graphic Novel'),
     ], default='physical', validators=[DataRequired()])
     cover_url = HiddenField()
     openlibrary_key = HiddenField()

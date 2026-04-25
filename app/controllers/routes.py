@@ -109,6 +109,7 @@ def index():
         return response
 
     except Exception as e:
+        db.session.rollback()
         current_app.logger.error(f"Index route failure: {str(e)}", exc_info=True)
         return render_template('index.html'), 500
 

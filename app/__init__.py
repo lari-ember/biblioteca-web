@@ -13,6 +13,7 @@ from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.middleware.proxy_fix import ProxyFix
 from sqlalchemy.exc import OperationalError
+from sqlalchemy import inspect, text
 from flask_wtf import CSRFProtect
 
 from .security.middleware import security_headers
@@ -229,6 +230,36 @@ def register_template_filters(app):
         return f"{dia} de {mes} de {ano} às {hora}h{minuto:02d}"
 
 
+def ensure_book_metadata_columns(app):
+    """Ensure additive Book metadata columns exist in legacy databases."""
+    with app.app_context():
+        try:
+            inspector = inspect(db.engine)
+            table_names = inspector.get_table_names()
+            if 'books' not in table_names:
+                return
+
+            existing_columns = {col['name'] for col in inspector.get_columns('books')}
+            pending = []
+
+            if 'country_of_origin' not in existing_columns:
+                pending.append("ALTER TABLE books ADD COLUMN country_of_origin VARCHAR(80)")
+            if 'original_language' not in existing_columns:
+                pending.append("ALTER TABLE books ADD COLUMN original_language VARCHAR(40)")
+
+            if not pending:
+                return
+
+            for statement in pending:
+                db.session.execute(text(statement))
+
+            db.session.commit()
+            app.logger.info("Book metadata schema sync applied (%d changes).", len(pending))
+        except Exception as e:
+            db.session.rollback()
+            app.logger.warning("Book metadata schema sync skipped: %s", e)
+
+
 def create_app():
     """Factory function para criação da aplicação Flask."""
     app = Flask(__name__, static_folder='static', static_url_path='/static')
@@ -312,6 +343,9 @@ def create_app():
         else:
             app.logger.error("Não foi possível conectar ao banco para criar tabelas em dev.")
 
+    # Keep old databases compatible when new nullable columns are added to Book.
+    ensure_book_metadata_columns(app)
+
     return app
 
 # Cria a app
@@ -319,5 +353,10 @@ app = create_app()
 
 # Importação de modelos (apenas para registrar no ORM); mantida após create_app
 from app.models.modelsdb import User, Book, UserBooks, UserReadings, Loan, UserRead
-with app.app_context():
-    db.create_all()
+try:
+    with app.app_context():
+        db.create_all()
+except Exception as e:
+    # Falha silenciosamente se o banco não está disponível
+    # (é normal em testes, desenvolvimento sem docker, etc)
+    app.logger.warning(f"Could not create database tables at startup: {e}")

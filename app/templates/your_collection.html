@@ -1,75 +1,86 @@
 {% extends 'base.html' %}
 
+{% block head %}
+  {{ super() }}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/pages/collection.css') }}">
+{% endblock %}
+
 {% block content %}
-<h1 class="text-white text-center my-4">Your Collection</h1>
-<div class="table-responsive-md table-responsive-sm table-responsive-xl table-responsive-lg">
-  <table class="table table-striped table-hover table-dark ">
-    <thead>
-      <tr>
-        <th>Position</th>
-        <th>ID</th>
-        <th>Code</th>
-        <th>Title</th>
-        <th>Author</th>
-        <th>Pages</th>
-        <th>Year</th>
-        <th>Genre</th>
-        <th>Read</th>
-        <th>Status</th>
-        <th>Format</th>
-        <th>Publisher</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for book in books %}
-      <tr>
-        <td>{{ loop.index }}</td>
-        <td>{{ book.id }}</td>
-        <td>{{ book.code }}</td>
-        <td>{{ book.title }}</td>
-        <td>{{ book.author }}</td>
-        <td>{{ book.pages }}</td>
-        <td>{{ book.year }}</td>
-        <td>{{ book.genre }}</td>
-        <td>
-          {% if book.read == 'read' %}
-          {% if book.completion_date %}
-          <span data-toggle="tooltip" data-placement="top" title="{{ book.completion_date }}">
-            {{ book.read }}
-          </span>
-          {% else %}
-          {{ book.read }}
-          {% endif %}
-          {% else %}
-          {{ book.read }}
-          {% endif %}
-        </td>
-        <td>
-          {% if book.status in ['borrowed'] and book.loan %}
-          <span data-toggle="tooltip" data-placement="top" title="loaned to: {{ book.loan.lender }}">{{ book.status }}
-          </span>
-          {% elif book.status in ['voluit']  %}
-          <span data-toggle="tooltip" data-placement="top" title="loaned by: {{ book.loan.borrower }}">
-          {{ book.status }}
-          </span>
-          {% else %}
-          {{book.status}}
-          {% endif %}
-        </td>
-        <td>{{ book.format }}</td>
-        <td>{{ book.publisher }}</td>
-        <td>
-          <!-- Botão de edição -->
-          <a href="{{ url_for('books.edit_book', book_id=book.id) }}" class="btn btn-outline-warning">Edit</a>
-          <!-- Botão de exclusão -->
-          <button class="btn btn-outline-danger" data-book-id="{{ book.id }}" data-book-status="{{ book.status }}" onclick="confirmDeleteHandler(event)">Delete</button>
-          {% if book.status not in ['borrowed', 'voluit'] %}
-          <button class="btn btn-primary" data-book-id="{{ book.id }}" onclick="openLoanPopupHandler(event)">Loan Book</button>
-          {% endif %}
-        </td>
-      </tr>
-      {% endfor %}
-  </table>
+<div class="collection-page container py-4">
+  <div class="collection-toolbar mb-4">
+    <div>
+      <h1 class="collection-title">Your Collection</h1>
+      <p class="collection-subtitle">Browse, open details, and move your data safely with import/export.</p>
+    </div>
+    <div class="collection-actions">
+      <a href="{{ url_for('books.register_new_book') }}" class="btn btn-outline-light">Add book</a>
+      <a href="{{ url_for('books.export_collection') }}" class="btn btn-outline-info">Export CSV</a>
+      <form action="{{ url_for('books.import_collection') }}" method="POST" enctype="multipart/form-data" class="import-form">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <input type="file" name="collection_file" accept=".csv,text/csv" required>
+        <button type="submit" class="btn btn-outline-success">Import CSV</button>
+      </form>
+    </div>
+  </div>
+
+  {% if books %}
+  <div class="collection-grid">
+    {% for user_book, book in books %}
+    <article class="collection-card">
+      <div class="collection-card-top">
+        <div>
+          <h2 class="book-title">{{ book.title }}</h2>
+          <p class="book-author">{{ book.author }}</p>
+        </div>
+        <span class="book-code">{{ book.code }}</span>
+      </div>
+
+      <div class="collection-meta">
+        <span>{{ book.publication_year }}</span>
+        <span>{{ book.pages }} pages</span>
+        <span>{{ book.genre }}</span>
+        <span>{{ user_book.format|title }}</span>
+      </div>
+
+      <p class="book-secondary">
+        {{ book.publisher }}
+        {% if book.country_of_origin %} · {{ book.country_of_origin }}{% endif %}
+        {% if book.original_language %} · {{ book.original_language }}{% endif %}
+      </p>
+
+      <div class="collection-state">
+        <span class="chip">{{ user_book.read_status|replace('-', ' ')|title }}</span>
+        <span class="chip">{{ user_book.status|replace('-', ' ')|title }}</span>
+      </div>
+
+      <div class="collection-card-actions">
+        <a href="{{ url_for('books.view_book', book_id=book.id) }}" class="btn btn-sm btn-outline-light">Open</a>
+        <a href="{{ url_for('books.edit_book', book_id=book.id) }}" class="btn btn-sm btn-outline-warning">Edit</a>
+        <form action="{{ url_for('books.delete_book', book_id=book.id) }}" method="POST" class="d-inline">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+        </form>
+      </div>
+    </article>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <p>Your collection is empty. Start by adding your first book.</p>
+    <a href="{{ url_for('books.register_new_book') }}" class="btn btn-outline-light">Register new book</a>
+  </div>
+  {% endif %}
+
+  {% if pagination and pagination.pages > 1 %}
+  <nav class="collection-pagination mt-4" aria-label="Collection pagination">
+    {% if pagination.has_prev %}
+    <a href="{{ url_for('books.your_collection', page=pagination.prev_num) }}" class="btn btn-sm btn-outline-light">Previous</a>
+    {% endif %}
+    <span>Page {{ pagination.page }} of {{ pagination.pages }}</span>
+    {% if pagination.has_next %}
+    <a href="{{ url_for('books.your_collection', page=pagination.next_num) }}" class="btn btn-sm btn-outline-light">Next</a>
+    {% endif %}
+  </nav>
+  {% endif %}
 </div>
 {% endblock %}
